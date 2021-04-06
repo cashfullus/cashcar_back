@@ -1,0 +1,36 @@
+tags:
+  - user
+
+parameters:
+  - name: email
+    in: formData
+    type: String
+    required: true
+
+  - name: password
+    in: formData
+    type: String
+    required: true
+
+
+
+responses:
+  200:
+    description: 로그인 성
+    examples:
+      application/json: {
+        "user_id" : 1,
+        "jwt_token" : token,
+        "refresh_token" : refresh_token}
+
+  400:
+    description: Require 데이터 미전송
+
+
+  409:
+    description: 이메일 또는 핸드폰번호 중복
+    examples:
+      application/json: {"status" : false}
+
+
+

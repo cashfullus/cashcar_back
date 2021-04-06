@@ -1,0 +1,48 @@
+tags:
+  - Upload
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: location
+    in: uri
+    type: String
+    required: true
+
+  - name: location_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: files
+    in: formData
+    type: file
+    required: true
+
+
+responses:
+  200:
+    description: 업로드 성공
+    examples:
+      application/json: {"status": True, "data": "Success Upload"}
+
+  400:
+    description: formData에서 잘못된 데이터가 넘어올때
+    examples:
+      application/json: {"status": False, "data": "Bad Request"}
+
+  404:
+    description: 이미지 파일 확장자가 옳바르지 않은 확장자
+    examples:
+      application/json: {"status": False, "data": "Not Allowed File"}
+
+
+

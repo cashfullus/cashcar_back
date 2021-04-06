@@ -1,0 +1,248 @@
+2021-03-29 17:16:58,513 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:16:58,515 INFO  * Restarting with stat
+2021-03-29 17:16:58,652 WARNING  * Debugger is active!
+2021-03-29 17:16:58,659 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:17:09,339 INFO 127.0.0.1 - - [29/Mar/2021 17:17:09] "[33mGET /register HTTP/1.1[0m" 404 -
+2021-03-29 17:17:37,328 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:17:37,330 INFO  * Restarting with stat
+2021-03-29 17:17:37,472 WARNING  * Debugger is active!
+2021-03-29 17:17:37,477 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:18:04,012 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:18:04,014 INFO  * Restarting with stat
+2021-03-29 17:18:04,169 WARNING  * Debugger is active!
+2021-03-29 17:18:04,176 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:18:07,126 INFO 127.0.0.1 - - [29/Mar/2021 17:18:07] "[33mGET /register HTTP/1.1[0m" 404 -
+2021-03-29 17:20:20,095 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:20:20,098 INFO  * Restarting with stat
+2021-03-29 17:20:20,242 WARNING  * Debugger is active!
+2021-03-29 17:20:20,246 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:20:25,404 INFO 127.0.0.1 - - [29/Mar/2021 17:20:25] "[33mGET /register HTTP/1.1[0m" 404 -
+2021-03-29 17:20:34,203 INFO 127.0.0.1 - - [29/Mar/2021 17:20:34] "[33mGET /register HTTP/1.1[0m" 404 -
+2021-03-29 17:22:14,708 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/app/__init__.py', reloading
+2021-03-29 17:22:14,729 INFO  * Restarting with stat
+2021-03-29 17:22:14,891 WARNING  * Debugger is active!
+2021-03-29 17:22:14,896 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:22:22,867 INFO 127.0.0.1 - - [29/Mar/2021 17:22:22] "[31m[1mGET /register HTTP/1.1[0m" 405 -
+2021-03-29 17:22:25,518 INFO 127.0.0.1 - - [29/Mar/2021 17:22:25] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-29 17:25:38,450 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/app/__init__.py', reloading
+2021-03-29 17:25:38,469 INFO  * Restarting with stat
+2021-03-29 17:25:38,633 WARNING  * Debugger is active!
+2021-03-29 17:25:38,638 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:31:12,174 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:31:12,176 INFO  * Restarting with stat
+2021-03-29 17:31:12,314 WARNING  * Debugger is active!
+2021-03-29 17:31:12,321 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:31:15,441 INFO 127.0.0.1 - - [29/Mar/2021 17:31:15] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:31:26,664 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:31:26,666 INFO  * Restarting with stat
+2021-03-29 17:31:26,802 WARNING  * Debugger is active!
+2021-03-29 17:31:26,807 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:31:28,406 INFO 127.0.0.1 - - [29/Mar/2021 17:31:28] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:31:31,084 INFO 127.0.0.1 - - [29/Mar/2021 17:31:31] "[33mPOST /register/ HTTP/1.1[0m" 404 -
+2021-03-29 17:31:43,845 INFO 127.0.0.1 - - [29/Mar/2021 17:31:43] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:32:26,573 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:32:26,574 INFO  * Restarting with stat
+2021-03-29 17:32:26,722 WARNING  * Debugger is active!
+2021-03-29 17:32:26,726 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:32:29,994 INFO 127.0.0.1 - - [29/Mar/2021 17:32:29] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:35:00,617 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/run.py', reloading
+2021-03-29 17:35:00,638 INFO  * Restarting with stat
+2021-03-29 17:35:00,792 WARNING  * Debugger is active!
+2021-03-29 17:35:00,798 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:35:05,037 INFO 127.0.0.1 - - [29/Mar/2021 17:35:05] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:35:10,602 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:35:10,604 INFO  * Restarting with stat
+2021-03-29 17:35:10,739 WARNING  * Debugger is active!
+2021-03-29 17:35:10,744 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:35:12,363 INFO 127.0.0.1 - - [29/Mar/2021 17:35:12] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:52:14,715 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/run.py', reloading
+2021-03-29 17:52:14,732 INFO  * Restarting with stat
+2021-03-29 17:52:14,950 WARNING  * Debugger is active!
+2021-03-29 17:52:14,957 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:53:19,952 INFO  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+2021-03-29 17:53:37,526 INFO 127.0.0.1 - - [29/Mar/2021 17:53:37] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:53:48,637 INFO 127.0.0.1 - - [29/Mar/2021 17:53:48] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:54:28,687 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:54:28,690 INFO  * Restarting with stat
+2021-03-29 17:54:28,826 WARNING  * Debugger is active!
+2021-03-29 17:54:28,831 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:54:35,145 INFO 127.0.0.1 - - [29/Mar/2021 17:54:35] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:56:14,586 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:56:14,587 INFO  * Restarting with stat
+2021-03-29 17:56:14,734 WARNING  * Debugger is active!
+2021-03-29 17:56:14,739 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:56:19,976 INFO 127.0.0.1 - - [29/Mar/2021 17:56:19] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:56:24,022 INFO 127.0.0.1 - - [29/Mar/2021 17:56:24] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:57:16,256 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 17:57:16,258 INFO  * Restarting with stat
+2021-03-29 17:57:16,385 WARNING  * Debugger is active!
+2021-03-29 17:57:16,390 INFO  * Debugger PIN: 330-644-446
+2021-03-29 17:57:23,578 INFO 127.0.0.1 - - [29/Mar/2021 17:57:23] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:57:34,423 INFO 127.0.0.1 - - [29/Mar/2021 17:57:34] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:59:19,297 INFO 127.0.0.1 - - [29/Mar/2021 17:59:19] "[33mPOST /register HTTP/1.1[0m" 404 -
+2021-03-29 17:59:25,662 INFO 127.0.0.1 - - [29/Mar/2021 17:59:25] "[33mGET /register HTTP/1.1[0m" 404 -
+2021-03-29 17:59:30,881 INFO 127.0.0.1 - - [29/Mar/2021 17:59:30] "[33mGET / HTTP/1.1[0m" 404 -
+2021-03-29 17:59:40,821 INFO 127.0.0.1 - - [29/Mar/2021 17:59:40] "[33mGET / HTTP/1.1[0m" 404 -
+2021-03-29 17:59:44,871 INFO 127.0.0.1 - - [29/Mar/2021 17:59:44] "[33mGET / HTTP/1.1[0m" 404 -
+2021-03-29 18:03:03,674 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/__init__.py', reloading
+2021-03-29 18:03:03,692 INFO  * Restarting with stat
+2021-03-29 18:05:49,175 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:05:49,178 INFO  * Restarting with stat
+2021-03-29 18:05:49,337 WARNING  * Debugger is active!
+2021-03-29 18:05:49,342 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:05:52,807 INFO 127.0.0.1 - - [29/Mar/2021 18:05:52] "[37mGET / HTTP/1.1[0m" 200 -
+2021-03-29 18:06:01,510 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:06:01,536 INFO  * Restarting with stat
+2021-03-29 18:06:01,721 WARNING  * Debugger is active!
+2021-03-29 18:06:01,726 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:24:21,616 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:24:21,634 INFO  * Restarting with stat
+2021-03-29 18:24:57,568 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:24:57,570 INFO  * Restarting with stat
+2021-03-29 18:24:57,734 WARNING  * Debugger is active!
+2021-03-29 18:24:57,744 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:28:30,898 INFO 127.0.0.1 - - [29/Mar/2021 18:28:30] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-29 18:29:15,083 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:29:15,104 INFO  * Restarting with stat
+2021-03-29 18:29:15,278 WARNING  * Debugger is active!
+2021-03-29 18:29:15,282 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:29:25,958 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:29:25,959 INFO  * Restarting with stat
+2021-03-29 18:29:26,105 WARNING  * Debugger is active!
+2021-03-29 18:29:26,109 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:29:27,655 INFO 127.0.0.1 - - [29/Mar/2021 18:29:27] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-29 18:30:18,795 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:30:18,816 INFO  * Restarting with stat
+2021-03-29 18:30:19,083 WARNING  * Debugger is active!
+2021-03-29 18:30:19,091 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:30:22,358 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:30:22,360 INFO  * Restarting with stat
+2021-03-29 18:30:22,493 WARNING  * Debugger is active!
+2021-03-29 18:30:22,498 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:30:23,922 INFO 127.0.0.1 - - [29/Mar/2021 18:30:23] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-29 18:30:35,673 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:30:35,692 INFO  * Restarting with stat
+2021-03-29 18:30:35,857 WARNING  * Debugger is active!
+2021-03-29 18:30:35,862 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:30:38,188 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:30:38,190 INFO  * Restarting with stat
+2021-03-29 18:30:38,336 WARNING  * Debugger is active!
+2021-03-29 18:30:38,341 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:30:39,843 INFO 127.0.0.1 - - [29/Mar/2021 18:30:39] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-29 18:33:09,391 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-29 18:33:09,411 INFO  * Restarting with stat
+2021-03-29 18:33:09,559 WARNING  * Debugger is active!
+2021-03-29 18:33:09,563 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:33:11,090 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-29 18:33:11,092 INFO  * Restarting with stat
+2021-03-29 18:33:11,241 WARNING  * Debugger is active!
+2021-03-29 18:33:11,246 INFO  * Debugger PIN: 330-644-446
+2021-03-29 18:33:13,784 INFO 127.0.0.1 - - [29/Mar/2021 18:33:13] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:24:07,831 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-30 11:24:07,837 INFO  * Restarting with stat
+2021-03-30 11:24:07,969 WARNING  * Debugger is active!
+2021-03-30 11:24:07,980 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:24:35,286 INFO 127.0.0.1 - - [30/Mar/2021 11:24:35] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:24:43,433 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:24:43,453 INFO  * Restarting with stat
+2021-03-30 11:24:43,652 WARNING  * Debugger is active!
+2021-03-30 11:24:43,657 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:24:47,822 INFO 127.0.0.1 - - [30/Mar/2021 11:24:47] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:25:04,936 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:25:04,965 INFO  * Restarting with stat
+2021-03-30 11:25:05,133 WARNING  * Debugger is active!
+2021-03-30 11:25:05,137 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:25:10,212 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:25:10,228 INFO  * Restarting with stat
+2021-03-30 11:25:10,376 WARNING  * Debugger is active!
+2021-03-30 11:25:10,380 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:25:13,430 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:25:13,450 INFO  * Restarting with stat
+2021-03-30 11:25:13,605 WARNING  * Debugger is active!
+2021-03-30 11:25:13,611 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:25:18,116 INFO 127.0.0.1 - - [30/Mar/2021 11:25:18] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:25:21,955 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-30 11:25:21,956 INFO  * Restarting with stat
+2021-03-30 11:25:22,092 WARNING  * Debugger is active!
+2021-03-30 11:25:22,096 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:25:23,810 INFO 127.0.0.1 - - [30/Mar/2021 11:25:23] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:25:47,422 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:25:47,439 INFO  * Restarting with stat
+2021-03-30 11:25:47,593 WARNING  * Debugger is active!
+2021-03-30 11:25:47,598 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:25:49,949 INFO 127.0.0.1 - - [30/Mar/2021 11:25:49] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:26:09,853 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:26:09,871 INFO  * Restarting with stat
+2021-03-30 11:26:10,026 WARNING  * Debugger is active!
+2021-03-30 11:26:10,030 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:26:10,346 INFO 127.0.0.1 - - [30/Mar/2021 11:26:10] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:26:12,743 INFO 127.0.0.1 - - [30/Mar/2021 11:26:12] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:26:33,339 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:26:33,356 INFO  * Restarting with stat
+2021-03-30 11:26:33,518 WARNING  * Debugger is active!
+2021-03-30 11:26:33,523 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:26:43,846 INFO 127.0.0.1 - - [30/Mar/2021 11:26:43] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:28:48,204 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:28:48,220 INFO  * Restarting with stat
+2021-03-30 11:28:48,353 WARNING  * Debugger is active!
+2021-03-30 11:28:48,358 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:39:06,263 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:39:06,282 INFO  * Restarting with stat
+2021-03-30 11:39:06,433 WARNING  * Debugger is active!
+2021-03-30 11:39:06,438 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:39:09,654 INFO 127.0.0.1 - - [30/Mar/2021 11:39:09] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:39:21,907 INFO 127.0.0.1 - - [30/Mar/2021 11:39:21] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:40:00,791 INFO 127.0.0.1 - - [30/Mar/2021 11:40:00] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:40:17,318 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:40:17,343 INFO  * Restarting with stat
+2021-03-30 11:40:17,486 WARNING  * Debugger is active!
+2021-03-30 11:40:17,491 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:40:23,683 INFO 127.0.0.1 - - [30/Mar/2021 11:40:23] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:40:32,679 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:40:32,698 INFO  * Restarting with stat
+2021-03-30 11:40:32,853 WARNING  * Debugger is active!
+2021-03-30 11:40:32,858 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:40:35,507 INFO 127.0.0.1 - - [30/Mar/2021 11:40:35] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 11:41:29,569 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:41:29,589 INFO  * Restarting with stat
+2021-03-30 11:41:29,748 WARNING  * Debugger is active!
+2021-03-30 11:41:29,753 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:41:55,936 INFO 127.0.0.1 - - [30/Mar/2021 11:41:55] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:42:13,306 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:42:13,325 INFO  * Restarting with stat
+2021-03-30 11:42:13,487 WARNING  * Debugger is active!
+2021-03-30 11:42:13,492 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:42:15,352 INFO 127.0.0.1 - - [30/Mar/2021 11:42:15] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:42:18,556 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:42:18,575 INFO  * Restarting with stat
+2021-03-30 11:42:18,725 WARNING  * Debugger is active!
+2021-03-30 11:42:18,730 INFO  * Debugger PIN: 330-644-446
+2021-03-30 11:42:19,040 INFO 127.0.0.1 - - [30/Mar/2021 11:42:19] "[37mPOST /register HTTP/1.1[0m" 200 -
+2021-03-30 11:42:54,176 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 11:42:54,197 INFO  * Restarting with stat
+2021-03-30 14:23:22,793 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-03-30 14:23:22,799 INFO  * Restarting with stat
+2021-03-30 14:23:22,944 WARNING  * Debugger is active!
+2021-03-30 14:23:22,952 INFO  * Debugger PIN: 330-644-446
+2021-03-30 14:23:26,847 INFO 127.0.0.1 - - [30/Mar/2021 14:23:26] "[35m[1mPOST /register HTTP/1.1[0m" 500 -
+2021-03-30 14:24:07,540 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-03-30 14:24:07,561 INFO  * Restarting with stat
+2021-04-01 13:20:03,261 WARNING  * Debugger is active!
+2021-04-01 13:20:03,268 INFO  * Debugger PIN: 330-644-446
+2021-04-01 13:23:20,992 INFO 127.0.0.1 - - [01/Apr/2021 13:23:20] "[31m[1mGET /manufacturer/list HTTP/1.1[0m" 401 -
+2021-04-01 13:24:07,011 INFO 127.0.0.1 - - [01/Apr/2021 13:24:07] "[37mGET /manufacturer/list HTTP/1.1[0m" 200 -
+2021-04-01 13:24:18,051 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/routes.py', reloading
+2021-04-01 13:24:18,440 WARNING  * Debugger is active!
+2021-04-01 13:24:18,446 INFO  * Debugger PIN: 330-644-446
+2021-04-01 13:25:32,187 INFO 127.0.0.1 - - [01/Apr/2021 13:25:32] "[37mGET /manufacturer/list HTTP/1.1[0m" 200 -
+2021-04-01 13:25:39,682 INFO 127.0.0.1 - - [01/Apr/2021 13:25:39] "[37mGET /manufacturer/list HTTP/1.1[0m" 200 -
+2021-04-01 13:27:37,020 INFO 127.0.0.1 - - [01/Apr/2021 13:27:37] "[31m[1mPOST /car/register HTTP/1.1[0m" 401 -
+2021-04-01 13:28:01,979 INFO 127.0.0.1 - - [01/Apr/2021 13:28:01] "[35m[1mPOST /car/register HTTP/1.1[0m" 500 -
+2021-04-01 13:28:24,061 INFO  * Detected change in '/Users/park/SolutionProjects/basicFlask/appConfig/models/car_model.py', reloading
+2021-04-01 13:28:24,458 WARNING  * Debugger is active!
+2021-04-01 13:28:24,463 INFO  * Debugger PIN: 330-644-446
+2021-04-01 13:28:26,053 INFO 127.0.0.1 - - [01/Apr/2021 13:28:26] "[37mPOST /car/register HTTP/1.1[0m" 200 -
+2021-04-02 10:59:37,747 INFO  * Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)
+2021-04-02 10:59:37,751 INFO  * Restarting with stat
+2021-04-02 10:59:37,997 WARNING  * Debugger is active!
+2021-04-02 10:59:38,008 INFO  * Debugger PIN: 330-644-446
