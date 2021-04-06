@@ -2,9 +2,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,dotenv
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,dotenv
 
+### log ###
+log.txt
+### cache ###
+__pycache__
 ### dotenv ###
 .env
-.txt
 ### macOS ###
 # General
 .DS_Store
