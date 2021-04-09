@@ -51,7 +51,8 @@ def upload_image(location):
 
     if False not in allowed:
         try:
-            os.makedirs(BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}", exist_ok=True)
+            directory = "{0}/{1}/{2}".format(location, data["location_id"], data["user_id"])
+            os.makedirs(BASE_IMAGE_LOCATION + directory, exist_ok=True)
             for file in files:
                 file.save(
                     BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}/" + secure_filename(
