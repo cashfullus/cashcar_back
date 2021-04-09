@@ -101,3 +101,26 @@ def login(**kwargs):
             return False
     else:
         return False
+
+
+# Fcm 토큰 저장
+def user_fcm(**kwargs):
+    db = Database()
+    user = db.getUserById(user_id=kwargs.get("user_id"))
+    if user:
+        fcm_row = db.executeOne(query="SELECT * FROM user_fcm WHERE user_id = %s", args=kwargs.get("user_id"))
+        if fcm_row:
+            db.execute(query="UPDATE user_fcm SET fcm_token = %s, "
+                             "last_check_time = NOW() WHERE fcm_id = %s",
+                       args=[fcm_row["fcm_token"], fcm_row["fcm_id"]]
+                       )
+            db.commit()
+            return True
+        else:
+            db.execute(query="INSERT INTO user_fcm (user_id, fcm_token) VALUES (%s, %s)",
+                       args=[kwargs.get("user_id"), kwargs.get("fcm_token")]
+                       )
+            db.commit()
+            return True
+    else:
+        return False

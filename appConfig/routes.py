@@ -65,6 +65,21 @@ def upload_image(location):
         return jsonify({"status": False, "data": "Not Allowed File"}), 404
 
 
+# FCM 토큰
+@app.route("/user/fcm", methods=["POST"])
+@swag_from('route_yml/user/user_fcm.yml', methods=["POST"])
+def fmc_token():
+    try:
+        data = request.get_json()
+        result = User.user_fcm(**data)
+        if result:
+            return jsonify({"status": True, "data": "Success Save Fcm"}), 200
+        else:
+            return jsonify({"status": False, "data": "Not Found"}), 404
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
 # 회원가입
 @app.route("/register", methods=["POST"])
 @swag_from('route_yml/user/user_register.yml', methods=["POST"])

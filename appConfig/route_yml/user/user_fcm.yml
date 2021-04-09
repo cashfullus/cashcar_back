@@ -1,0 +1,30 @@
+tags:
+  - Fcm
+
+parameters:
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: fcm_token
+    in: formData
+    type: Integer
+    required: true
+
+
+responses:
+  200:
+    description: 저장 및 업데이트 성공
+    examples:
+      application/json: {status: true, data: Success Save Fcm}
+
+  400:
+    description: 데이터 타입 또는 Null
+    examples:
+      application/json: {status: false, data: Data Not Null}
+
+  404:
+    description: 사용자를 찾을수 없음
+    examples:
+      application/json: {status: false, data: Not Found}
