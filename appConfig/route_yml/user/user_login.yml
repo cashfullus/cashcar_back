@@ -1,5 +1,5 @@
 tags:
-  - user
+  - User
 
 parameters:
   - name: email
@@ -24,15 +24,12 @@ responses:
   200:
     description: 로그인 성공 (카카오 로그인 시도시 이메일이 존재할시 바로 패스)
     examples:
-      application/json: {
-        "user_id" : 1,
-        "jwt_token" : token,
-        "refresh_token" : refresh_token
-      }
+      application/json: {"status" : true, "data": {"jwt_token": String, "user_id": Integer}}
 
   400:
-    description: Require 데이터 미전송
-
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
 
   409:
     description: 이메일 또는 핸드폰번호 중복

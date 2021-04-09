@@ -107,9 +107,42 @@ def get_user_profile(**kwargs):
     db = Database()
     user = db.getUserById(user_id=kwargs.get("user_id"))
     if user:
-        result = {}
+        result = {
+            'user_id': user['user_id'],
+            'nick_name': user['nickname'],
+            'email': user['email'],
+            'call_number': user['call_number'],
+            'gender': user['resident_registration_number_back'],
+            'date_of_birth': user['resident_registration_number_front'],
+            'alarm': user['alarm'],
+            'marketing': user['marketing']
+        }
+        return result
+
+    else:
+        return False
 
 
+def update_user_profile(**kwargs):
+    db = Database()
+    user = db.getUserById(user_id=kwargs.get('user_id'))
+    if user:
+        sql = "UPDATE user SET " \
+              "nickname = %s, email = %s, name = %s, " \
+              "call_number = %s, " \
+              "resident_registration_number_back = %s, " \
+              "resident_registration_number_front = %s, " \
+              "alarm = %s, " \
+              "marketing = %s WHERE user_id = %s"
+        value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
+                      kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
+                      kwargs['alarm'], kwargs['marketing']
+                      ]
+        db.execute(query=sql, args=value_list)
+        db.commit()
+        return True
+    else:
+        return False
 
 
 # Fcm 토큰 저장

@@ -1,0 +1,76 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+      in: Headers
+      type: Bearer String
+      required: true
+
+  - name: nickname
+    in: application/json
+    type: String
+    required: true
+
+  - name: email
+    in: application/json
+    type: string
+    required: true
+
+  - name: name
+    in: application/json
+    type: string
+    required: true
+
+  - name: call_number
+    in: application/json
+    type: string
+    required: true
+
+  - name: gender(1 or 2)
+    in: application/json
+    type: string
+    required: true
+
+  - name: date_of_birth
+    in: application/json
+    type: string
+    required: true
+
+  - name: alarm
+    in: application/json
+    type: integer
+    required: true
+
+  - name: marketing
+    in: application/json
+    type: integer
+    required: true
+
+
+
+responses:
+  201:
+    description: 업데이트 성공
+    examples:
+      application/json: {status: true, data: Success Update}
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
+
+  404:
+    description: 사용자 정보가 존재하지 않음
+    examples:
+      application/json: { status: false, data: Not Found }
+
+  405:
+    description: 허용된 접근방법이 아닐때
+    examples:
+      application/json: { status: false, data: Not Allowed Method }

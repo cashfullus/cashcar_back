@@ -1,0 +1,72 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: application/json
+    type: Integer
+    required: true
+
+
+responses:
+  200:
+    description: 사용자 프로필 정보
+    schema:
+      user_id: 1
+      nick_name: "A"
+      email: "A"
+      call_number: "A"
+      gender: "A"
+      date_of_birth: "A"
+      alarm: 0
+      marketing: 1
+      properties:
+        user_id:
+          type: integer
+          description: 사용자 ID
+        nick_name:
+          type: string
+          description: 사용자 닉네임
+        email:
+          type: string
+          description: 사용자 이메일
+        call_number:
+          type: string
+          description: 사용자 전화번호
+        gender:
+          type: string
+          description: 사용자 성별
+        date_of_birth:
+          type: string
+          description: 생년월일(yymmdd)
+        alarm:
+          type: integer
+          description: 필수 알람 수신 유무
+        marketing:
+          type: integer
+          description: 광고 알람 수신 유무
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
+
+  404:
+    description: 사용자 정보가 존재하지 않음
+    examples:
+      application/json: { status: false, data: Not Found }
+
+  405:
+    description: 허용된 접근방법이 아닐때
+    examples:
+      application/json: { status: false, data: Not Allowed Method }
