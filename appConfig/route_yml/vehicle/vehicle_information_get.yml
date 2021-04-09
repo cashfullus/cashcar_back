@@ -1,0 +1,88 @@
+tags:
+  - Vehicle
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: vehicle_id
+    in: formData
+    type: Integer
+    required: true
+
+
+responses:
+  200:
+    description: 차량 정보
+    schema:
+      vehicle_id: 1
+      user_id: 1
+      supporters: 0
+      country: "A"
+      brand: "A"
+      year: 2021
+      car_number: "11 가 1111"
+      register_time: "YYYY-MM-DD hh:mm:ss"
+      remove_time: "YYYY-MM-DD hh:mm:ss"
+      removed: 0
+      properties:
+        vehicle_id:
+          type: integer
+          description: 차량 ID
+        user_id:
+          type: integer
+          description: 사용자 ID
+        supporters:
+          type: integer
+          description: 서포터즈 차량 선택 유무
+        country:
+          type: string
+          description: 국산 OR 외국
+        brand:
+          type: string
+          description: 브랜드
+        year:
+          type: integer
+          description: 연식
+        car_number:
+          type: string
+          description: 차량번호
+        register_time:
+          type: string
+          description: 생성날짜
+        remove_time:
+          type: string
+          description: 삭제날짜
+        removed:
+          type: integer
+          description: 삭제유무
+
+
+
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
+
+  404:
+    description: 차량정보가 존재하지 않음
+    examples:
+      application/json: { status: false, data: Not Found}
+
+  405:
+    description: 허용된 접근방법이 아닐때
+    examples:
+      application/json: { status: false, data: Not Allowed Method }

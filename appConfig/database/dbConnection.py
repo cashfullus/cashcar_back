@@ -1,12 +1,14 @@
 import pymysql
 
 
-class Database():
+# 실서버에서는 port 33906
+class Database:
     def __init__(self):
-        self.db = pymysql.connect(host='localhost',
-                                  user='root',
-                                  password='',
-                                  db='nodebasic',
+        self.db = pymysql.connect(host='101.101.217.231',
+                                  port=33906,
+                                  user='cashcarapiuser',
+                                  password='akTmzmtlfgdj2)2!',
+                                  db='appservice',
                                   charset='utf8')
 
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
@@ -31,30 +33,17 @@ class Database():
     def commit(self):
         self.db.commit()
 
-    def getUserByPhoneNumber(self, user_phone_number):
-        sql = "SELECT * FROM user WHERE phone_number = %s"
-        self.cursor.execute(sql, user_phone_number)
-        row = self.cursor.fetchone()
-        return row
-
-    def getUserById(self, user_id=None):
-        if user_id is None:
-            return False
+    def getUserById(self, user_id):
         sql = f"SELECT * FROM user WHERE user_id = {user_id}"
         self.cursor.execute(sql)
         row = self.cursor.fetchone()
         return row
 
-    def _checkUserJwt(self, user_id, jwt_token):
-        if user_id is None or jwt_token is None:
-            return False
-
-        sql = f"SELECT user_id FROM user WHERE user_id = {user_id} AND jwt_token = {jwt_token}"
-        self.cursor.execute(sql)
+    def getUserByEmail(self, email):
+        sql = "SELECT email FROM user WHERE email = %s"
+        self.cursor.execute(sql, email)
         row = self.cursor.fetchone()
-        if row:
-            return True
-        else:
-            return False
+        return row
+
 
 
