@@ -8,27 +8,27 @@ parameters:
     required: true
 
   - name: user_id
-    in: formData
+    in: application/json
     type: Integer
     required: true
 
   - name: manufacturer_id
-    in: formData
+    in: application/json
     type: Integer
     required: true
 
   - name: car_name
-    in: formData
+    in: application/json
     type: String
     required: true
 
   - name: year
-    in: formData
+    in: application/json
     type: String
     required: true
 
   - name: car_number
-    in: formData
+    in: application/json
     type: String
     required: true
 

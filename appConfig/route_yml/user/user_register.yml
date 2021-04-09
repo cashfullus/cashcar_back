@@ -3,22 +3,22 @@ tags:
 
 parameters:
   - name: email
-    in: json
+    in: application/json
     type: String
     required: true
 
   - name: password
-    in: formData
+    in: application/json
     type: String
     required: false
 
   - name: alarm
-    in: json
+    in: application/json
     type: Integer
     required: true
 
   - name: marketing
-    in: json
+    in: application/json
     type: Integer
     required: true
 

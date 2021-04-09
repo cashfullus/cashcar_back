@@ -8,7 +8,7 @@ parameters:
     required: true
 
   - name: user_id
-    in: formData
+    in: application/json
     type: Integer
     required: true
 

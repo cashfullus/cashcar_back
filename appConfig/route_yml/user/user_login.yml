@@ -3,17 +3,17 @@ tags:
 
 parameters:
   - name: email
-    in: formData
+    in: application/json
     type: String
     required: true
 
   - name: password
-    in: formData
+    in: application/json
     type: String
     required: true
 
   - name: login_type(kakao or normal)
-    in: formData
+    in: application/json
     type: String
     required: true
 

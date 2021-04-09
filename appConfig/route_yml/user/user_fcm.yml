@@ -3,12 +3,12 @@ tags:
 
 parameters:
   - name: user_id
-    in: formData
+    in: application/json
     type: Integer
     required: true
 
   - name: fcm_token
-    in: formData
+    in: application/json
     type: Integer
     required: true
 
