@@ -5,13 +5,12 @@ from werkzeug.utils import secure_filename
 from appConfig import secret_key
 
 from .models import user_model as User, vehicle_model as Vehicle
-import pymysql
 import os
 import logging
 
 from flasgger import Swagger, swag_from
 
-# logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secret_key
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
