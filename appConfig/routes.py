@@ -97,7 +97,7 @@ def user_register():
             return jsonify({"status": False, "data": "Not Allowed Type"}), 405
         else:
             return jsonify({"status": True, "data": result["data"]}), 201
-    except KeyError:
+    except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
