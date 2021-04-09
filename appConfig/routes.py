@@ -84,20 +84,16 @@ def fmc_token():
 @app.route("/register", methods=["POST"])
 @swag_from('route_yml/user/user_register.yml', methods=["POST"])
 def user_register():
-    try:
-        data = request.get_json()
-        result = User.register(**data)
-        if result["email_regex"] is False:
-            return jsonify({"status": False, "data": "Not Correct Form Email"}), 404
-        elif result["status"] is False:
-            return jsonify({"status": False, "data": "Conflict User"}), 409
-        elif result["register_type"] is False:
-            return jsonify({"status": False, "data": "Not Allowed Type"}), 405
-        else:
-            return jsonify({"status": True, "data": result["data"]}), 201
-
-    except KeyError:
-        return jsonify({"status": False, "data": "Data Not Null"}), 400
+    data = request.get_json()
+    result = User.register(**data)
+    if result["email_regex"] is False:
+        return jsonify({"status": False, "data": "Not Correct Form Email"}), 404
+    elif result["status"] is False:
+        return jsonify({"status": False, "data": "Conflict User"}), 409
+    elif result["register_type"] is False:
+        return jsonify({"status": False, "data": "Not Allowed Type"}), 405
+    else:
+        return jsonify({"status": True, "data": result["data"]}), 201
 
 
 # 로그인
