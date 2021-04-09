@@ -4,12 +4,11 @@
 
 ### log ###
 log.txt
-### cache ###
-__pycache__
 ### dotenv ###
 .env
 ### macOS ###
 # General
+__pycache__/
 .DS_Store
 .AppleDouble
 .LSOverride
