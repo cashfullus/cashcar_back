@@ -55,9 +55,7 @@ def upload_image(location):
             directory = "{0}/{1}/{2}".format(location, data["location_id"], data["user_id"])
             os.makedirs(BASE_IMAGE_LOCATION + directory, exist_ok=True)
             for file in files:
-                file.save(
-                    BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}/" + secure_filename(
-                        file.filename))
+                file.save(BASE_IMAGE_LOCATION + directory + secure_filename(file.filename))
             return jsonify({"status": True, "data": "Success Upload"}), 200
         except TypeError:
             return jsonify({"status": False, "data": "Bad Request"}), 400
