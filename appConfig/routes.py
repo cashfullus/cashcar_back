@@ -113,6 +113,13 @@ def user_login():
         return jsonify({"status": result, "data": "Not Found"}), 404
 
 
+# 사용자 프로필
+# @app.route("/user/profile", methods=["GET", "POST"])
+# def user_profile():
+#     data = request.get_json()
+
+
+
 # 차량 등록
 @app.route("/vehicle/register", methods=["POST"])
 @jwt_required()

@@ -43,11 +43,11 @@ def register(**kwargs):
 
     # 기본 회원가입 Query
     sql = "INSERT INTO user(email, hashed_password, login_type, alarm, marketing) VALUES (%s, %s, %s, %s, %s)"
-
+    value_list = []
     # 카카오 회원일 경우 Query
     if kwargs.get("login_type") == "kakao":
         sql = "INSERT INTO user(email, login_type, alarm, marketing) VALUES (%s, %s, %s, %s)"
-
+        value_list = [kwargs['email'], kwargs['login_type'], kwargs['alarm'], kwargs['marketing']]
     # 앱 기본 회원가입일 경우 password 복호화
     elif kwargs.get("login_type") == "normal":
         if kwargs.get("password") is None:
@@ -57,13 +57,12 @@ def register(**kwargs):
         encrypted_password = bcrypt.hashpw(
             kwargs.get("password").encode("utf-8"),
             bcrypt.gensalt()).decode("utf-8")
-        kwargs["password"] = encrypted_password
+        value_list = [kwargs['email'], encrypted_password, kwargs['login_type'], kwargs['alarm'], kwargs['marketing']]
     # 정해지지않은 회원가입 시도
     else:
         result["register_type"] = False
         return result
 
-    value_list = [val for key, val in kwargs.items()]
     db.execute(query=sql, args=value_list)
     db.commit()
 
@@ -101,6 +100,16 @@ def login(**kwargs):
             return False
     else:
         return False
+
+
+# 사용자 프로필 GET
+def get_user_profile(**kwargs):
+    db = Database()
+    user = db.getUserById(user_id=kwargs.get("user_id"))
+    if user:
+        result = {}
+
+
 
 
 # Fcm 토큰 저장

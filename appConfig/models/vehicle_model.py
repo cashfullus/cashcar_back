@@ -39,7 +39,8 @@ def register_vehicle(**kwargs):
     sql = "INSERT INTO vehicle (user_id, supporters, country, brand, year, car_number) VALUES (%s, %s, %s, %s, %s, %s)"
     # kwargs 가 아닌 args 인 value만 필요하기때문에 val만 리스트로 만들어서 전달
     # kwargs 로 보내도 확인 결과 똑같은 과정을 진행하여 value를 가져오는것으로 확인
-    value_list = [val for val in kwargs.values()]
+    value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['country'],
+                  kwargs['brand'], kwargs['year'], kwargs['car_number']]
     db.execute(query=sql, args=value_list)
     db.commit()
     return result
