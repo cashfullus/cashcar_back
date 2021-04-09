@@ -64,9 +64,6 @@ responses:
           type: integer
           description: 삭제유무
 
-
-
-
   400:
     description: 데이터 형식 실패
     examples:

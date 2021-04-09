@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from appConfig import secret_key
@@ -16,6 +17,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secret_key
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
+CORS(app)
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
 
@@ -55,7 +57,7 @@ def upload_image(location):
             directory = "{0}/{1}/{2}".format(location, data["location_id"], data["user_id"])
             os.makedirs(BASE_IMAGE_LOCATION + directory, exist_ok=True)
             for file in files:
-                file.save(BASE_IMAGE_LOCATION + directory + secure_filename(file.filename))
+                file.save(BASE_IMAGE_LOCATION + directory + "/" + secure_filename(file.filename))
             return jsonify({"status": True, "data": "Success Upload"}), 200
         except TypeError:
             return jsonify({"status": False, "data": "Bad Request"}), 400
