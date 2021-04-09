@@ -42,11 +42,11 @@ def register(**kwargs):
         return result
 
     # 기본 회원가입 Query
-    sql = "INSERT INTO user(email, hashed_password, login_type) VALUES (%s, %s, %s)"
+    sql = "INSERT INTO user(email, hashed_password, login_type, alarm, marketing) VALUES (%s, %s, %s, %s, %s)"
 
     # 카카오 회원일 경우 Query
     if kwargs.get("login_type") == "kakao":
-        sql = "INSERT INTO user(email, login_type) VALUES (%s, %s)"
+        sql = "INSERT INTO user(email, login_type, alarm, marketing) VALUES (%s, %s, %s, %s)"
 
     # 앱 기본 회원가입일 경우 password 복호화
     elif kwargs.get("login_type") == "normal":

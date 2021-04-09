@@ -3,7 +3,7 @@ tags:
 
 parameters:
   - name: email
-    in: formData
+    in: json
     type: String
     required: true
 
@@ -11,6 +11,16 @@ parameters:
     in: formData
     type: String
     required: false
+
+  - name: alarm
+    in: json
+    type: Integer
+    required: true
+
+  - name: marketing
+    in: json
+    type: Integer
+    required: true
 
 
 responses:

@@ -35,6 +35,8 @@ def allowed_file(files):
     return result
 
 
+# 회원가입 전 이용약관 동의 받기
+
 # 토큰 인증 실패시 return 하는 response 의 중복적인 사용으로 인해 return 변수를 저장해서 쓰는게 낫다고 생각함.
 Unauthorized = {"status": False, "data": "Unauthorized"}
 
