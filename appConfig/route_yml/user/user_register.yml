@@ -1,5 +1,5 @@
 tags:
-  - user
+  - User
 
 parameters:
   - name: email
@@ -28,6 +28,11 @@ responses:
     description: 회원가입 성공
     examples:
       application/json: {"status" : true, "data": {"jwt_token": String, "user_id": Integer}}
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
 
   404:
     description: 이메일 정규식 Validation
