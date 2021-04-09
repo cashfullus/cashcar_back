@@ -1,0 +1,29 @@
+tags:
+  - car
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+responses:
+  200:
+    description: 소유한 차량 리스트
+    examples:
+      application/json: {status: true, data: [{
+        user_id: Integer,
+        car_id: Integer,
+        car_name: String,
+        car_number: String,
+        manufacturer: String,
+        manufacturer_type: String,
+        year: String,
+        is_main: tinyInteger
+      }]}
+

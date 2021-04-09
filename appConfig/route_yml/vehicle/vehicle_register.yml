@@ -1,0 +1,65 @@
+tags:
+  - Vehicle
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: manufacturer_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: car_name
+    in: formData
+    type: String
+    required: true
+
+  - name: year
+    in: formData
+    type: String
+    required: true
+
+  - name: car_number
+    in: formData
+    type: String
+    required: true
+
+
+responses:
+  201:
+    description: 자동차 등록 성공
+    examples:
+      application/json: {status: true, data: {"user": True, "register": True, "double_check_number": True}}
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: {status: false, data: Data Not Null}
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: {status: False, data: Unauthorized}
+
+  404:
+    description: 회원정보 fail
+    examples:
+      application/json: {status: False, data: Not Correct User}
+
+  405:
+    description: 최대 허용된 차량 개수 초과
+    examples:
+      application/json: {status: False, data: Register Car Limit 3}
+
+  409:
+    description: 차량번호 중복확인
+    examples:
+      application/json: {status: False, data: Double Check False}

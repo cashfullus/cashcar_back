@@ -4,8 +4,8 @@ from werkzeug.utils import secure_filename
 
 from appConfig import secret_key
 
-from .models import user_model as User, car_model as Car
-
+from .models import user_model as User, vehicle_model as Vehicle
+import pymysql
 import os
 import logging
 
@@ -19,10 +19,9 @@ app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
 
-
 # 이미지 파일 형식
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-BASE_IMAGE_LOCATION = os.getcwd()+"/appConfig/static/image/"
+BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 
 
 # 이미지 파일 형식검사
@@ -55,7 +54,9 @@ def upload_image(location):
         try:
             os.makedirs(BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}", exist_ok=True)
             for file in files:
-                file.save(BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}/"+secure_filename(file.filename))
+                file.save(
+                    BASE_IMAGE_LOCATION + f"{location}/{data['location_id']}/{data['user_id']}/" + secure_filename(
+                        file.filename))
             return jsonify({"status": True, "data": "Success Upload"}), 200
         except TypeError:
             return jsonify({"status": False, "data": "Bad Request"}), 400
@@ -67,12 +68,20 @@ def upload_image(location):
 @app.route("/register", methods=["POST"])
 @swag_from('route_yml/user/user_register.yml', methods=["POST"])
 def user_register():
-    data = request.get_json()
-    result = User.register(**data)
-    if result:
-        return jsonify({"status": result}), 201
-    else:
-        return jsonify({"status": result}), 409
+    try:
+        data = request.get_json()
+        result = User.register(**data)
+        if result["email_regex"] is False:
+            return jsonify({"status": False, "data": "Not Correct Form Email"}), 404
+        elif result["status"] is False:
+            return jsonify({"status": False, "data": "Conflict User"}), 409
+        elif result["register_type"] is False:
+            return jsonify({"status": False, "data": "Not Allowed Type"}), 405
+        else:
+            return jsonify({"status": True, "data": result["data"]}), 201
+
+    except KeyError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
 # 로그인
@@ -80,50 +89,93 @@ def user_register():
 @swag_from('route_yml/user/user_login.yml', methods=["POST"])
 def user_login():
     data = request.get_json()
-
     result = User.login(**data)
     if result:
         return jsonify({"status": True, "data": result}), 200
     else:
-        return jsonify({"status": result, "data": "Not Found"}), 405
-
-
-# 제조사 별 차량 업체 리스트
-@app.route("/manufacturer/list", methods=["GET"])
-@jwt_required()
-@swag_from('route_yml/car/manufacturer_list.yml', methods=['GET'])
-def get_manufacturer_list():
-    """
-    """
-    data = request.get_json()
-    identity_ = get_jwt_identity()
-    result = Car.manufacturer(data["manufacturer_type"])
-    if result:
-        if data["user_id"] == identity_:
-            return jsonify({"status": True, "data": result}), 200
-        else:
-            return jsonify(Unauthorized), 401
-    else:
-        return jsonify({"status": False, "data": "Not Found"}), 405
+        return jsonify({"status": result, "data": "Not Found"}), 404
 
 
 # 차량 등록
-@app.route("/car/register", methods=["POST"])
+@app.route("/vehicle/register", methods=["POST"])
 @jwt_required()
-@swag_from('route_yml/car/car_register.yml', methods=['POST'])
+@swag_from('route_yml/vehicle/vehicle_register.yml', methods=['POST'])
 def register_car():
-    data = request.get_json()
-    identity_ = get_jwt_identity()
-    result = Car.register_car(**data)
-    if result:
+    try:
+        data = request.get_json()
+        identity_ = get_jwt_identity()
+        result = Vehicle.register_vehicle(**data)
         if data["user_id"] == identity_:
-            return jsonify({"status": True, "data": result}), 200
+            if result["user"] is False:
+                return jsonify({"status": False, "data": "Not Correct User"}), 404
+            elif result["register"] is False:
+                return jsonify({"status": False, "data": "Register Vehicle Limit 3"}), 405
+            elif result["double_check_number"] is False:
+                return jsonify({"status": False, "data": "Double Check False"}), 409
+            else:
+                return jsonify({"status": True, "data": result}), 201
         else:
             return jsonify(Unauthorized), 401
-    else:
-        return jsonify({"status": False, "data": "Not Found"}), 405
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
-# 미션등록
+@app.route("/vehicle/information", methods=["GET", "POST", "DELETE"])
+@jwt_required()
+@swag_from('route_yml/vehicle/vehicle_information_get.yml', methods=['GET'])
+@swag_from('route_yml/vehicle/vehicle_information_post.yml', methods=['POST'])
+def vehicle_get():
+    try:
+        data = request.get_json()
+        identity_ = get_jwt_identity()
+        if data.get("user_id") == identity_:
+            if request.method == "GET":
+                result = Vehicle.vehicle_detail_by_id(**data)
+                if result:
+                    return jsonify({"status": True, "data": result}), 200
+                else:
+                    return jsonify({"status": False, "data": "Not Found"}), 404
+
+            elif request.method == "POST":
+                result = Vehicle.vehicle_update_by_id(**data)
+                if result["target_vehicle"] is True:
+                    return jsonify({"status": True, "data": result}), 200
+                else:
+                    return jsonify({"status": False, "data": result}), 404
+            else:
+                return jsonify({"status": False, "data": "Not Allowed Method"}), 405
+
+        else:
+            return jsonify(Unauthorized), 401
+
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+# @app.route("/car/{car_id}", methods=["GET", "POST"])
+# @jwt_required()
+# def detail_car():
+#     try:
+#         data = request.get_json()
+#         identity_ = get_jwt_identity()
+#         if data["user_id"] == identity_:
+#             if request.method == "GET":
 
 
+# # 본인 차량 리스트
+# @app.route("/car/list", methods=["GET"])
+# @jwt_required()
+# @swag_from('route_yml/car/car_list.yml', methods=['GET'])
+# def get_own_car_list():
+#     data = request.get_json()
+#     identity_ = get_jwt_identity()
+#     result = Car.get_all_own_car(**data)
+#     if data["user_id"] == identity_:
+#         if result:
+#             return jsonify({"status": True, "data": result}), 200
+#         else:
+#             return jsonify({"status": False, "data": "Not Exist User"}), 404
+#     else:
+#         return jsonify(Unauthorized), 401
+
+
+#

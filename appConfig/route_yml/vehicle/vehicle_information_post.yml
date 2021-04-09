@@ -1,0 +1,69 @@
+tags:
+  - Vehicle
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: vehicle_id
+    in: formData
+    type: Integer
+    required: true
+
+  - name: supporters
+    in: formData
+    type: tinyint
+    required: true
+
+  - name: country
+    in: formData
+    type: String
+    required: true
+
+  - name: brand
+    in: formData
+    type: String
+    required: true
+
+  - name: year
+    in: formData
+    type: Integer
+    required: true
+
+  - name: car_number
+    in: formData
+    type: String
+    required: true
+
+responses:
+  200:
+    description: 업데이트 성공
+    examples:
+      application/json: {status: true, data: {target_vehicle: True}}
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: False, data: Unauthorized }
+
+  404:
+    description: 해당 차량이 존재하지 않음
+    examples:
+      application/json: {status: false, data: {target_vehicle: false}}
+
+  405:
+    description: 허용된 접근방법이 아닐때
+    examples:
+      application/json: {status: false, data: Not Allowed Method}
