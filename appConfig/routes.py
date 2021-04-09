@@ -152,31 +152,4 @@ def vehicle_get():
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
-# @app.route("/car/{car_id}", methods=["GET", "POST"])
-# @jwt_required()
-# def detail_car():
-#     try:
-#         data = request.get_json()
-#         identity_ = get_jwt_identity()
-#         if data["user_id"] == identity_:
-#             if request.method == "GET":
 
-
-# # 본인 차량 리스트
-# @app.route("/car/list", methods=["GET"])
-# @jwt_required()
-# @swag_from('route_yml/car/car_list.yml', methods=['GET'])
-# def get_own_car_list():
-#     data = request.get_json()
-#     identity_ = get_jwt_identity()
-#     result = Car.get_all_own_car(**data)
-#     if data["user_id"] == identity_:
-#         if result:
-#             return jsonify({"status": True, "data": result}), 200
-#         else:
-#             return jsonify({"status": False, "data": "Not Exist User"}), 404
-#     else:
-#         return jsonify(Unauthorized), 401
-
-
-#

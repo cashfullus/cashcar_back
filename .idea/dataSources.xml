@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="appservice@101.101.217.231" uuid="6f3e0ca6-7dbc-458e-8656-f0facc2e3817">
+    <data-source source="LOCAL" name="appservice@101.101.217.231" uuid="a35312e7-f81d-4f36-b5f9-c48da211dc8b">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <remarks>CashCarDB</remarks>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://101.101.217.231:33906/appservice</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
