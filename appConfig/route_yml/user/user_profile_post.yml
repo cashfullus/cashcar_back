@@ -3,9 +3,9 @@ tags:
 
 parameters:
   - name: Authorization
-      in: Headers
-      type: Bearer String
-      required: true
+    in: Headers
+    type: Bearer String
+    required: true
 
   - name: nickname
     in: application/json
