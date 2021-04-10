@@ -2,7 +2,7 @@ tags:
   - User
 
 parameters:
-  - name: Authorization:q
+  - name: Authorization
     in: Headers
     type: Bearer String
     required: true

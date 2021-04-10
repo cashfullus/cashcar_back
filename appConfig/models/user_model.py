@@ -123,9 +123,9 @@ def get_user_profile(user_id):
         return False
 
 
-def update_user_profile(**kwargs):
+def update_user_profile(user_id, **kwargs):
     db = Database()
-    user = db.getUserById(user_id=kwargs.get('user_id'))
+    user = db.getUserById(user_id=int(user_id))
     if user:
         sql = "UPDATE user SET " \
               "nickname = %s, email = %s, name = %s, " \
@@ -136,7 +136,7 @@ def update_user_profile(**kwargs):
               "marketing = %s WHERE user_id = %s"
         value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
                       kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
-                      kwargs['alarm'], kwargs['marketing'], kwargs['user_id']
+                      kwargs['alarm'], kwargs['marketing'], int(user_id)
                       ]
         db.execute(query=sql, args=value_list)
         db.commit()
