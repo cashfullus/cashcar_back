@@ -114,11 +114,11 @@ def user_login():
 
 
 # 사용자 프로필
-@app.route("/user/profile", methods=["GET", "POST"])
+@app.route("/user/profile/user_id=<user_id>", methods=["GET", "POST"])
 @jwt_required()
 @swag_from('route_yml/user/user_profile_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_profile_post.yml', methods=['POST'])
-def user_profile():
+def user_profile(user_id):
     try:
         data = request.get_json()
         identity_ = get_jwt_identity()
@@ -126,7 +126,7 @@ def user_profile():
             return jsonify(Unauthorized), 401
 
         if request.method == "GET":
-            result = User.get_user_profile(**data)
+            result = User.get_user_profile(user_id)
             if result:
                 return jsonify({"status": True, "data": result}), 200
             else:

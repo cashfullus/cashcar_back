@@ -103,9 +103,9 @@ def login(**kwargs):
 
 
 # 사용자 프로필 GET
-def get_user_profile(**kwargs):
+def get_user_profile(user_id):
     db = Database()
-    user = db.getUserById(user_id=kwargs.get("user_id"))
+    user = db.getUserById(user_id=user_id)
     if user:
         result = {
             'user_id': user['user_id'],
