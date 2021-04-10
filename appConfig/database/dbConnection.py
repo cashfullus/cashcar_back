@@ -46,7 +46,7 @@ class Database:
         return row
 
     def getLoginTypeUserByEmail(self, email, login_type):
-        sql = "SELECT email FROM user WHERE email = %s AND login_type = %s"
+        sql = "SELECT * FROM user WHERE email = %s AND login_type = %s"
         self.cursor.execute(sql, [email, login_type])
         row = self.cursor.fetchone()
         return row
