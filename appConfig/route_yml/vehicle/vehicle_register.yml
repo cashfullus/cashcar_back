@@ -34,7 +34,7 @@ parameters:
 
   - name: year
     in: application/json
-    type: String
+    type: Integer
     required: true
 
   - name: car_number
