@@ -47,7 +47,15 @@ responses:
   201:
     description: 자동차 등록 성공
     examples:
-      application/json: {status: true, data: {"user": True, "register": True, "double_check_number": True}}
+      application/json: {status: true, data: {"user": True, "register": True, "double_check_number": True, "vehicle_information": {
+            "brand": "현대",
+            "car_number": "123가48",
+            "country": "국산",
+            "supporters": 0,
+            "user_id": 16,
+            "vehicle_model_name": "아반떼",
+            "year": 2021
+        }}}
 
   400:
     description: 데이터 형식 실패

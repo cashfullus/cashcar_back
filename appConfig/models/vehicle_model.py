@@ -50,6 +50,7 @@ def register_vehicle(**kwargs):
                   kwargs['brand'], kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number']]
     db.execute(query=sql, args=value_list)
     db.commit()
+    result["vehicle_information"] = kwargs
     return result
 
 
