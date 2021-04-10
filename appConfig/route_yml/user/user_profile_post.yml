@@ -7,6 +7,11 @@ parameters:
     type: Bearer String
     required: true
 
+  - name: user_id
+    in: application/json
+    type: Integer
+    required: true
+
   - name: nickname
     in: application/json
     type: String
