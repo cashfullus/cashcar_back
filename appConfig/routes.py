@@ -168,6 +168,25 @@ def register_car():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
+@app.route("/vehicle/list")
+@jwt_required()
+def vehicle_list():
+    try:
+        data = request.get_json()
+        identity_ = get_jwt_identity()
+        if data['user_id'] != identity_:
+            return jsonify(Unauthorized), 401
+
+        result = Vehicle.vehicle_list_by_user_id(**data)
+        if result:
+            return jsonify({'status': True, 'data': result}), 200
+        else:
+            return jsonify({'status': True, 'data': []}), 201
+
+    except TypeError:
+        return jsonify({'status': False, 'data': 'Data Not Null'}), 400
+
+
 @app.route("/vehicle/information", methods=["GET", "POST", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_information_get.yml', methods=['GET'])

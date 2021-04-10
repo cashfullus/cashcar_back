@@ -54,6 +54,13 @@ def register_vehicle(**kwargs):
     return result
 
 
+def vehicle_list_by_user_id(**kwargs):
+    db = Database()
+    vehicle_list = db.executeAll(query="SELECT * FROM vehicle WHERE user_id = %s",
+                                 args=kwargs.get('user_id'))
+
+    return vehicle_list
+
 def vehicle_detail_by_id(**kwargs):
     db = Database()
     target_vehicle = db.executeOne(
