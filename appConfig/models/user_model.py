@@ -91,8 +91,8 @@ def login(**kwargs):
         elif kwargs.get("login_type") == "normal":
 
             encode_password = kwargs.get('password').encode('utf8')
-            if bcrypt.checkpw(encode_password, user["password"].encode('utf8')):
-                login_user = {"user_id", user["user_id"], "jwt_token", user["jwt_token"]}
+            if bcrypt.checkpw(encode_password, user["hashed_password"].encode('utf8')):
+                login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
                 return login_user
             else:
                 return False
