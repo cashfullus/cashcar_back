@@ -19,7 +19,7 @@ parameters:
 
   - name: supporters
     in: application/json
-    type: tinyint
+    type: integer
     required: true
 
   - name: country
@@ -28,6 +28,11 @@ parameters:
     required: true
 
   - name: brand
+    in: application/json
+    type: String
+    required: true
+
+  - name: vehicle_model_name
     in: application/json
     type: String
     required: true

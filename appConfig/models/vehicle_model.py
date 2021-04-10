@@ -1,5 +1,9 @@
 from ..database.dbConnection import Database
+import datetime
 
+# Datetime to String
+def datetime_to_str(time):
+    return time.strftime('%Y-%m-%d %H:%M:%S')
 
 # 차량 등록
 def register_vehicle(**kwargs):
@@ -36,11 +40,12 @@ def register_vehicle(**kwargs):
         pass
 
     # INSERT
-    sql = "INSERT INTO vehicle (user_id, supporters, country, brand, year, car_number) VALUES (%s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO vehicle (user_id, supporters, country, brand, vehicle_model_name, year, car_number) " \
+          "VALUES (%s, %s, %s, %s, %s, %s, %s)"
     # kwargs 가 아닌 args 인 value만 필요하기때문에 val만 리스트로 만들어서 전달
     # kwargs 로 보내도 확인 결과 똑같은 과정을 진행하여 value를 가져오는것으로 확인
     value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['country'],
-                  kwargs['brand'], kwargs['year'], kwargs['car_number']]
+                  kwargs['brand'], kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number']]
     db.execute(query=sql, args=value_list)
     db.commit()
     return result
@@ -49,17 +54,21 @@ def register_vehicle(**kwargs):
 def vehicle_detail_by_id(**kwargs):
     db = Database()
     target_vehicle = db.executeOne(
-        query="SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s",
+        query="SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0",
         args=[kwargs.get("vehicle_id"), kwargs.get("user_id")]
     )
+    if target_vehicle:
+        target_vehicle['register_time'] = datetime_to_str(target_vehicle['register_time'])
+
     return target_vehicle
 
 
 def vehicle_update_by_id(**kwargs):
     db = Database()
     result = {"target_vehicle": True}
+    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
     target_vehicle = db.executeOne(
-        query="SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s",
+        query=sql,
         args=[kwargs.get("vehicle_id"), kwargs.get("user_id")]
     )
 
@@ -67,14 +76,14 @@ def vehicle_update_by_id(**kwargs):
     if target_vehicle:
         # 업데이트 쿼리 진행
         sql = "UPDATE vehicle SET " \
-              f"supporters = {kwargs.get('supporters')}, " \
-              f"country = {kwargs.get('country')}, " \
-              f"brand = {kwargs.get('brand')}, " \
-              f"year = {kwargs.get('year')}, " \
-              f"car_number = {kwargs.get('car_number')} " \
-              f"WHERE vehicle_id = {kwargs.get('vehicle_id')} AND user_id = {kwargs.get('user_id')}"
-
-        db.execute(query=sql, args=None)
+              "supporters = %s, country = %s, brand = %s, " \
+              "vehicle_model_name = %s, year = %s, car_number = %s " \
+              "WHERE vehicle_id = %s AND user_id = %s"
+        value_list = [kwargs['supporters'], kwargs['country'], kwargs['brand'],
+                      kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
+                      kwargs['vehicle_id'], kwargs['user_id']
+                      ]
+        db.execute(query=sql, args=value_list)
         db.commit()
 
         return result
