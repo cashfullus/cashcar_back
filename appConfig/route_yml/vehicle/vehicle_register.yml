@@ -12,12 +12,22 @@ parameters:
     type: Integer
     required: true
 
-  - name: manufacturer_id
+  - name: supporters
     in: application/json
-    type: Integer
+    type: integer
     required: true
 
-  - name: car_name
+  - name: country
+    in: application/json
+    type: string
+    required: true
+
+  - name: brand
+    in: application/json
+    type: string
+    required: true
+
+  - name: vehicle_model_name
     in: application/json
     type: String
     required: true

@@ -144,7 +144,6 @@ def user_profile():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
-
 # 차량 등록
 @app.route("/vehicle/register", methods=["POST"])
 @jwt_required()
