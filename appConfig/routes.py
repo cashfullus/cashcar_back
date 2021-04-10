@@ -120,9 +120,8 @@ def user_login():
 @swag_from('route_yml/user/user_profile_post.yml', methods=['POST'])
 def user_profile(user_id):
     try:
-        data = request.get_json()
         identity_ = get_jwt_identity()
-        if data["user_id"] != identity_:
+        if int(user_id) != identity_:
             return jsonify(Unauthorized), 401
 
         if request.method == "GET":
@@ -133,7 +132,8 @@ def user_profile(user_id):
                 return jsonify({"status": False, "data": "Not Found"}), 404
 
         elif request.method == "POST":
-            result = User.update_user_profile(**data)
+            data = request.get_json()
+            result = User.update_user_profile(user_id, **data)
             if result:
                 return jsonify({"status": True, "data": "Success Update"}), 201
             else:
