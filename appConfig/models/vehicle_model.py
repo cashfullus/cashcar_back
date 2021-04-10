@@ -1,9 +1,11 @@
 from ..database.dbConnection import Database
 import datetime
 
+
 # Datetime to String
 def datetime_to_str(time):
     return time.strftime('%Y-%m-%d %H:%M:%S')
+
 
 # 차량 등록
 def register_vehicle(**kwargs):
@@ -23,7 +25,7 @@ def register_vehicle(**kwargs):
 
     # 차량 번호 유무 확인
     check_vehicle_number = db.executeOne(
-        query="SELECT * FROM vehicle WHERE car_number = %s",
+        query="SELECT car_number FROM vehicle WHERE car_number = %s",
         args=kwargs.get("car_number")
     )
     # 최대 허용 등록 개수 3개
