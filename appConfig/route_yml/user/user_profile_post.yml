@@ -8,7 +8,7 @@ parameters:
     required: true
 
   - name: user_id
-    in: application/json
+    in: uri
     type: Integer
     required: true
 
