@@ -119,29 +119,27 @@ def user_login():
 @swag_from('route_yml/user/user_profile_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_profile_post.yml', methods=['POST'])
 def user_profile():
-    try:
-        data = request.get_json()
-        identity_ = get_jwt_identity()
-        if data["user_id"] != identity_:
-            return jsonify(Unauthorized), 401
+    data = request.get_json()
+    identity_ = get_jwt_identity()
+    if data["user_id"] != identity_:
+        return jsonify(Unauthorized), 401
 
-        if request.method == "GET":
-            result = User.get_user_profile(**data)
-            if result:
-                return jsonify({"status": True, "data": result}), 200
-            else:
-                return jsonify({"status": False, "data": "Not Found"}), 404
-
-        elif request.method == "POST":
-            result = User.update_user_profile(**data)
-            if result:
-                return jsonify({"status": True, "data": "Success Update"}), 201
-            else:
-                return jsonify({"status": False, "data": "Not Found"}), 404
+    if request.method == "GET":
+        result = User.get_user_profile(**data)
+        if result:
+            return jsonify({"status": True, "data": result}), 200
         else:
-            return jsonify({"status": False, "data": "Not Allowed Request"}), 405
-    except TypeError:
-        return jsonify({"status": False, "data": "Data Not Null"}), 400
+            return jsonify({"status": False, "data": "Not Found"}), 404
+
+    elif request.method == "POST":
+        result = User.update_user_profile(**data)
+        if result:
+            return jsonify({"status": True, "data": "Success Update"}), 201
+        else:
+            return jsonify({"status": False, "data": "Not Found"}), 404
+    else:
+        return jsonify({"status": False, "data": "Not Allowed Request"}), 405
+
 
 
 # 차량 등록
