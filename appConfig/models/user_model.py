@@ -81,7 +81,7 @@ def register(**kwargs):
 # 로그인
 def login(**kwargs):
     db = Database()
-    user = db.getAllLoginTypeUserByEmail(email=kwargs.get("email"), login_type=kwargs.get("login_type"))
+    user = db.getLoginTypeUserByEmail(email=kwargs.get("email"), login_type=kwargs.get("login_type"))
     if user:
         # 제한된 데이터만 response
         if kwargs.get("login_type") == "kakao":
