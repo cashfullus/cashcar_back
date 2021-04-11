@@ -102,6 +102,26 @@ def vehicle_update_by_id(**kwargs):
         return result
 
 
+# 차량 ID로 차량 삭제
+def vehicle_delete_by_id(**kwargs):
+    db = Database()
+    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
+    target_vehicle = db.executeOne(
+        query=sql,
+        args=[kwargs.get('vehicle_id'), kwargs.get('user_id')]
+    )
+
+    if target_vehicle:
+        db.execute(
+            query="DELETE FROM vehicle WHERE vehicle_id = %s AND user_id = %s",
+            args=[kwargs.get('vehicle_id'), kwargs.get('user_id')]
+        )
+        db.commit()
+        return True
+
+    else:
+        return False
+
 
 
 

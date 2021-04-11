@@ -1,0 +1,41 @@
+tags:
+  - Vehicle
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: application/json
+    type: Integer
+    required: true
+
+  - name: vehicle_id
+    in: application/json
+    type: Integer
+    required: true
+
+
+responses:
+  200:
+    description: 삭제 성공
+    examples:
+      application/json: {status: true, data: true}
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: False, data: Unauthorized }
+
+  404:
+    description: 해당 차량이 존재하지 않음
+    examples:
+      application/json: { status: false, data: { target_vehicle: false } }

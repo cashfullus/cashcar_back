@@ -189,10 +189,12 @@ def vehicle_list():
         return jsonify({'status': False, 'data': 'Data Not Null'}), 400
 
 
+# 차량 정보 GET UPDATE API
 @app.route("/vehicle/information", methods=["GET", "POST", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_information_get.yml', methods=['GET'])
 @swag_from('route_yml/vehicle/vehicle_information_post.yml', methods=['POST'])
+@swag_from('route_yml/vehicle/vehicle_information_delete.yml', methods=['DELETE'])
 def vehicle_get():
     try:
         data = request.get_json()
@@ -211,6 +213,14 @@ def vehicle_get():
                     return jsonify({"status": True, "data": result}), 200
                 else:
                     return jsonify({"status": False, "data": result}), 404
+
+            elif request.method == "DELETE":
+                result = Vehicle.vehicle_delete_by_id(**data)
+                if result:
+                    return jsonify({"status": True, "data": result}), 200
+                else:
+                    return jsonify({"status": False, "data": "Not Found"}), 404
+
             else:
                 return jsonify({"status": False, "data": "Not Allowed Method"}), 405
 
@@ -219,5 +229,10 @@ def vehicle_get():
 
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
+
+
+
 
 
