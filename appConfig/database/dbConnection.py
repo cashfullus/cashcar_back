@@ -51,4 +51,24 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    def getOneVehicleByVehicleIdAndUserId(self, vehicle_id, user_id):
+        sql = "SELECT " \
+              "vehicle_id, user_id, supporters, country, " \
+              "brand, vehicle_model_name, year, car_number, " \
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
+              "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
+              "FROM vehicle WHERE user_id = %s AND vehicle_id = %s"
+        self.cursor.execute(query=sql, args=[user_id, vehicle_id])
+        row = self.cursor.fetchone()
+        return row
 
+    def getAllVehicleByUserId(self, user_id):
+        sql = "SELECT " \
+              "vehicle_id, user_id, supporters, country, " \
+              "brand, vehicle_model_name, year, car_number, " \
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
+              "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
+              "FROM vehicle WHERE user_id = %s"
+        self.cursor.execute(query=sql, args=user_id)
+        rows = self.cursor.fetchall()
+        return rows
