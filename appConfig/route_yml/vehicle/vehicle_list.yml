@@ -8,7 +8,7 @@ parameters:
     required: true
 
   - name: user_id
-    in: body
+    in: uri
     type: Integer
     required: true
 

@@ -55,9 +55,9 @@ def register_vehicle(**kwargs):
 
 
 # 사용자 ID로 등록한 차량 GET ALL
-def vehicle_list_by_user_id(**kwargs):
+def vehicle_list_by_user_id(user_id):
     db = Database()
-    vehicle_list = db.getAllVehicleByUserId(kwargs.get('user_id'))
+    vehicle_list = db.getAllVehicleByUserId(user_id)
     return vehicle_list
 
 

@@ -169,17 +169,16 @@ def register_car():
 
 
 # 본인 차량 리스트
-@app.route("/vehicle/list")
+@app.route("/vehicle/list/user_id=<user_id>")
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_list.yml')
-def vehicle_list():
+def vehicle_list(user_id):
     try:
-        data = request.get_json()
         identity_ = get_jwt_identity()
-        if data['user_id'] != identity_:
+        if int(user_id) != identity_:
             return jsonify(Unauthorized), 401
 
-        result = Vehicle.vehicle_list_by_user_id(**data)
+        result = Vehicle.vehicle_list_by_user_id(user_id=user_id)
         if result:
             return jsonify({'status': True, 'data': result}), 200
         else:
