@@ -168,8 +168,10 @@ def register_car():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
+# 본인 차량 리스트
 @app.route("/vehicle/list")
 @jwt_required()
+@swag_from('route_yml/vehicle/vehicle_list.yml')
 def vehicle_list():
     try:
         data = request.get_json()

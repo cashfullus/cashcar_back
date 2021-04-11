@@ -54,25 +54,24 @@ def register_vehicle(**kwargs):
     return result
 
 
+# 사용자 ID로 등록한 차량 GET ALL
 def vehicle_list_by_user_id(**kwargs):
     db = Database()
-    vehicle_list = db.executeAll(query="SELECT * FROM vehicle WHERE user_id = %s",
-                                 args=kwargs.get('user_id'))
-
+    vehicle_list = db.getAllVehicleByUserId(kwargs.get('user_id'))
     return vehicle_list
 
+
+# 차량의 ID 로 하나의 정보 조회
 def vehicle_detail_by_id(**kwargs):
     db = Database()
-    target_vehicle = db.executeOne(
-        query="SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0",
-        args=[kwargs.get("vehicle_id"), kwargs.get("user_id")]
+    target_vehicle = db.getOneVehicleByVehicleIdAndUserId(
+        vehicle_id=kwargs.get('vehicle_id'),
+        user_id=kwargs.get('user_id')
     )
-    if target_vehicle:
-        target_vehicle['register_time'] = datetime_to_str(target_vehicle['register_time'])
-
     return target_vehicle
 
 
+# 차량의 ID로 정보 업데이트
 def vehicle_update_by_id(**kwargs):
     db = Database()
     result = {"target_vehicle": True}
