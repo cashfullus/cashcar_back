@@ -68,7 +68,7 @@ class Database:
               "brand, vehicle_model_name, year, car_number, " \
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
               "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
-              "FROM vehicle WHERE user_id = %s"
+              "FROM vehicle WHERE user_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=user_id)
         rows = self.cursor.fetchall()
         return rows
