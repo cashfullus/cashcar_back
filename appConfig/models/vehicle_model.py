@@ -19,13 +19,13 @@ def register_vehicle(**kwargs):
 
     # 본인이 등록한 차량 수 조회
     counter_register_vehicle = db.executeAll(
-        query="SELECT COUNT(*) as cnt FROM vehicle WHERE user_id = %s",
+        query="SELECT COUNT(*) as cnt FROM vehicle WHERE user_id = %s AND removed = 0",
         args=kwargs.get("user_id")
     )
 
     # 차량 번호 유무 확인
     check_vehicle_number = db.executeOne(
-        query="SELECT car_number FROM vehicle WHERE car_number = %s",
+        query="SELECT car_number FROM vehicle WHERE car_number = %s AND removed = 0",
         args=kwargs.get("car_number")
     )
     # 최대 허용 등록 개수 3개
@@ -62,40 +62,58 @@ def vehicle_list_by_user_id(user_id):
 
 
 # 차량의 ID 로 하나의 정보 조회
-def vehicle_detail_by_id(**kwargs):
+def vehicle_detail_by_id(user_id, vehicle_id):
     db = Database()
     target_vehicle = db.getOneVehicleByVehicleIdAndUserId(
-        vehicle_id=kwargs.get('vehicle_id'),
-        user_id=kwargs.get('user_id')
+        vehicle_id=vehicle_id,
+        user_id=user_id
     )
     return target_vehicle
 
 
 # 차량의 ID로 정보 업데이트
-def vehicle_update_by_id(**kwargs):
+def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
     db = Database()
     result = {"target_vehicle": True}
     sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
     target_vehicle = db.executeOne(
         query=sql,
-        args=[kwargs.get("vehicle_id"), kwargs.get("user_id")]
+        args=[vehicle_id, user_id]
     )
 
     # vehicle_id 와 user_id에 맞는 데이터가 존재한다면
     if target_vehicle:
-        # 업데이트 쿼리 진행
-        sql = "UPDATE vehicle SET " \
-              "supporters = %s, country = %s, brand = %s, " \
-              "vehicle_model_name = %s, year = %s, car_number = %s " \
-              "WHERE vehicle_id = %s AND user_id = %s"
-        value_list = [kwargs['supporters'], kwargs['country'], kwargs['brand'],
+        if kwargs.get('supporters') == 1:
+            db.execute(
+                query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s",
+                args=user_id
+            )
+            db.execute(
+                query="UPDATE vehicle SET "
+                      "supporters = %s, country = %s, brand = %s, "
+                      "vehicle_model_name = %s, year = %s, car_number = %s "
+                      "WHERE vehicle_id = %s AND user_id = %s",
+                args=[kwargs['supporters'], kwargs['country'], kwargs['brand'],
                       kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
-                      kwargs['vehicle_id'], kwargs['user_id']
+                      vehicle_id, user_id
                       ]
-        db.execute(query=sql, args=value_list)
-        db.commit()
+            )
+            db.commit()
+            return result
+        else:
+            # 업데이트 쿼리 진행
+            sql = "UPDATE vehicle SET " \
+                  "supporters = %s, country = %s, brand = %s, " \
+                  "vehicle_model_name = %s, year = %s, car_number = %s " \
+                  "WHERE vehicle_id = %s AND user_id = %s"
+            value_list = [kwargs['supporters'], kwargs['country'], kwargs['brand'],
+                          kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
+                          vehicle_id, user_id
+                          ]
+            db.execute(query=sql, args=value_list)
+            db.commit()
 
-        return result
+            return result
     # 차량 정보가 존재하지않다면 False
     else:
         result["target_vehicle"] = False
@@ -103,18 +121,18 @@ def vehicle_update_by_id(**kwargs):
 
 
 # 차량 ID로 차량 삭제
-def vehicle_delete_by_id(**kwargs):
+def vehicle_delete_by_id(vehicle_id, user_id):
     db = Database()
     sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
     target_vehicle = db.executeOne(
         query=sql,
-        args=[kwargs.get('vehicle_id'), kwargs.get('user_id')]
+        args=[vehicle_id, user_id]
     )
 
     if target_vehicle:
         db.execute(
-            query="DELETE FROM vehicle WHERE vehicle_id = %s AND user_id = %s",
-            args=[kwargs.get('vehicle_id'), kwargs.get('user_id')]
+            query="UPDATE vehicle SET removed = 1, remove_time = NOW() WHERE vehicle_id = %s AND user_id = %s",
+            args=[vehicle_id, user_id]
         )
         db.commit()
         return True

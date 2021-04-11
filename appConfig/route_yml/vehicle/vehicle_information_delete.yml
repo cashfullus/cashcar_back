@@ -9,12 +9,12 @@ parameters:
     required: true
 
   - name: user_id
-    in: application/json
+    in: uri
     type: Integer
     required: true
 
   - name: vehicle_id
-    in: application/json
+    in: uri
     type: Integer
     required: true
 

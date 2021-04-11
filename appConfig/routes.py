@@ -189,32 +189,32 @@ def vehicle_list(user_id):
 
 
 # 차량 정보 GET UPDATE API
-@app.route("/vehicle/information", methods=["GET", "POST", "DELETE"])
+@app.route("/vehicle/information/user_id=<user_id>/vehicle_id=<vehicle_id>", methods=["GET", "POST", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_information_get.yml', methods=['GET'])
 @swag_from('route_yml/vehicle/vehicle_information_post.yml', methods=['POST'])
 @swag_from('route_yml/vehicle/vehicle_information_delete.yml', methods=['DELETE'])
-def vehicle_get():
+def vehicle_get(user_id, vehicle_id):
     try:
         data = request.get_json()
         identity_ = get_jwt_identity()
-        if data.get("user_id") == identity_:
+        if int(user_id) == identity_:
             if request.method == "GET":
-                result = Vehicle.vehicle_detail_by_id(**data)
+                result = Vehicle.vehicle_detail_by_id(user_id=user_id, vehicle_id=vehicle_id)
                 if result:
                     return jsonify({"status": True, "data": result}), 200
                 else:
                     return jsonify({"status": False, "data": "Not Found"}), 404
 
             elif request.method == "POST":
-                result = Vehicle.vehicle_update_by_id(**data)
+                result = Vehicle.vehicle_update_by_id(user_id=user_id, vehicle_id=vehicle_id, **data)
                 if result["target_vehicle"] is True:
                     return jsonify({"status": True, "data": result}), 200
                 else:
                     return jsonify({"status": False, "data": result}), 404
 
             elif request.method == "DELETE":
-                result = Vehicle.vehicle_delete_by_id(**data)
+                result = Vehicle.vehicle_delete_by_id(vehicle_id=vehicle_id, user_id=user_id)
                 if result:
                     return jsonify({"status": True, "data": result}), 200
                 else:
