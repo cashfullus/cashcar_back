@@ -24,7 +24,7 @@ parameters:
 
   - name: country
     in: application/json
-    type: String
+    type: integer
     required: true
 
   - name: brand

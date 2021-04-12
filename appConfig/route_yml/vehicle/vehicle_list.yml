@@ -21,7 +21,7 @@ responses:
         vehicle_id: 1
         user_id: 1
         supporters: 0
-        country: "A"
+        country: 0,
         brand: "A"
         year: 2021
         car_number: "11 가 1111"
@@ -39,8 +39,8 @@ responses:
             type: integer
             description: 서포터즈 차량 선택 유무
           country:
-            type: string
-            description: 국산 OR 외국
+            type: integer
+            description: 국산(0) OR 외국(1)
           brand:
             type: string
             description: 브랜드

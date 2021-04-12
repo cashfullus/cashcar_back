@@ -19,7 +19,7 @@ parameters:
 
   - name: country
     in: application/json
-    type: string
+    type: integer
     required: true
 
   - name: brand
@@ -50,7 +50,7 @@ responses:
       application/json: {status: true, data: {"user": True, "register": True, "double_check_number": True, "vehicle_information": {
             "brand": "현대",
             "car_number": "123가48",
-            "country": "국산",
+            "country": 0,
             "supporters": 0,
             "user_id": 16,
             "vehicle_model_name": "아반떼",
