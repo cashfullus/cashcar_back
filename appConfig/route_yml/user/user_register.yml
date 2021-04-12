@@ -12,6 +12,11 @@ parameters:
     type: String
     required: false
 
+  - name: login_type
+    in: application/json
+    type: String
+    required: true
+
   - name: alarm
     in: application/json
     type: Integer
