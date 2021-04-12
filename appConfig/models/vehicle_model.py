@@ -74,16 +74,18 @@ def vehicle_detail_by_id(user_id, vehicle_id):
 # 차량의 ID로 정보 업데이트
 def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
     db = Database()
-    result = {"target_vehicle": True}
-    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
+    result = {"target_vehicle": True, "double_check_number": True}
+    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0"
     target_vehicle = db.executeOne(
         query=sql,
         args=[vehicle_id, user_id]
     )
 
-    # sql = "SELECT * FROM vehicle WHERE vehicle_id not in (%s) AND car_number = %s"
-    # double_chcek_data = db.executeOne(query=sql, args=[vehicle_id, kwargs.get('car_number')])
-    #
+    sql = "SELECT * FROM vehicle WHERE vehicle_id not in (%s) AND car_number = %s AND removed = 0"
+    double_check_data = db.executeOne(query=sql, args=[vehicle_id, kwargs.get('car_number')])
+    if double_check_data:
+        result["double_check_number"] = False
+        return result
 
     # vehicle_id 와 user_id에 맞는 데이터가 존재한다면
     if target_vehicle:
@@ -127,7 +129,7 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
 # 차량 ID로 차량 삭제
 def vehicle_delete_by_id(vehicle_id, user_id):
     db = Database()
-    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s"
+    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0"
     target_vehicle = db.executeOne(
         query=sql,
         args=[vehicle_id, user_id]

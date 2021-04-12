@@ -72,3 +72,8 @@ responses:
     description: 허용된 접근방법이 아닐때
     examples:
       application/json: {status: false, data: Not Allowed Method}
+
+  409:
+    description: 차량 번호가 이미 등록된 번호일 경우(현재 업데이트할 차량 제외)
+    examples:
+      application/json: {status: false, data: Double Check Fail}
