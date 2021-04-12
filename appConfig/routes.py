@@ -212,8 +212,10 @@ def vehicle_get():
 
             elif request.method == "POST":
                 result = Vehicle.vehicle_update_by_id(user_id=user_id, vehicle_id=vehicle_id, **data)
-                if result["target_vehicle"] is True:
+                if result["target_vehicle"] is True and result["double_check_number"] is True:
                     return jsonify({"status": True, "data": result}), 200
+                elif result["double_check_number"] is False:
+                    return jsonify({"status": False, "data": "Double Check Fail"}), 409
                 else:
                     return jsonify({"status": False, "data": "Not Found"}), 404
 
