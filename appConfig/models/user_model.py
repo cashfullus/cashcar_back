@@ -110,6 +110,7 @@ def get_user_profile(user_id):
         result = {
             'user_id': user['user_id'],
             'nick_name': user['nickname'],
+            'name': user['name'],
             'email': user['email'],
             'call_number': user['call_number'],
             'gender': user['resident_registration_number_back'],
