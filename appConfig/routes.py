@@ -114,12 +114,13 @@ def user_login():
 
 
 # 사용자 프로필
-@app.route("/user/profile/user_id=<user_id>", methods=["GET", "POST"])
+@app.route("/user/profile", methods=["GET", "POST"])
 @jwt_required()
 @swag_from('route_yml/user/user_profile_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_profile_post.yml', methods=['POST'])
-def user_profile(user_id):
+def user_profile():
     try:
+        user_id = request.args.get('user_id')
         identity_ = get_jwt_identity()
         if int(user_id) != identity_:
             return jsonify(Unauthorized), 401
@@ -169,11 +170,12 @@ def register_car():
 
 
 # 본인 차량 리스트
-@app.route("/vehicle/list/user_id=<user_id>")
+@app.route("/vehicle/list")
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_list.yml')
-def vehicle_list(user_id):
+def vehicle_list():
     try:
+        user_id = request.args.get('user_id')
         identity_ = get_jwt_identity()
         if int(user_id) != identity_:
             return jsonify(Unauthorized), 401
@@ -189,14 +191,16 @@ def vehicle_list(user_id):
 
 
 # 차량 정보 GET UPDATE API
-@app.route("/vehicle/information/user_id=<user_id>/vehicle_id=<vehicle_id>", methods=["GET", "POST", "DELETE"])
+@app.route("/vehicle/information", methods=["GET", "POST", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/vehicle/vehicle_information_get.yml', methods=['GET'])
 @swag_from('route_yml/vehicle/vehicle_information_post.yml', methods=['POST'])
 @swag_from('route_yml/vehicle/vehicle_information_delete.yml', methods=['DELETE'])
-def vehicle_get(user_id, vehicle_id):
+def vehicle_get():
     try:
         data = request.get_json()
+        user_id = request.args.get('user_id')
+        vehicle_id = request.args.get('vehicle_id')
         identity_ = get_jwt_identity()
         if int(user_id) == identity_:
             if request.method == "GET":

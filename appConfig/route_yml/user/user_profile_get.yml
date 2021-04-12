@@ -9,7 +9,7 @@ parameters:
 
   - name: user_id
     in: application/json
-    type: uri
+    type: query string
     required: true
 
 

@@ -9,12 +9,12 @@ parameters:
     required: true
 
   - name: user_id
-    in: uri
+    in: query string
     type: Integer
     required: true
 
   - name: vehicle_id
-    in: uri
+    in: query string
     type: Integer
     required: true
 
