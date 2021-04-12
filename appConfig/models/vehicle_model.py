@@ -81,6 +81,10 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
         args=[vehicle_id, user_id]
     )
 
+    # sql = "SELECT * FROM vehicle WHERE vehicle_id not in (%s) AND car_number = %s"
+    # double_chcek_data = db.executeOne(query=sql, args=[vehicle_id, kwargs.get('car_number')])
+    #
+
     # vehicle_id 와 user_id에 맞는 데이터가 존재한다면
     if target_vehicle:
         if kwargs.get('supporters') == 1:
