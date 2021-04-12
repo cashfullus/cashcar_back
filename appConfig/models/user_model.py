@@ -85,7 +85,7 @@ def login(**kwargs):
     if user:
         # 제한된 데이터만 response
         if kwargs.get("login_type") == "kakao":
-            login_user = {"user_id", user["user_id"], "jwt_token", user["jwt_token"]}
+            login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
             return login_user
 
         elif kwargs.get("login_type") == "normal":
