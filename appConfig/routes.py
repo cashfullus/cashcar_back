@@ -215,7 +215,7 @@ def vehicle_get():
                 if result["target_vehicle"] is True:
                     return jsonify({"status": True, "data": result}), 200
                 else:
-                    return jsonify({"status": False, "data": result}), 404
+                    return jsonify({"status": False, "data": "Not Found"}), 404
 
             elif request.method == "DELETE":
                 result = Vehicle.vehicle_delete_by_id(vehicle_id=vehicle_id, user_id=user_id)
@@ -234,6 +234,9 @@ def vehicle_get():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
+# 광고 등록 (Admin에서 해야할 일)
+# 등록된 광고 리스트 (ad_information_list)
+# 광고 신청 (GET, POST) (차량 정보 및 배송지)
 
 
 
