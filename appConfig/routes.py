@@ -55,6 +55,7 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 
 # 지도 API (Daum postcode)
 @app.route('/kakao/postcode', methods=['GET'])
+@swag_from('route_yml/address/kakao_address.yml')
 def kakao_address():
     return render_template('kakao_address.html')
 
