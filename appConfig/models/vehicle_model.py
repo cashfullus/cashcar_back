@@ -42,11 +42,11 @@ def register_vehicle(**kwargs):
         pass
 
     # INSERT
-    sql = "INSERT INTO vehicle (user_id, supporters, country, brand, vehicle_model_name, year, car_number) " \
+    sql = "INSERT INTO vehicle (user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number) " \
           "VALUES (%s, %s, %s, %s, %s, %s, %s)"
     # kwargs 가 아닌 args 인 value만 필요하기때문에 val만 리스트로 만들어서 전달
     # kwargs 로 보내도 확인 결과 똑같은 과정을 진행하여 value를 가져오는것으로 확인
-    value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['country'],
+    value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['is_foreign_car'],
                   kwargs['brand'], kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number']]
     db.execute(query=sql, args=value_list)
     db.commit()
@@ -96,10 +96,10 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
             )
             db.execute(
                 query="UPDATE vehicle SET "
-                      "supporters = %s, country = %s, brand = %s, "
+                      "supporters = %s, is_foreign_car = %s, brand = %s, "
                       "vehicle_model_name = %s, year = %s, car_number = %s "
                       "WHERE vehicle_id = %s AND user_id = %s",
-                args=[kwargs['supporters'], kwargs['country'], kwargs['brand'],
+                args=[kwargs['supporters'], kwargs['is_foreign_car'], kwargs['brand'],
                       kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
                       vehicle_id, user_id
                       ]
@@ -109,10 +109,10 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
         else:
             # 업데이트 쿼리 진행
             sql = "UPDATE vehicle SET " \
-                  "supporters = %s, country = %s, brand = %s, " \
+                  "supporters = %s, is_foreign_car = %s, brand = %s, " \
                   "vehicle_model_name = %s, year = %s, car_number = %s " \
                   "WHERE vehicle_id = %s AND user_id = %s"
-            value_list = [kwargs['supporters'], kwargs['country'], kwargs['brand'],
+            value_list = [kwargs['supporters'], kwargs['is_foreign_car'], kwargs['brand'],
                           kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
                           vehicle_id, user_id
                           ]

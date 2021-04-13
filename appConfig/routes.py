@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from appConfig import secret_key
 
-from .models import user_model as User, vehicle_model as Vehicle
+from .models import user_model as User, vehicle_model as Vehicle, ad_model as AD
 import os
 import logging
 
@@ -27,7 +27,7 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 
 
 # 이미지 파일 형식검사
-def allowed_file(files):
+def allowed_files(files):
     result = []
     for file in files:
         filename = file.filename
@@ -35,10 +35,28 @@ def allowed_file(files):
     return result
 
 
+def allowed_image_for_dict(images):
+    result = []
+    for image in images.values():
+        result.append('.' in image and image.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
+    return result
+
+
+def allowed_image(image):
+    filename = image.filename
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 # 회원가입 전 이용약관 동의 받기
 
 # 토큰 인증 실패시 return 하는 response 의 중복적인 사용으로 인해 return 변수를 저장해서 쓰는게 낫다고 생각함.
 Unauthorized = {"status": False, "data": "Unauthorized"}
+
+
+# 지도 API (Daum postcode)
+@app.route('/kakao/postcode', methods=['GET'])
+def kakao_address():
+    return render_template('kakao_address.html')
 
 
 # 이미지 업로드
@@ -49,7 +67,7 @@ def upload_image(location):
     files = request.files.getlist('files')
     data = request.form
     identity_ = get_jwt_identity()
-    allowed = allowed_file(files)
+    allowed = allowed_files(files)
 
     if data["user_id"] != identity_:
         return jsonify(Unauthorized), 401
@@ -80,6 +98,13 @@ def fmc_token():
             return jsonify({"status": False, "data": "Not Found"}), 404
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
+# 비회원 계정 생성
+@app.route("/home", methods=["GET"])
+def home():
+    result = User.non_user_register()
+    return jsonify({"status": True, "data": result}), 200
 
 
 # 회원가입
@@ -239,7 +264,40 @@ def vehicle_get():
 # 광고 등록 (Admin에서 해야할 일)
 # 등록된 광고 리스트 (ad_information_list)
 # 광고 신청 (GET, POST) (차량 정보 및 배송지)
-
+@app.route('/admin/ad/register', methods=['POST'])
+def ad_register():
+    title_image = request.files.get('title_image')
+    logo_image = request.files.get('logo_image')
+    sticker_design_side = request.files.get('sticker_design_side')
+    sticker_design_back = request.files.get('sticker_design_back')
+    sticker_attach_side_image = request.files.get('sticker_attach_side')
+    sticker_attach_back_image = request.files.get('sticker_attach_back')
+    # Allowed 를 위한 리스트
+    image_list = {
+        "title_image": title_image.filename,
+        "logo_image": logo_image.filename,
+        "sticker_design_side_image": sticker_design_side.filename,
+        "sticker_design_back_image": sticker_design_back.filename,
+        "sticker_attach_side_image": sticker_attach_side_image.filename,
+        "sticker_attach_back_image": sticker_attach_back_image.filename
+    }
+    # image_list = [title_image, logo_image, sticker_design_side, sticker_design_back,
+    #               sticker_attach_side_image, sticker_attach_back_image]
+    # 결과
+    allowed_result = allowed_image_for_dict(image_list)
+    # 만약 사진 전부 허용된다면
+    if False not in allowed_result:
+        try:
+            data = request.form
+            result = AD.register(image_dict=image_list, **data)
+            # directory = "{0}/{1}".format("adverting", "1")
+            # os.makedirs(BASE_IMAGE_LOCATION + directory, exist_ok=True)
+            # title_image.save(BASE_IMAGE_LOCATION + directory + "/" + secure_filename(title_image.filename))
+            return jsonify({"status": True, "data": result}), 200
+        except TypeError:
+            return jsonify({"status": False, "data": "Bad Request"}), 400
+    else:
+        return jsonify({"status": False, "data": "Bad Request"}), 400
 
 
 

@@ -22,7 +22,7 @@ parameters:
     type: integer
     required: true
 
-  - name: country
+  - name: is_foreign_car
     in: application/json
     type: integer
     required: true

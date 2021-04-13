@@ -38,7 +38,7 @@ responses:
           supporters:
             type: integer
             description: 서포터즈 차량 선택 유무
-          country:
+          is_foreign_car:
             type: integer
             description: 국산(0) OR 외국(1)
           brand:

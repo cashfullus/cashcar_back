@@ -24,6 +24,16 @@ def datetime_to_str(time):
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
+# Non_User_Register
+def non_user_register():
+    db = Database()
+    sql = "INSERT INTO user (is_non) VALUES (%s)"
+    db.execute(query=sql, args=1)
+    db.commit()
+    result = db.executeOne(query="SELECT user_id, is_non FROM user ORDER BY register_time DESC LIMIT 1")
+    return result
+
+
 # 회원가입
 def register(**kwargs):
     db = Database()
