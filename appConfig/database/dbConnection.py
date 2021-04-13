@@ -53,7 +53,7 @@ class Database:
 
     def getOneVehicleByVehicleIdAndUserId(self, vehicle_id, user_id):
         sql = "SELECT " \
-              "vehicle_id, user_id, supporters, country, " \
+              "vehicle_id, user_id, supporters, is_foreign_car, " \
               "brand, vehicle_model_name, year, car_number, " \
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
               "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
@@ -64,7 +64,7 @@ class Database:
 
     def getAllVehicleByUserId(self, user_id):
         sql = "SELECT " \
-              "vehicle_id, user_id, supporters, country, " \
+              "vehicle_id, user_id, supporters, is_foreign_car, " \
               "brand, vehicle_model_name, year, car_number, " \
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
               "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
