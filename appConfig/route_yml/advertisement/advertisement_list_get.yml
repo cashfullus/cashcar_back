@@ -1,0 +1,67 @@
+tags:
+  - Advertisement
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: category
+    in: query string
+    type: String
+    required: true
+
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+responses:
+  200:
+    description: 조회한 광고 리스트
+    schema:
+      type: array
+      items:
+        ad_id: 1
+        area: 서울/경기
+        title: "String"
+        title_image: "String"
+        max_recruiting_count: 1
+        recruit_count: 1
+        recruit_start_date: "String"
+        recruit_end_date: "String"
+        total_point: 100000
+        properties:
+          ad_id:
+            type: integer
+            description: 광고 ID
+          area:
+            type: String
+            description: 활동지역
+          title:
+            type: string
+            description: 광고 제목
+          title_image:
+            type: integer
+            description: 광고 메인 이미지
+          max_recruiting_count:
+            type: integer
+            description: 최대 신청인원
+          recruiting_count:
+            type: integer
+            description: 현재 신청인원
+          recruit_start_date:
+            type: string
+            description: 모집 시작 날짜
+          recruit_end_date:
+            type: string
+            description: 모집 마감 날짜
+          total_point:
+            type: integer
+            description: 총 포인트
+
+  405:
+    description: 허용되지않은 카테고리 요청
+    examples:
+      application/json: {status: False, data: Not Allowed Category}

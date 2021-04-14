@@ -72,3 +72,15 @@ class Database:
         self.cursor.execute(query=sql, args=user_id)
         rows = self.cursor.fetchall()
         return rows
+
+    def getOneAdByAdId(self, ad_id):
+        sql = "SELECT " \
+              "ad_id, title, title_image, logo_image, " \
+              "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
+              "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
+              "activity_period, max_recruiting_count, recruiting_count, " \
+              "total_point, area, description " \
+              "FROM ad_information WHERE ad_id = %s"
+        self.cursor.execute(query=sql, args=ad_id)
+        row = self.cursor.fetchone()
+        return row

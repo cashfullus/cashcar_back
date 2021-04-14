@@ -38,7 +38,8 @@ def allowed_files(files):
 def allowed_image_for_dict(images):
     result = []
     for image in images.values():
-        result.append('.' in image and image.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
+        filename = image.filename
+        result.append('.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
     return result
 
 
@@ -269,36 +270,75 @@ def vehicle_get():
 def ad_register():
     title_image = request.files.get('title_image')
     logo_image = request.files.get('logo_image')
-    sticker_design_side = request.files.get('sticker_design_side')
-    sticker_design_back = request.files.get('sticker_design_back')
-    sticker_attach_side_image = request.files.get('sticker_attach_side')
-    sticker_attach_back_image = request.files.get('sticker_attach_back')
     # Allowed 를 위한 리스트
     image_list = {
-        "title_image": title_image.filename,
-        "logo_image": logo_image.filename,
-        "sticker_design_side_image": sticker_design_side.filename,
-        "sticker_design_back_image": sticker_design_back.filename,
-        "sticker_attach_side_image": sticker_attach_side_image.filename,
-        "sticker_attach_back_image": sticker_attach_back_image.filename
+        "title_image": title_image,
+        "logo_image": logo_image
     }
-    # image_list = [title_image, logo_image, sticker_design_side, sticker_design_back,
-    #               sticker_attach_side_image, sticker_attach_back_image]
     # 결과
     allowed_result = allowed_image_for_dict(image_list)
     # 만약 사진 전부 허용된다면
     if False not in allowed_result:
-        try:
-            data = request.form
-            result = AD.register(image_dict=image_list, **data)
-            # directory = "{0}/{1}".format("adverting", "1")
-            # os.makedirs(BASE_IMAGE_LOCATION + directory, exist_ok=True)
-            # title_image.save(BASE_IMAGE_LOCATION + directory + "/" + secure_filename(title_image.filename))
+        data = request.form
+        result = AD.register(image_dict=image_list, **data)
+        if result:
             return jsonify({"status": True, "data": result}), 200
-        except TypeError:
-            return jsonify({"status": False, "data": "Bad Request"}), 400
+        else:
+            return jsonify({"status": False, "data": "No"})
     else:
         return jsonify({"status": False, "data": "Bad Request"}), 400
+
+
+# 광고 리스트 (진행중="ongoing", 예정="scheduled", 완료="done")
+@app.route("/ad/list")
+@jwt_required()
+@swag_from('route_yml/advertisement/advertisement_list_get.yml', methods=['GET'])
+def ongoing_ad_information():
+    category = request.args.get('category')
+    page = request.args.get('page')
+    if int(page) == 0:
+        page = 1
+    result, status = AD.get_all_by_category_ad_list(page=int(page), category=category)
+    if status["correct_category"] is True:
+        return jsonify({"status": True, "data": result}), 200
+    else:
+        return jsonify({"status": False, "data": "Not Allowed Category"}), 405
+
+
+# 광고 세부정보
+@app.route("/ad")
+@jwt_required()
+@swag_from('route_yml/advertisement/advertisement_information_get.yml', methods=['GET'])
+def ad_information_detail():
+    ad_id = request.args.get('ad_id')
+    result = AD.get_ad_information_by_id(ad_id=ad_id)
+    if result:
+        return jsonify({"status": True, "data": result})
+    else:
+        return jsonify({"status": False, "data": "Not Found"}), 404
+
+
+# # 광고 신청
+# @app.route("/ad/apply", methods=["GET", "POST"])
+# @jwt_required()
+# def ad_apply():
+#     user_id = request.args.get('user_id')
+#     ad_id = request.args.get('ad_id')
+#     identity_ = get_jwt_identity()
+#     if int(user_id) != identity_:
+#         return jsonify(Unauthorized), 401
+#
+#     if request.method == "GET":
+#         result, status = AD.get_information_for_ad_apply(user_id=user_id, ad_id=ad_id)
+#         if status["ad_information"] is False:
+#             return jsonify({"status": False, "data": "Not Found AD"}), 404
+#         elif status["user_information"] is False:
+#             return jsonify({"status": False, "data": "Not Found User"}), 404
+#         else:
+#             return jsonify({"status": True, "data": result}), 200
+#
+#     elif request.method == "POST":
+
 
 
 
