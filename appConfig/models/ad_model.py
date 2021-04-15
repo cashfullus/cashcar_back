@@ -2,7 +2,7 @@ from ..database.dbConnection import Database
 from werkzeug.utils import secure_filename
 import os
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/adverting"
+BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/appConfig/static/image/adverting"
 
 
@@ -34,8 +34,8 @@ def register(image_dict, **kwargs):
         # 서버에서는 Cashcar라는 directory 안에 있기때문에 추가
         for key, val in image_dict.items():
             # save_db = BASE_IMAGE_LOCATION_BACK + "/" + secure_filename(val.filename)
-            val.save(directory + "/Cashcar/" + secure_filename(val.filename))
-            save_to_db_dict.setdefault(key, directory + "/Cashcar/" + secure_filename(val.filename))
+            val.save(directory + secure_filename(val.filename))
+            save_to_db_dict.setdefault(key, directory + secure_filename(val.filename))
 
         db.execute(
             query="UPDATE ad_information SET title_image = %s, logo_image = %s WHERE ad_id = %s",
