@@ -6,7 +6,12 @@ from werkzeug.utils import secure_filename
 
 from appConfig import secret_key
 
-from .models import user_model as User, vehicle_model as Vehicle, ad_model as AD
+from .models import (
+    user_model as User,
+    vehicle_model as Vehicle,
+    ad_model as AD,
+    mission_model as Mission
+)
 import os
 import logging
 
@@ -339,6 +344,46 @@ def ad_information_detail():
 #
 #     elif request.method == "POST":
 
+# mission_type  (0 = required, 1 = additional)
+@app.route('/admin/mission/card/register', methods=["POST"])
+def mission_card_register():
+    try:
+        data = request.get_json()
+        result = Mission.register(**data)
+        return jsonify({"status": True, "data": result}), 200
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 404
 
+
+# 미션카드 광고에 배정 ex) ad_id=1 mission_id=1, ad_id=1 mission_id=2
+@app.route("/admin/mission/advertisement", methods=["POST"])
+def mission_to_advertisement():
+    try:
+        data = request.get_json()
+        result = Mission.mission_assign_advertisement(**data)
+        return jsonify({"status": True, "data": result}), 200
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 404
+
+# stand_by 대기중, review 검토중, success 미션성공, fail 미션실패,  authenticate 인증하기
+
+
+@app.route("/admin/mission/image", methods=["POST"])
+def mission_image():
+    side_image = request.files.get('side_image')
+    back_image = request.files.get('back_image')
+
+    # Allowed 를 위한 리스트
+    image_list = {
+        "side_image": side_image,
+        "back_image": back_image
+    }
+    # 결과
+    allowed_result = allowed_image_for_dict(image_list)
+    if False not in allowed_result:
+        result = Mission.mission_save_images(image_list)
+        return jsonify({"status":True, "data": result}), 200
+    else:
+        return jsonify({"status": False, "data": "Not Allowed File"}), 405
 
 

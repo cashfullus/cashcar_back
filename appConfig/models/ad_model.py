@@ -31,10 +31,11 @@ def register(image_dict, **kwargs):
         save_to_db_dict = {}
         directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
         os.makedirs(directory, exist_ok=True)
+        # 서버에서는 Cashcar라는 directory 안에 있기때문에 추가
         for key, val in image_dict.items():
             # save_db = BASE_IMAGE_LOCATION_BACK + "/" + secure_filename(val.filename)
-            val.save(directory + "/" + secure_filename(val.filename))
-            save_to_db_dict.setdefault(key, directory + "/" + secure_filename(val.filename))
+            val.save(directory + "/Cashcar/" + secure_filename(val.filename))
+            save_to_db_dict.setdefault(key, directory + "/Cashcar/" + secure_filename(val.filename))
 
         db.execute(
             query="UPDATE ad_information SET title_image = %s, logo_image = %s WHERE ad_id = %s",
