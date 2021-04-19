@@ -1,0 +1,36 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: ad_user_apply_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 취소 성공
+    examples:
+      application/json: {status: True, data: {apply_information: True, time_out: True}}
+
+  403:
+    description: 시간 초과
+    examples:
+      application/json: {status: true, data: Time Out For Cancel}
+
+  404:
+    description: 이미 취소된 정보
+    examples:
+      application/json: {status: true, data: Not Found Apply}
