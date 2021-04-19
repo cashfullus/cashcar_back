@@ -1,0 +1,28 @@
+tags:
+  - Image
+
+
+parameters:
+  - name: location
+    in: uri
+    type: string
+    required: true
+
+  - name: idx
+    in: uri
+    type: int
+    required: true
+
+  - name: image_file
+    in: uri
+    type: string
+    required: true
+
+
+responses:
+  404:
+    description: 해당 파일이 존재하지 않을때
+    examples:
+      application/json: {status: false, data: Not Found Image}
+
+

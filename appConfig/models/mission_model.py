@@ -56,11 +56,12 @@ def mission_save_images(image_dict):
     return True
 
 
-def images_save(side_image):
+def images_save(side_image, fullname):
     db = Database()
-    db.execute(query="INSERT INTO images_test (rendered_data) VALUES (%s)",
-               args=side_image
-               )
+    db.execute(
+        query="INSERT INTO test_image_save (img, fullname) VALUES (%s, %s)",
+        args=[side_image.read(), fullname]
+    )
     db.commit()
     return True
 

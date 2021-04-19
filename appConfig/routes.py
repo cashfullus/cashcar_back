@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, send_file
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -58,6 +58,16 @@ def allowed_image(image):
 
 # 토큰 인증 실패시 return 하는 response 의 중복적인 사용으로 인해 return 변수를 저장해서 쓰는게 낫다고 생각함.
 Unauthorized = {"status": False, "data": "Unauthorized"}
+
+
+@app.route('/image/<location>/<idx>/<image_file>')
+@swag_from('route_yml/image/get_image.yml')
+def get_image(location, idx, image_file):
+    try:
+        image_file = f"static/image/{location}/{idx}/{image_file}"
+        return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
+    except FileNotFoundError:
+        return jsonify({"status": False, "data": "Not Found Image"}), 404
 
 
 # 지도 API (Daum postcode)
@@ -362,7 +372,7 @@ def ad_apply():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
-# 사용자의 진행중인 광고 정보 카드
+# 사용자의 진행중인 광고 정보 카드(광고 취소 기능 포함)
 @app.route("/main/my-ad", methods=["GET", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/user/user_my_ad_get.yml', methods=['GET'])
@@ -472,3 +482,13 @@ def mission_image():
         return jsonify({"status": True, "data": result}), 200
     else:
         return jsonify({"status": False, "data": "Not Allowed File"}), 405
+
+
+@app.route('/abcd')
+def send_images():
+    return send_from_directory('/static/image/adverting/32', filename="Unknown.jpg")
+
+
+
+
+
