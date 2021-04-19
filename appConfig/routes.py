@@ -351,8 +351,7 @@ def ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             status = AD.ad_apply(user_id=user_id, ad_id=ad_id, **data)
-            if status["user_information"] is False or status["ad_information"] is False or status[
-                "already_apply"] is False:
+            if status["user_information"] is False or status["ad_information"] is False or status["already_apply"] is False:
                 return jsonify({"status": False, "data": status}), 404
             else:
                 return jsonify({"status": True, "data": status}), 200
@@ -366,7 +365,8 @@ def ad_apply():
 # 사용자의 진행중인 광고 정보 카드
 @app.route("/main/my-ad", methods=["GET", "DELETE"])
 @jwt_required()
-@swag_from('route_yml/user/user_my_ad_get.yml')
+@swag_from('route_yml/user/user_my_ad_get.yml', methods=['GET'])
+@swag_from('route_yml/user/user_my_ad_delete.yml', methods=['DELETE'])
 def home_my_ad():
     user_id = request.args.get('user_id')
     identity_ = get_jwt_identity()
@@ -472,5 +472,3 @@ def mission_image():
         return jsonify({"status": True, "data": result}), 200
     else:
         return jsonify({"status": False, "data": "Not Allowed File"}), 405
-
-

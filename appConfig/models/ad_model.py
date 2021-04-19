@@ -133,11 +133,11 @@ def ad_apply(user_id, ad_id, **kwargs):
     )
 
     if not target_ad:
-        status["ad"] = False
+        status["ad_information"] = False
         return status
 
     elif not target_user:
-        status["user"] = False
+        status["user_information"] = False
         return status
 
     elif already_apply_ad:
