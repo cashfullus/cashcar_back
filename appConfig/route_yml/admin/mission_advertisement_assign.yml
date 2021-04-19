@@ -1,0 +1,25 @@
+tags:
+  - Admin
+
+parameters:
+  - name: ad_id
+    in: application/json
+    type: integer
+    required: true
+
+  - name: mission_list
+    in: application/json
+    type: array
+    required: true
+
+
+responses:
+  200:
+    description: 매칭 성공
+    examples:
+      application/json: {status: true, data: true}
+
+  404:
+    description: 데이터가 null일 경우
+    examples:
+      application/json: { status: false, data: Data Not Null }

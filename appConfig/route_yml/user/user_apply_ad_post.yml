@@ -1,0 +1,56 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: ad_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: main_address
+    in: application/json
+    type: string
+    required: true
+
+  - name: detail_address
+    in: application/json
+    type: string
+    required: true
+
+  - name: call_nubmer
+    in: application/json
+    type: string
+    required: true
+
+  - name: name
+    in: application/json
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: 신청 완료
+    examples:
+      application/json: {status: true, data: {user_information: True, ad_information: True, already_apply: True}}
+
+  404:
+    description: 신청 실패(false가 되어있는 것이 문제)
+    examples:
+      application/json:
+        application/json: {status: true, data: {user_information: false, ad_information: false, already_apply: false}}
+
+  405:
+    description: 잘못된 메소드 요청
+    examples:
+      application/json: {status: False, data: Not Allowed Method}

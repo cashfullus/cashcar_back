@@ -1,0 +1,127 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: ad_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 광고 신청 페이지 GET
+    schema:
+      type: object
+      properties:
+        ad_information:
+          type: object
+          properties:
+            ad_id:
+              type: integer
+              description: 광고 ID
+            logo_image:
+              type: string
+              description: 로고 이미지
+            title:
+              type: string
+              description: 타이틀
+            total_point:
+              type: integer
+              description: 총 포인트 금액
+
+        user_information:
+          type: object
+          properties:
+            call_number:
+              type: string
+              description: 전화번호
+            detail_address:
+              type: string
+              description: 상세 주소
+            main_address:
+              type: string
+              description: 일반적인 주소
+            name:
+              type: string
+              description: 사용자 이름
+
+        vehicle_information:
+          type: array
+          items:
+            vehicle_id: 1
+            user_id: 1
+            supporters: 0
+            is_foreign_car: 0
+            vehicle_model_name: "A"
+            brand: "A"
+            year: 2021
+            car_number: "11 가 1111"
+            register_time: "YYYY-MM-DD hh:mm:ss"
+            remove_time: "YYYY-MM-DD hh:mm:ss"
+            removed: 0
+            properties:
+              vehicle_id:
+                type: integer
+                description: 차량 ID
+              user_id:
+                type: integer
+                description: 사용자 ID
+              supporters:
+                type: integer
+                description: 서포터즈 차량 선택 유무
+              is_foreign_car:
+                type: integer
+                description: 국산(0) OR 외국(1)
+              brand:
+                type: string
+                description: 브랜드
+              vehicle_model_name:
+                type: string
+                description: 차량 이름
+              year:
+                type: integer
+                description: 연식
+              car_number:
+                type: string
+                description: 차량번호
+              register_time:
+                type: string
+                description: 생성날짜
+              remove_time:
+                type: string
+                description: 삭제날짜
+              removed:
+                type: integer
+                description: 삭제유무
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
+
+
+  404:
+    description: 광고 또는 사용자를 찾을수 없음(false 인것이 원인)
+    examples:
+      application/json: {status: false, data: {ad_information: false, user_information: true}}
+
+  405:
+    description: 잘못된 메소드 요청
+    examples:
+      application/json: { status: False, data: Not Allowed Method }

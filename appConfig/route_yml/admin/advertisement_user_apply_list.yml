@@ -1,0 +1,42 @@
+tags:
+  - Admin
+
+
+
+responses:
+  200:
+    description: 광고 신청 리스트
+    schema:
+      type: array
+      items:
+        ad_id: 25
+        ad_user_apply_id: 6
+        change_status_time: "2021-04-18 13:48:00"
+        register_time: "2021-04-18 13:45:53"
+        status: "stand_by"
+        user_id: 15
+        properties:
+          ad_id:
+            type: integer
+            description: 광고 ID
+          ad_user_apply_id:
+            type: integer
+            description: 사용자의 신청 광고 ID
+          change_status_time:
+            type: string
+            description: 상태 변경 시점
+          register_time:
+            type: string
+            description: 신청한 일시
+          status:
+            type: string
+            description: 현재 상태
+          user_id:
+            type: integer
+            description: 사용자 ID
+
+  201:
+    description: 신청한 광고가 없을경우
+    examples:
+      application/json: {status: true, data: []}
+
