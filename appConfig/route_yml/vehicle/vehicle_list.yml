@@ -21,7 +21,8 @@ responses:
         vehicle_id: 1
         user_id: 1
         supporters: 0
-        country: 0,
+        is_foreign_car: 0
+        vehicle_model_name: "A"
         brand: "A"
         year: 2021
         car_number: "11 가 1111"
@@ -44,6 +45,9 @@ responses:
           brand:
             type: string
             description: 브랜드
+          vehicle_model_name:
+            type: string
+            description: 차량 이름
           year:
             type: integer
             description: 연식

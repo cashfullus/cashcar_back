@@ -8,13 +8,15 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/mission"
 def register(**kwargs):
     db = Database()
     sql = "INSERT INTO mission_card " \
-          "(mission_type, mission_name, additional_point) " \
+          "(mission_type, mission_name, additional_point, due_date) " \
           "VALUES " \
-          "(%s, %s, %s)"
+          "(%s, %s, %s, %s)"
     value_list = [
         kwargs.get('mission_type'),
         kwargs.get('mission_name'),
-        kwargs.get('additional_point')]
+        kwargs.get('additional_point'),
+        kwargs.get('due_date')
+    ]
     db.execute(query=sql, args=value_list)
     db.commit()
     return True
@@ -46,7 +48,7 @@ def mission_save_images(image_dict):
         save_to_db_dict.setdefault(key, directory + "/" + secure_filename(val.filename))
 
     db.execute(
-        query="INSERT INTO ad_mission_image (side_image, back_image) VALUES (%s, %s)",
+        query="INSERT INTO mission_images (side_image, back_image) VALUES (%s, %s)",
         args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"]]
     )
     db.commit()

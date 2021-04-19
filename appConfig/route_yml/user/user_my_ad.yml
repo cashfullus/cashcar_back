@@ -1,0 +1,51 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 현재 진행중인 광고가 있을경우
+    schema:
+      type: object
+      properties:
+        title:
+          type: string
+          description: 광고 타이틀
+        status:
+          type: string
+          description: 현재 상태
+        logo_image:
+          type: string
+          description: 로고 이미지
+        activity_start_date:
+          type: string
+          description: 적립 시작 날짜
+        activity_end_date:
+          type: string
+          description: 적립 마지막 날짜
+        ad_mission_card_user_id:
+          type: integer
+          description: 현재 진행중인 미션 카드 ID
+        additional_mission_success_count:
+          type: integer
+          description: 추가 미션 성공 횟수
+        default_mission_success_count:
+          type: integer
+          description: 필수 미션 성공 횟수
+
+  201:
+    description: 현재 진행하는 광고가 없을 경우
+    examples:
+      application/json: {status: false, data: Not Found}
