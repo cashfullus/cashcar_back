@@ -54,3 +54,18 @@ def mission_save_images(image_dict):
     db.commit()
 
     return True
+
+
+def images_save(side_image):
+    db = Database()
+    db.execute(query="INSERT INTO images_test (rendered_data) VALUES (%s)",
+               args=side_image
+               )
+    db.commit()
+    return True
+
+def get_images(id):
+    db = Database()
+    result = db.executeOne(query="SELECT * FROM images_test WHERE id = %s", args=id)
+    return result
+

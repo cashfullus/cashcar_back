@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from flask import Flask, jsonify, request, render_template
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
@@ -310,6 +311,7 @@ def ongoing_ad_information():
     else:
         return jsonify({"status": False, "data": "Not Allowed Category"}), 405
 
+
 # 메인화면 신청 진행중인 카드 (신청취소는 한시간 전까지만)
 
 
@@ -327,7 +329,7 @@ def ad_information_detail():
 
 
 # 광고 신청
-@app.route("/ad/apply", methods=["GET", "POST"])
+@app.route("/ad/apply", methods=["GET", "POST", "DELETE"])
 @jwt_required()
 @swag_from('route_yml/user/user_apply_ad_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_apply_ad_post.yml', methods=['POST'])
@@ -349,7 +351,8 @@ def ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             status = AD.ad_apply(user_id=user_id, ad_id=ad_id, **data)
-            if status["user_information"] is False or status["ad_information"] is False or status["already_apply"] is False:
+            if status["user_information"] is False or status["ad_information"] is False or status[
+                "already_apply"] is False:
                 return jsonify({"status": False, "data": status}), 404
             else:
                 return jsonify({"status": True, "data": status}), 200
@@ -361,20 +364,33 @@ def ad_apply():
 
 
 # 사용자의 진행중인 광고 정보 카드
-@app.route("/main/my-ad")
+@app.route("/main/my-ad", methods=["GET", "DELETE"])
 @jwt_required()
-@swag_from('route_yml/user/user_my_ad.yml')
+@swag_from('route_yml/user/user_my_ad_get.yml')
 def home_my_ad():
     user_id = request.args.get('user_id')
     identity_ = get_jwt_identity()
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
-    result = AD.get_ongoing_user_by_id(user_id=user_id)
-    if result:
-        return jsonify({"status": True, "data": result})
+    if request.method == 'GET':
+        result = AD.get_ongoing_user_by_id(user_id=user_id)
+        if result:
+            return jsonify({"status": True, "data": result})
+        else:
+            return jsonify({"status": False, "data": "Not Found"}), 201
+
+    elif request.method == 'DELETE':
+        ad_user_apply_id = request.args.get('ad_user_apply_id')
+        result = AD.cancel_apply_user(ad_user_apply_id=ad_user_apply_id)
+        if result["apply_information"] is False:
+            return jsonify({"status": False, "data": "Not Found Apply"}), 404
+        elif result["time_out"] is False:
+            return jsonify({"status": False, "data": "Time Out For Cancel"}), 403
+        else:
+            return jsonify({"status": True, "data": result}), 200
     else:
-        return jsonify({"status": False, "data": "Not Found"}), 201
+        return jsonify({"status": False, "data": "Not Allowed Method"}), 405
 
 
 # 광고신청 리스트
@@ -453,7 +469,7 @@ def mission_image():
     allowed_result = allowed_image_for_dict(image_list)
     if False not in allowed_result:
         result = Mission.mission_save_images(image_list)
-        return jsonify({"status":True, "data": result}), 200
+        return jsonify({"status": True, "data": result}), 200
     else:
         return jsonify({"status": False, "data": "Not Allowed File"}), 405
 

@@ -27,7 +27,7 @@ parameters:
     type: string
     required: true
 
-  - name: call_nubmer
+  - name: call_number
     in: application/json
     type: string
     required: true
