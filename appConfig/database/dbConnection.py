@@ -144,17 +144,17 @@ class Database:
 
     def getMainMyAd(self, user_id):
         sql = "SELECT " \
-              "title, logo_image, ad_mission_card_user_id, additional_mission_success_count, " \
-              "default_mission_success_count, amcu.status, " \
+              "title, logo_image, ad_user_apply_id, " \
+              "additional_mission_success_count, default_mission_success_count, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date " \
-              "FROM ad_mission_card_user as amcu " \
-              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+              "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
-              "WHERE aua.status != 'done' AND amcu.status != 'stand_by' AND user_id = %s"
+              "WHERE aua.status != 'done' AND user_id = %s"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
         return row
+
 
 
 

@@ -20,6 +20,9 @@ responses:
     schema:
       type: object
       properties:
+        ad_user_apply_id:
+          type: integer
+          description: 신청했던 ID
         title:
           type: string
           description: 광고 타이틀
@@ -35,9 +38,6 @@ responses:
         activity_end_date:
           type: string
           description: 적립 마지막 날짜
-        ad_mission_card_user_id:
-          type: integer
-          description: 현재 진행중인 미션 카드 ID
         additional_mission_success_count:
           type: integer
           description: 추가 미션 성공 횟수

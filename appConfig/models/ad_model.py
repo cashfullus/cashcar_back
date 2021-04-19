@@ -9,7 +9,6 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/appConfig/static/image/adverting"
 
 
-
 # Admin 광고등록하기
 # def admin_ad_register():
 
@@ -43,7 +42,7 @@ def register(image_dict, **kwargs):
         for key, val in image_dict.items():
             # save_db = BASE_IMAGE_LOCATION_BACK + "/" + secure_filename(val.filename)
             val.save(directory + "/" + secure_filename(val.filename))
-            save_to_db_dict.setdefault(key, "file://"+directory + "/" + secure_filename(val.filename))
+            save_to_db_dict.setdefault(key, "file://" + directory + "/" + secure_filename(val.filename))
 
         db.execute(
             query="UPDATE ad_information SET title_image = %s, logo_image = %s WHERE ad_id = %s",
@@ -203,6 +202,34 @@ def get_ongoing_user_by_id(user_id):
         return result
     else:
         return False
+
+
+# 신청한 광고 취소 (사용자)
+def cancel_apply_user(ad_user_apply_id):
+    db = Database()
+    status = {"apply_information": True, "time_out": True}
+    user_apply_information = db.executeOne(
+        query="SELECT * FROM ad_user_apply WHERE ad_user_apply_id = %s",
+        args=ad_user_apply_id
+    )
+    if not user_apply_information:
+        status["apply_information"] = False
+        return status
+
+    if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
+        status["time_out"] = False
+        return status
+
+    db.execute(
+        query="DELETE FROM ad_user_apply WHERE ad_user_apply_id = %s",
+        args=ad_user_apply_id
+    )
+    db.execute(
+        query="UPDATE ad_information SET recruiting_count = recruiting_count - 1 WHERE ad_id = %s",
+        args=user_apply_information["ad_id"]
+    )
+    db.commit()
+    return status
 
 
 # 신청한 광고 status 업데이트
