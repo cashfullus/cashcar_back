@@ -9,6 +9,11 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/appConfig/static/image/adverting"
 
 
+
+# Admin 광고등록하기
+# def admin_ad_register():
+
+
 # 광고 등록 / (현재 이미지는 미정 2021-04-13 ) title_image 의 첫번째는 무조건 썸네일 이미지가 된다.
 def register(image_dict, **kwargs):
     db = Database()
@@ -38,7 +43,7 @@ def register(image_dict, **kwargs):
         for key, val in image_dict.items():
             # save_db = BASE_IMAGE_LOCATION_BACK + "/" + secure_filename(val.filename)
             val.save(directory + "/" + secure_filename(val.filename))
-            save_to_db_dict.setdefault(key, directory + "/" + secure_filename(val.filename))
+            save_to_db_dict.setdefault(key, "file://"+directory + "/" + secure_filename(val.filename))
 
         db.execute(
             query="UPDATE ad_information SET title_image = %s, logo_image = %s WHERE ad_id = %s",
