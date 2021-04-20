@@ -20,30 +20,98 @@ responses:
     schema:
       type: object
       properties:
-        ad_user_apply_id:
-          type: integer
-          description: 신청했던 ID
-        title:
-          type: string
-          description: 광고 타이틀
-        status:
-          type: string
-          description: 현재 진행중인 미션의 상태
-        logo_image:
-          type: string
-          description: 로고 이미지
-        activity_start_date:
-          type: string
-          description: 적립 시작 날짜
-        activity_end_date:
-          type: string
-          description: 적립 마지막 날짜
-        additional_mission_success_count:
-          type: integer
-          description: 추가 미션 성공 횟수
-        default_mission_success_count:
-          type: integer
-          description: 필수 미션 성공 횟수
+        data:
+          properties:
+            ad_information:
+              type: object
+              properties:
+                ad_user_apply_id:
+                  type: integer
+                  description: 신청했던 ID
+                user_id:
+                  type: integer
+                  description: 사용자 ID
+                ad_id:
+                  type: integer
+                  description: 광고 ID
+                ad_mission_card_id:
+                  type: integer
+                  description: 현재 미션 ID(수락전 0)
+                appy_status:
+                  type: string
+                  description: 신청 상태(stand_by, accept, reject)
+                mission_status:
+                  type: string
+                  description: 현재 미션 상태(수락전 Empty)
+                title:
+                  type: string
+                  description: 광고 제목
+                logo_image:
+                  type: string
+                  description: 광고 로고 이미지
+                default_mission_success_count:
+                  type: integer
+                  description: 필수 미션 성공 횟수
+                additional_mission_success_count:
+                  type: integer
+                  description: 선택 미션 성공 횟수
+                apply_register_time:
+                  type: string
+                  description: 신청 시간
+                activity_start_date:
+                  type: string
+                  description: 활동 시작 일시
+                activity_end_date:
+                  type: string
+                  description: 활동 끝 일시
+            vehicle_information:
+              type: array
+              items:
+                vehicle_id: 1
+                user_id: 1
+                supporters: 0
+                is_foreign_car: 0
+                vehicle_model_name: "A"
+                brand: "A"
+                year: 2021
+                car_number: "11 가 1111"
+                register_time: "YYYY-MM-DD hh:mm:ss"
+                remove_time: "YYYY-MM-DD hh:mm:ss"
+                removed: 0
+                properties:
+                  vehicle_id:
+                    type: integer
+                    description: 차량 ID
+                  user_id:
+                    type: integer
+                    description: 사용자 ID
+                  supporters:
+                    type: integer
+                    description: 서포터즈 차량 선택 유무
+                  is_foreign_car:
+                    type: integer
+                    description: 국산(0) OR 외국(1)
+                  brand:
+                    type: string
+                    description: 브랜드
+                  vehicle_model_name:
+                    type: string
+                    description: 차량 이름
+                  year:
+                    type: integer
+                    description: 연식
+                  car_number:
+                    type: string
+                    description: 차량번호
+                  register_time:
+                    type: string
+                    description: 생성날짜
+                  remove_time:
+                    type: string
+                    description: 삭제날짜
+                  removed:
+                    type: integer
+                    description: 삭제유무
 
   201:
     description: 현재 진행하는 광고가 없을 경우

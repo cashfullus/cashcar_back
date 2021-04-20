@@ -385,10 +385,7 @@ def home_my_ad():
 
     if request.method == 'GET':
         result = AD.get_ongoing_user_by_id(user_id=user_id)
-        if result:
-            return jsonify({"status": True, "data": result})
-        else:
-            return jsonify({"status": False, "data": "Not Found"}), 201
+        return jsonify({"status": True, "data": result}), 200
 
     elif request.method == 'DELETE':
         ad_user_apply_id = request.args.get('ad_user_apply_id')
@@ -484,9 +481,6 @@ def mission_image():
         return jsonify({"status": False, "data": "Not Allowed File"}), 405
 
 
-@app.route('/abcd')
-def send_images():
-    return send_from_directory('/static/image/adverting/32', filename="Unknown.jpg")
 
 
 
