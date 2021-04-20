@@ -68,7 +68,7 @@ class Database:
               "brand, vehicle_model_name, year, car_number, " \
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS register_time, " \
               "DATE_FORMAT(remove_time, '%%Y-%%m-%%d %%H:%%i:%%s') AS remove_time, removed " \
-              "FROM vehicle WHERE user_id = %s AND removed = 0"
+              "FROM vehicle WHERE user_id = %s AND removed = 0 ORDER BY supporters"
         self.cursor.execute(query=sql, args=user_id)
         rows = self.cursor.fetchall()
         return rows
@@ -144,13 +144,16 @@ class Database:
 
     def getMainMyAd(self, user_id):
         sql = "SELECT " \
-              "title, logo_image, ad_user_apply_id, " \
-              "additional_mission_success_count, default_mission_success_count, " \
+              "aua.ad_user_apply_id as ad_user_apply_id, user_id, aua.ad_id as ad_id, aua.status as apply_status, " \
+              "default_mission_success_count, additional_mission_success_count, ad_mission_card_id," \
+              "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
-              "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date " \
+              "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
+              "title, logo_image, amcu.status as mission_status " \
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
-              "WHERE aua.status != 'done' AND user_id = %s"
+              "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
+              "WHERE user_id = %s ORDER BY mission_end_date LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
         return row

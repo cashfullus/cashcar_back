@@ -128,7 +128,7 @@ def ad_apply(user_id, ad_id, **kwargs):
     target_user = db.getUserById(user_id)
     target_ad = db.getOneAdApplyByAdId(ad_id)
     already_apply_ad = db.executeOne(
-        query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in (0, 1) and user_id = %s",
+        query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
         args=user_id
     )
 
@@ -161,8 +161,34 @@ def ad_apply(user_id, ad_id, **kwargs):
         )
         db.commit()
 
-        return status
+        insert_information = db.executeOne(
+            query="SELECT * FROM ad_user_apply ORDER BY register_time DESC"
+        )
 
+        return status
+# ad_mission_card_info = db.getAdMissionCardIdsByAcceptApply(ad_user_apply_id=ad_user_apply_id)
+#             # 수락후 미션 생성
+#             for i in range(len(ad_mission_card_info)):
+#                 if ad_mission_card_info[i]["mission_card_id"] == 1:
+#                     first_start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#                     first_end_date = date.today() + timedelta(days=ad_mission_card_info[i]["due_date"])
+#                     db.execute(
+#                         query="INSERT INTO "
+#                               "ad_mission_card_user "
+#                               "(ad_user_apply_id, ad_mission_card_id, status, "
+#                               "mission_start_date, mission_end_date, register_time) "
+#                               "VALUES (%s, %s, %s, %s, %s, NOW())",
+#                         args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"], "ongoing",
+#                               first_start_date, first_end_date.strftime('%Y-%m-%d 23:59:59')]
+#                     )
+#                 else:
+#                     db.execute(
+#                         query="INSERT INTO "
+#                               "ad_mission_card_user "
+#                               "(ad_user_apply_id, ad_mission_card_id, register_time) "
+#                               "VALUES (%s, %s, NOW())",
+#                         args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"]]
+#                     )
 
 # 진행중인 광고 By User
 def get_ongoing_ad(user_id):
@@ -197,11 +223,15 @@ def get_ad_apply(ad_user_apply_id):
 # 메인화면 본인이 진행중인 광고 카드의 정보
 def get_ongoing_user_by_id(user_id):
     db = Database()
-    result = db.getMainMyAd(user_id=user_id)
-    if result:
-        return result
+    ad_information = db.getMainMyAd(user_id=user_id)
+    vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
+    if ad_information:
+        ad_information["mission_status"] = ""
+        ad_information["ad_mission_card_id"] = 0
+        result = {"ad_information": ad_information, "vehicle_information": vehicle_information}
     else:
-        return False
+        result = {"ad_information": {}, "vehicle_information": vehicle_information}
+    return result
 
 
 # 신청한 광고 취소 (사용자)
@@ -235,7 +265,7 @@ def cancel_apply_user(ad_user_apply_id):
 # 신청한 광고 status 업데이트
 # 먼저 광고와 연결된 미션 을 전부 return
 # 그 해당 미션에 대해 미션하기를 누를시 데이터 생성
-#
+# 미션을 광고 등록시에 설정하기때문에 미션카드라는 테이블을 나눌필요 없이 광고와 미션카드를 1대다로 만들어주는 테이블을 만들면 된다.
 # 승인시 flow (default = stand_by(승인 대기중) -> accept(승인) -> during_delivery(배송중) -> delivery_completed(배송완료)
 # 거절시 flow (default = stand_by(승인 대기중) -> reject(거절)
 def update_ad_apply_status(ad_user_apply_id, **kwargs):
