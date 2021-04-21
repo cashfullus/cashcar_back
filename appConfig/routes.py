@@ -339,7 +339,7 @@ def ad_information_detail():
 
 
 # 광고 신청
-@app.route("/ad/apply", methods=["GET", "POST", "DELETE"])
+@app.route("/ad/apply", methods=["GET", "POST"])
 @jwt_required()
 @swag_from('route_yml/user/user_apply_ad_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_apply_ad_post.yml', methods=['POST'])
@@ -370,6 +370,83 @@ def ad_apply():
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
+# 미션 인증 신청 ongoing -> success -> success_count +1
+#             ongoing -> reject -> 미션 실패 (필수미션일 경우)
+@app.route("/ad/mission", methods=['GET', 'POST'])
+@jwt_required()
+@swag_from('route_yml/user/user_mission_apply_get.yml', methods=['GET'])
+@swag_from('route_yml/user/user_mission_apply_post.yml', methods=['POST'])
+def ad_mission_apply_with_list():
+    user_id = request.args.get('user_id')
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    if request.method == 'GET':
+        result = User.user_mission_list(user_id=user_id)
+        return jsonify({"status": True, "data": result}), 200
+
+    elif request.method == 'POST':
+        result_status = {"image_data": True, "mission_data": True,
+                         "mission_type": True, "image_allowed": True, "data_not_null": True
+                         }
+        ad_mission_card_user_id = request.args.get('ad_mission_card_user_id')
+        # ad_mission_card_user 테이블의 id와 해당 미션 Id에 맞는 미션타입 조회
+        amcu_id_and_mission_type = Mission.get_mission_type_idx_by_stand_by(ad_mission_card_user_id=ad_mission_card_user_id)
+        if not amcu_id_and_mission_type:
+            result_status["mission_data"] = False
+            return jsonify({"status": False, "data": result_status})
+        # 주행거리 데이터
+        travelled_distance = None
+        # 미션이 필수 미션인경우
+        if int(amcu_id_and_mission_type["mission_type"]) == 0:
+            side_image = request.files.get('side_image')
+            back_image = request.files.get('back_image')
+            instrument_panel_image = request.files.get('instrument_panel_image')
+            # Allowed 를 위한 리스트
+            image_list = {
+                "side_image": side_image,
+                "back_image": back_image,
+                "instrument_panel_image": instrument_panel_image
+            }
+            travelled_distance = request.form["travelled_distance"]
+        # 미션이 선택미션인 경우
+        elif int(amcu_id_and_mission_type["mission_type"]) == 1:
+            side_image = request.files.get('side_image')
+            back_image = request.files.get('back_image')
+            # Allowed 를 위한 리스트
+            image_list = {
+                "side_image": side_image,
+                "back_image": back_image
+            }
+        else:
+            result_status["mission_type"] = False
+            return jsonify({"status": False, "data": result_status})
+
+        # 이미지 결과
+        try:
+            allowed_result = allowed_image_for_dict(image_list)
+            if False not in allowed_result:
+                result = Mission.user_apply_mission(
+                    ad_mission_card_user_id=amcu_id_and_mission_type["ad_mission_card_user_id"],
+                    ad_mission_card_id=amcu_id_and_mission_type["ad_mission_card_id"],
+                    mission_type=int(amcu_id_and_mission_type["mission_type"]),
+                    image_dict=image_list,
+                    travelled_distance=travelled_distance
+                )
+                if result:
+                    return jsonify({"status": True, "data": result_status})
+            else:
+                result_status["image_allowed"] = False
+                return jsonify({"status": False, "data": result_status})
+        except AttributeError:
+            result_status["image_data"] = False
+            return jsonify({"status": False, "data": result_status})
+        except TypeError:
+            result_status["data_not_null"] = False
+            return jsonify({"status": False, "data": result_status})
 
 
 # 사용자의 진행중인 광고 정보 카드(광고 취소 기능 포함)
@@ -438,27 +515,27 @@ def admin_ad_apply():
 
 
 # mission_type  (0 = required, 1 = additional)
-@app.route('/admin/mission/card/register', methods=["POST"])
-@swag_from('route_yml/admin/mission_card_register.yml')
-def mission_card_register():
-    try:
-        data = request.get_json()
-        result = Mission.register(**data)
-        return jsonify({"status": True, "data": result}), 200
-    except TypeError:
-        return jsonify({"status": False, "data": "Data Not Null"}), 404
-
-
-# 미션카드 광고에 배정 ex) ad_id=1 mission_id=1, ad_id=1 mission_id=2
-@app.route("/admin/mission/advertisement", methods=["POST"])
-@swag_from('route_yml/admin/mission_advertisement_assign.yml')
-def mission_to_advertisement():
-    try:
-        data = request.get_json()
-        result = Mission.mission_assign_advertisement(**data)
-        return jsonify({"status": True, "data": result}), 200
-    except TypeError:
-        return jsonify({"status": False, "data": "Data Not Null"}), 404
+# @app.route('/admin/mission/card/register', methods=["POST"])
+# @swag_from('route_yml/admin/mission_card_register.yml')
+# def mission_card_register():
+#     try:
+#         data = request.get_json()
+#         result = Mission.register(**data)
+#         return jsonify({"status": True, "data": result}), 200
+#     except TypeError:
+#         return jsonify({"status": False, "data": "Data Not Null"}), 404
+#
+#
+# # 미션카드 광고에 배정 ex) ad_id=1 mission_id=1, ad_id=1 mission_id=2
+# @app.route("/admin/mission/advertisement", methods=["POST"])
+# @swag_from('route_yml/admin/mission_advertisement_assign.yml')
+# def mission_to_advertisement():
+#     try:
+#         data = request.get_json()
+#         result = Mission.mission_assign_advertisement(**data)
+#         return jsonify({"status": True, "data": result}), 200
+#     except TypeError:
+#         return jsonify({"status": False, "data": "Data Not Null"}), 404
 
 
 # stand_by 대기중, review 검토중, success 미션성공, fail 미션실패,  authenticate 인증하기

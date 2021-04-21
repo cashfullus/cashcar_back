@@ -132,11 +132,10 @@ class Database:
         return row
 
     # 광고 신청 수락 후 id 데이터 가져오기
-    def getAdMissionCardIdsByAcceptApply(self, ad_user_apply_id):
-        sql = "SELECT ad_mission_card_id, mc.mission_card_id, due_date " \
+    def getAdMissionCardIdxByAcceptApply(self, ad_user_apply_id):
+        sql = "SELECT ad_mission_card_id, amc.ad_id, amc.due_date, amc.mission_type " \
               "FROM ad_user_apply " \
               "JOIN ad_mission_card amc on ad_user_apply.ad_id = amc.ad_id " \
-              "JOIN mission_card mc on amc.mission_card_id = mc.mission_card_id " \
               "WHERE ad_user_apply_id = %s"
         self.cursor.execute(query=sql, args=ad_user_apply_id)
         rows = self.cursor.fetchall()
@@ -149,15 +148,27 @@ class Database:
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
-              "title, logo_image, amcu.status as mission_status " \
+              "title, logo_image, amcu.status as mission_status, amcu.mission_type as mission_type " \
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
-              "WHERE user_id = %s ORDER BY mission_end_date LIMIT 1"
+              "WHERE user_id = %s AND amcu.status != 'success' ORDER BY ad_mission_card_id LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
         return row
 
+    def getAllMyMissionByUserId(self, user_id):
+        sql = "SELECT " \
+              "ad_mission_card_user_id, amcu.ad_user_apply_id, ad_mission_card_id, mission_type, amcu.status, " \
+              "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "DATE_FORMAT(mission_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_start_date, " \
+              "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date " \
+              "FROM ad_mission_card_user as amcu " \
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+              "WHERE aua.user_id = %s AND aua.status IN ('accept', 'stand_by')"
+        self.cursor.execute(query=sql, args=user_id)
+        rows = self.cursor.fetchall()
+        return rows
 
 
 

@@ -8,6 +8,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 # 시간
 import datetime
 import re
+import os
+
 
 
 # 이메일 형태 정규식 사용하여 검사
@@ -177,3 +179,11 @@ def user_fcm(**kwargs):
             return True
     else:
         return False
+
+
+# 진행해야할 미션 리스트
+def user_mission_list(user_id):
+    db = Database()
+    mission_information = db.getAllMyMissionByUserId(user_id=user_id)
+    return mission_information
+

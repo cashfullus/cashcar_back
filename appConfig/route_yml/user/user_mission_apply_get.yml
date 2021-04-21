@@ -1,0 +1,51 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 현재 진행중인 서포터즈에 관한 미션 리스트(미션 상태 stand_by, review, success, reject, re_review, fail)
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              ad_mission_card_id:
+                type: integer
+                description: 미션 ID
+              ad_mission_card_user_id:
+                type: integer
+                description: 미션 종합 ID
+              ad_user_apply_id:
+                type: integer
+                description: 서포터즈 신청 ID
+              mission_type:
+                type: integer
+                description: 미션 종류(0 필수, 1 선택)
+              status:
+                type: string
+                description: 미선 상태
+              mission_start_date:
+                type: string
+                description: 미션 시작 날짜
+              mission_end_date:
+                type: string
+                description: 미션 마지막 날짜
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }

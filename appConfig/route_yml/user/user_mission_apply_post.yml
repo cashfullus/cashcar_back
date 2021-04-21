@@ -1,0 +1,49 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: ad_mission_card_user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: side_image
+    in: Form File
+    type: file
+    required: true
+
+  - name: back_image
+    in: Form File
+    type: file
+    required: true
+
+  - name: instrument_panel_image
+    in: Form File
+    type: file
+    required: false
+
+  - name: travelled_distance
+    in: Form Data
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: 미선 인증 요청 성공과 실패 유무 image_data(이미지 유무), mission_data(미션 데이터 유무), mission_type(옳바른 타입), image_allowed(확장자), data_not_null(데이터가 없을시)
+    examples:
+      application/json: {status: True, data:{"image_data": True, "mission_data": True,
+                         "mission_type": True, "image_allowed": True, "data_not_null": True}}
+
+
