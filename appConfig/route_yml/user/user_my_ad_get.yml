@@ -43,6 +43,9 @@ responses:
                 mission_status:
                   type: string
                   description: 현재 미션 상태(수락전 Empty)
+                mission_type:
+                  type: integer
+                  description: 미션의 종류(0 필수, 1 선택)
                 title:
                   type: string
                   description: 광고 제목

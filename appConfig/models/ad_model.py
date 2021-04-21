@@ -161,34 +161,8 @@ def ad_apply(user_id, ad_id, **kwargs):
         )
         db.commit()
 
-        insert_information = db.executeOne(
-            query="SELECT * FROM ad_user_apply ORDER BY register_time DESC"
-        )
-
         return status
-# ad_mission_card_info = db.getAdMissionCardIdsByAcceptApply(ad_user_apply_id=ad_user_apply_id)
-#             # 수락후 미션 생성
-#             for i in range(len(ad_mission_card_info)):
-#                 if ad_mission_card_info[i]["mission_card_id"] == 1:
-#                     first_start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#                     first_end_date = date.today() + timedelta(days=ad_mission_card_info[i]["due_date"])
-#                     db.execute(
-#                         query="INSERT INTO "
-#                               "ad_mission_card_user "
-#                               "(ad_user_apply_id, ad_mission_card_id, status, "
-#                               "mission_start_date, mission_end_date, register_time) "
-#                               "VALUES (%s, %s, %s, %s, %s, NOW())",
-#                         args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"], "ongoing",
-#                               first_start_date, first_end_date.strftime('%Y-%m-%d 23:59:59')]
-#                     )
-#                 else:
-#                     db.execute(
-#                         query="INSERT INTO "
-#                               "ad_mission_card_user "
-#                               "(ad_user_apply_id, ad_mission_card_id, register_time) "
-#                               "VALUES (%s, %s, NOW())",
-#                         args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"]]
-#                     )
+
 
 # 진행중인 광고 By User
 def get_ongoing_ad(user_id):
@@ -225,13 +199,16 @@ def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
-    if ad_information:
+    result = {"ad_information": ad_information, "vehicle_information": vehicle_information}
+    if not ad_information:
+        result = {"ad_information": {}, "vehicle_information": vehicle_information}
+        return result
+    elif not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0
-        result = {"ad_information": ad_information, "vehicle_information": vehicle_information}
-    else:
-        result = {"ad_information": {}, "vehicle_information": vehicle_information}
-    return result
+        return result
+    elif ad_information["mission_status"]:
+        return result
 
 
 # 신청한 광고 취소 (사용자)
@@ -292,29 +269,45 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
             )
 
         elif kwargs["status"] == "accept":
-            ad_mission_card_info = db.getAdMissionCardIdsByAcceptApply(ad_user_apply_id=ad_user_apply_id)
+            ad_mission_card_info = db.getAdMissionCardIdxByAcceptApply(ad_user_apply_id=ad_user_apply_id)
             # 수락후 미션 생성
             for i in range(len(ad_mission_card_info)):
-                if ad_mission_card_info[i]["mission_card_id"] == 1:
+                if i == 0:
                     first_start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     first_end_date = date.today() + timedelta(days=ad_mission_card_info[i]["due_date"])
                     db.execute(
                         query="INSERT INTO "
                               "ad_mission_card_user "
-                              "(ad_user_apply_id, ad_mission_card_id, status, "
+                              "(ad_user_apply_id, ad_mission_card_id, mission_type, status, "
                               "mission_start_date, mission_end_date, register_time) "
-                              "VALUES (%s, %s, %s, %s, %s, NOW())",
-                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"], "ongoing",
+                              "VALUES (%s, %s, %s, %s, %s, %s, NOW())",
+                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"],
+                              ad_mission_card_info[i]["mission_type"], "ongoing",
                               first_start_date, first_end_date.strftime('%Y-%m-%d 23:59:59')]
                     )
                 else:
                     db.execute(
                         query="INSERT INTO "
                               "ad_mission_card_user "
-                              "(ad_user_apply_id, ad_mission_card_id, register_time) "
-                              "VALUES (%s, %s, NOW())",
-                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"]]
+                              "(ad_user_apply_id, ad_mission_card_id, mission_type, register_time) "
+                              "VALUES (%s, %s, %s, NOW())",
+                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"],
+                              ad_mission_card_info[i]["mission_type"]]
                     )
+        ad_mission_card_user_info = db.executeAll(
+            query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
+                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+                  "WHERE aua.ad_user_apply_id = %s",
+            args=ad_user_apply_id
+        )
+        for i in range(len(ad_mission_card_user_info)):
+            db.execute(
+                query="INSERT INTO "
+                      "mission_images (ad_mission_card_user_id) "
+                      "VALUES "
+                      "(%s)",
+                args=ad_mission_card_user_info[i]["ad_mission_card_user_id"]
+            )
         db.execute(
             query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
             args=[kwargs['status'], ad_user_apply_id]
