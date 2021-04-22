@@ -10,48 +10,95 @@ BASE_IMAGE_LOCATION_BACK = "/CashCar/appConfig/static/image/adverting"
 
 
 # Admin 광고등록하기
-# def admin_ad_register():
-
-
-# 광고 등록 / (현재 이미지는 미정 2021-04-13 ) title_image 의 첫번째는 무조건 썸네일 이미지가 된다.
-def register(image_dict, **kwargs):
+def admin_ad_register(other_images, ad_images, **kwargs):
     db = Database()
     sql = "INSERT INTO ad_information " \
-          "(title, recruit_start_date, recruit_end_date, activity_period, " \
-          "max_recruiting_count, total_point, day_point, area, description) " \
-          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+          "(owner_name, title, recruit_start_date, recruit_end_date, " \
+          "activity_period, max_recruiting_count, " \
+          "total_point, day_point, area, description, min_distance, gender, " \
+          "min_age_group, max_age_group, side_length, side_width, back_length, back_width) " \
+          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
     kwargs['recruit_start_date'] = kwargs['recruit_start_date'] + " 00:00:00"
     kwargs['recruit_end_date'] = kwargs['recruit_end_date'] + " 23:59:59"
 
-    value_list = [kwargs['title'], kwargs['recruit_start_date'],
-                  kwargs['recruit_end_date'], kwargs['activity_period'],
-                  kwargs['max_recruiting_count'], kwargs['total_point'],
-                  int(kwargs['total_point']) // int(kwargs['activity_period']),
-                  kwargs['area'], kwargs['description']
+    value_list = [kwargs['owner_name'], kwargs['title'], kwargs['recruit_start_date'],
+                  kwargs['recruit_end_date'], kwargs['activity_period'], kwargs['max_recruiting_count'],
+                  kwargs['total_point'], int(kwargs['total_point']) // int(kwargs['activity_period']),
+                  kwargs['area'], kwargs['description'], kwargs['min_distance'], kwargs['gender'],
+                  kwargs['min_age_group'], kwargs['max_age_group'], kwargs['side_length'], kwargs['side_width'],
+                  kwargs['back_length'], kwargs['back_width']
                   ]
 
     db.execute(query=sql, args=value_list)
     db.commit()
-
     register_id = db.executeOne(query="SELECT ad_id FROM ad_information ORDER BY register_time DESC LIMIT 1")
     if register_id:
         save_to_db_dict = {}
+        save_to_db_list = []
         directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
         os.makedirs(directory, exist_ok=True)
-        # 서버에서는 Cashcar라는 directory 안에 있기때문에 추가
-        for key, val in image_dict.items():
-            # save_db = BASE_IMAGE_LOCATION_BACK + "/" + secure_filename(val.filename)
+
+        for key, val in other_images.items():
             val.save(directory + "/" + secure_filename(val.filename))
             save_to_db_dict.setdefault(key, f"/adverting/{register_id['ad_id']}/" + secure_filename(val.filename))
 
+        for image in ad_images:
+            image.save(directory + "/" + secure_filename(image.filename))
+            value = f"/adverting/{register_id['ad_id']}/{secure_filename(image.filename)}"
+            save_to_db_list.append(value)
+
         db.execute(
-            query="UPDATE ad_information SET title_image = %s, logo_image = %s WHERE ad_id = %s",
-            args=[save_to_db_dict.get('title_image'), save_to_db_dict.get('logo_image'), register_id['ad_id']]
+            query="UPDATE ad_information "
+                  "SET thumnail_image = %s, side_image = %s, back_image = %s, images = %s "
+                  "WHERE ad_id = %s",
+            args=[save_to_db_dict['thumbnail_image'],
+                  save_to_db_dict['side_image'],
+                  save_to_db_dict['back_image'],
+                  ' '.join(save_to_db_list), register_id['ad_id']
+                  ]
         )
         db.commit()
         return True
     else:
         return False
+
+
+# 어드민 광고 리스트 (query string)
+def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by, sort):
+    db = Database()
+    status = {"correct_category": True}
+    category_value = ""
+    if category == "ongoing":
+        category_value = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
+    elif category == "scheduled":
+        category_value = "recruit_start_date > NOW()"
+    elif category == "done":
+        category_value = "recruit_end_date < NOW() OR recruiting_count = max_recruiting_count"
+    else:
+        status["correct_category"] = False
+
+    # 포인트가 최솟값보다 크고 최대값보다 작은 데이터
+    where_point = f"(total_point >= {avg_point[0]} AND total_point <= {avg_point[1]})"
+    where_area = f"area LIKE '%{area}%'"
+    where_gender = f"gender IN ({gender})"
+    where_distance = f"min_distance >= {distance}"
+    where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
+    where_recruit_date = f"(recruit_start_date >= {recruit_start} AND recruit_end_date <= {recruit_end})"
+
+    sql = "SELECT ad_id, owner_name, title, thumnail_image, images, " \
+          "recruit_start_date, recruit_end_date, activity_period, " \
+          "max_recruiting_count, recruiting_count, total_point, " \
+          "day_point, area, description, gender, min_distance, min_age_group, " \
+          "max_age_group, side_image, back_image, side_length, side_width, " \
+          "back_length, back_width, register_time FROM ad_information " \
+          f"WHERE {category_value} AND {where_point} " \
+          f"AND {where_area} AND {where_gender} " \
+          f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort}"
+    print(sql)
+    result = db.executeAll(query=sql)
+    return result
+
 
 
 # 광고 리스트 (parameter query_string)
@@ -71,7 +118,7 @@ def get_all_by_category_ad_list(page, category):
     else:
         status["correct_category"] = False
 
-    sql = "SELECT ad_id, title, title_image, " \
+    sql = "SELECT ad_id, title, thumnail_image, " \
           "max_recruiting_count, recruiting_count, total_point, area," \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \

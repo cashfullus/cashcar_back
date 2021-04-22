@@ -279,33 +279,6 @@ def vehicle_get():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
-# 광고 등록 (Admin에서 해야할 일)
-# 등록된 광고 리스트 (ad_information_list)
-# 광고 신청 (GET, POST) (차량 정보 및 배송지)
-@app.route('/admin/ad/register', methods=['POST'])
-@swag_from('route_yml/admin/advertisement_register.yml')
-def ad_register():
-    title_image = request.files.get('title_image')
-    logo_image = request.files.get('logo_image')
-    # Allowed 를 위한 리스트
-    image_list = {
-        "title_image": title_image,
-        "logo_image": logo_image
-    }
-    # 결과
-    allowed_result = allowed_image_for_dict(image_list)
-    # 만약 사진 전부 허용된다면
-    if False not in allowed_result:
-        data = request.form
-        result = AD.register(image_dict=image_list, **data)
-        if result:
-            return jsonify({"status": True, "data": result}), 200
-        else:
-            return jsonify({"status": False, "data": "Not Found"}), 404
-    else:
-        return jsonify({"status": False, "data": "Not Allowed File"}), 405
-
-
 # 광고 리스트 (진행중="ongoing", 예정="scheduled", 완료="done")
 @app.route("/ad/list")
 @jwt_required()
@@ -361,7 +334,8 @@ def ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             status = AD.ad_apply(user_id=user_id, ad_id=ad_id, **data)
-            if status["user_information"] is False or status["ad_information"] is False or status["already_apply"] is False:
+            if status["user_information"] is False or status["ad_information"] is False or status[
+                "already_apply"] is False:
                 return jsonify({"status": False, "data": status}), 404
             else:
                 return jsonify({"status": True, "data": status}), 200
@@ -394,7 +368,8 @@ def ad_mission_apply_with_list():
                          }
         ad_mission_card_user_id = request.args.get('ad_mission_card_user_id')
         # ad_mission_card_user 테이블의 id와 해당 미션 Id에 맞는 미션타입 조회
-        amcu_id_and_mission_type = Mission.get_mission_type_idx_by_stand_by(ad_mission_card_user_id=ad_mission_card_user_id)
+        amcu_id_and_mission_type = Mission.get_mission_type_idx_by_stand_by(
+            ad_mission_card_user_id=ad_mission_card_user_id)
         if not amcu_id_and_mission_type:
             result_status["mission_data"] = False
             return jsonify({"status": False, "data": result_status})
@@ -477,6 +452,82 @@ def home_my_ad():
         return jsonify({"status": False, "data": "Not Allowed Method"}), 405
 
 
+########### ADMIN ############
+# 이미지 (썸네일, 스티커 이미지, 광고 이미지)
+@app.route('/admin/adverting/register', methods=['POST'])
+def admin_adverting_register():
+    side_image = request.files.get('side_image')
+    back_image = request.files.get('back_image')
+    thumbnail_image = request.files.get('thumbnail_image')
+    # 기타 사진들
+    images = request.files.getlist('ad_images')
+    # 썸네일, 좌측, 후면 사진
+    image_dict = {
+        "side_image": side_image,
+        "back_image": back_image,
+        "thumbnail_image": thumbnail_image
+    }
+
+    allowed_ad_images = allowed_files(images)
+    allowed_other_images = allowed_image_for_dict(image_dict)
+    if False not in allowed_ad_images and allowed_other_images is not False:
+        # eval 의 사용이유는 getlist 로 데이터를 가져올 경우 ['{}'] 인 스트링 형태로 데이터가 들어오기 때문에 강제로 여러개의 프로퍼티 값으로 변환
+        # 클라이언트와 데이터의 형식을 맞춰 사용할 경우 위험성은 없어보임.
+        data = {
+            'title': request.form.get('title'),
+            'owner_name': request.form.get('owner_name'),
+            'description': request.form.get('description'),
+            'total_point': request.form.get('total_point'),
+            'activity_period': request.form.get('activity_period'),
+            'recruit_start_date': request.form.get('recruit_start_date'),
+            'recruit_end_date': request.form.get('recruit_end_date'),
+            'max_recruiting_count': request.form.get('max_recruiting_count'),
+            'area': request.form.get('area'),
+            'gender': request.form.get('gender'),
+            'min_age_group': request.form.get('min_age_group', 0),
+            'max_age_group': request.form.get('max_age_group', 200),
+            'min_distance': request.form.get('min_distance'),
+            'side_length': request.form.get('side_length'),
+            'side_width': request.form.get('side_width'),
+            'back_length': request.form.get('back_length'),
+            'back_width': request.form.get('back_width'),
+            'default_mission_items': [eval(item) for item in request.form.getlist('default_mission_items')],
+            'additional_mission_items': [eval(item) for item in request.form.getlist('additional_mission_items')]
+        }
+        result = AD.admin_ad_register(other_images=image_dict, ad_images=images, **data)
+        if result:
+            return jsonify({"data": {"allowed_image": True, "success": True}})
+        else:
+            return jsonify({"data": {"allowed_image": True, "success": False}})
+    else:
+        return jsonify({"data": {"allowed_image": False, "success": False}})
+
+
+# 어드민 광고 리스트
+@app.route('/admin/ad/list')
+def admin_ad_list():
+    category = request.args.get('category')
+    point = request.args.get('point', '0~200000')
+    area = request.args.get('area', '')
+    gender = request.args.get('gender', '0')
+    age = request.args.get('age', '0~200')
+    distance = request.args.get('distance', '0')
+    recruit_start_date = request.args.get('recruit_start', '0000-00-00 00:00:00')
+    recruit_end_date = request.args.get('recruit_end', '9999-99-99 00:00:00')
+    order_by = request.args.get('order_by', 'ad_id')
+    sort = request.args.get('sort', 'ASC')
+    avg_point = point.split('~')
+    avg_age = age.split('~')
+    result = AD.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area, gender=gender,
+                                         avg_age=avg_age, distance=distance, recruit_start=recruit_start_date,
+                                         recruit_end = recruit_end_date, order_by=order_by, sort=sort
+                                         )
+
+    return jsonify({"data": result})
+
+
+
+
 # 광고신청 리스트
 @app.route("/admin/ad/apply/list")
 @swag_from('route_yml/admin/advertisement_user_apply_list.yml')
@@ -512,54 +563,3 @@ def admin_ad_apply():
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
-
-
-# mission_type  (0 = required, 1 = additional)
-# @app.route('/admin/mission/card/register', methods=["POST"])
-# @swag_from('route_yml/admin/mission_card_register.yml')
-# def mission_card_register():
-#     try:
-#         data = request.get_json()
-#         result = Mission.register(**data)
-#         return jsonify({"status": True, "data": result}), 200
-#     except TypeError:
-#         return jsonify({"status": False, "data": "Data Not Null"}), 404
-#
-#
-# # 미션카드 광고에 배정 ex) ad_id=1 mission_id=1, ad_id=1 mission_id=2
-# @app.route("/admin/mission/advertisement", methods=["POST"])
-# @swag_from('route_yml/admin/mission_advertisement_assign.yml')
-# def mission_to_advertisement():
-#     try:
-#         data = request.get_json()
-#         result = Mission.mission_assign_advertisement(**data)
-#         return jsonify({"status": True, "data": result}), 200
-#     except TypeError:
-#         return jsonify({"status": False, "data": "Data Not Null"}), 404
-
-
-# stand_by 대기중, review 검토중, success 미션성공, fail 미션실패,  authenticate 인증하기
-@app.route("/admin/mission/image", methods=["POST"])
-def mission_image():
-    side_image = request.files.get('side_image')
-    back_image = request.files.get('back_image')
-
-    # Allowed 를 위한 리스트
-    image_list = {
-        "side_image": side_image,
-        "back_image": back_image
-    }
-    # 결과
-    allowed_result = allowed_image_for_dict(image_list)
-    if False not in allowed_result:
-        result = Mission.mission_save_images(image_list)
-        return jsonify({"status": True, "data": result}), 200
-    else:
-        return jsonify({"status": False, "data": "Not Allowed File"}), 405
-
-
-
-
-
-
-
