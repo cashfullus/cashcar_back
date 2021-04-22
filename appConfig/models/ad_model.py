@@ -147,7 +147,7 @@ def get_information_for_ad_apply(user_id, ad_id):
     db = Database()
     status = {"ad_information": True, "user_information": True}
     ad_information = db.executeOne(
-        query="SELECT ad_id, logo_image, title, total_point "
+        query="SELECT ad_id, thumbnail_image, title, total_point "
               "FROM ad_information WHERE ad_id = %s",
         args=ad_id
     )

@@ -30,9 +30,9 @@ responses:
             ad_id:
               type: integer
               description: 광고 ID
-            logo_image:
+            thumbnail_image:
               type: string
-              description: 로고 이미지
+              description: 썸네일 이미지
             title:
               type: string
               description: 타이틀
