@@ -118,7 +118,7 @@ def get_all_by_category_ad_list(page, category):
     else:
         status["correct_category"] = False
 
-    sql = "SELECT ad_id, title, thumnail_image, " \
+    sql = "SELECT ad_id, title, thumbnail_image, " \
           "max_recruiting_count, recruiting_count, total_point, area," \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \
