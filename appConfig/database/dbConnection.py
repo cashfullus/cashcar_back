@@ -159,7 +159,7 @@ class Database:
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
-              "title, logo_image, amcu.status as mission_status, amcu.mission_type as mission_type " \
+              "title, thumbnail_image, amcu.status as mission_status, amcu.mission_type as mission_type " \
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
