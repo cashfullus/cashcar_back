@@ -50,14 +50,19 @@ def admin_ad_register(other_images, ad_images, **kwargs):
 
         db.execute(
             query="UPDATE ad_information "
-                  "SET thumnail_image = %s, side_image = %s, back_image = %s, images = %s "
+                  "SET thumbnail_image = %s, side_image = %s, back_image = %s "
                   "WHERE ad_id = %s",
             args=[save_to_db_dict['thumbnail_image'],
                   save_to_db_dict['side_image'],
                   save_to_db_dict['back_image'],
-                  ' '.join(save_to_db_list), register_id['ad_id']
+                  register_id['ad_id']
                   ]
         )
+        for i in range(len(save_to_db_list)):
+            db.execute(
+                query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
+                args=[register_id['ad_id'], save_to_db_list[i]]
+            )
         db.commit()
         return True
     else:
@@ -86,7 +91,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
     where_recruit_date = f"(recruit_start_date >= {recruit_start} AND recruit_end_date <= {recruit_end})"
 
-    sql = "SELECT ad_id, owner_name, title, thumnail_image, images, " \
+    sql = "SELECT ad_id, owner_name, title, thumbnail_image, " \
           "recruit_start_date, recruit_end_date, activity_period, " \
           "max_recruiting_count, recruiting_count, total_point, " \
           "day_point, area, description, gender, min_distance, min_age_group, " \
@@ -98,7 +103,6 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
     print(sql)
     result = db.executeAll(query=sql)
     return result
-
 
 
 # 광고 리스트 (parameter query_string)
@@ -133,6 +137,8 @@ def get_all_by_category_ad_list(page, category):
 def get_ad_information_by_id(ad_id):
     db = Database()
     result = db.getOneAdByAdId(ad_id)
+    ad_image = db.getAllAdImageById(ad_id=ad_id)
+    result["images"] = ad_image
     return result
 
 
