@@ -76,7 +76,9 @@ class Database:
     # 광고 디테일 By ad_id
     def getOneAdByAdId(self, ad_id):
         sql = "SELECT " \
-              "ad_id, title, title_image, logo_image, " \
+              "ad_id, title, thumbnail_image, min_distance, " \
+              "side_image, side_length, side_width, " \
+              "back_image, back_length, back_width, " \
               "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
               "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
               "activity_period, max_recruiting_count, recruiting_count, " \
@@ -86,10 +88,19 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    # 광고 이미지 전체
+    def getAllAdImageById(self, ad_id):
+        sql = "SELECT image FROM ad_images WHERE ad_id = %s"
+        self.cursor.execute(query=sql, args=ad_id)
+        rows = self.cursor.fetchall()
+        return rows
+
     # 광고 신청할때 사용 by ad_id
     def getOneAdApplyByAdId(self, ad_id):
         sql = "SELECT " \
-              "ad_id, title, title_image, logo_image, " \
+              "ad_id, title, thumbnail_image, " \
+              "side_image, side_length, side_width, " \
+              "back_image, back_length, back_width, " \
               "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
               "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
               "activity_period, max_recruiting_count, recruiting_count, " \

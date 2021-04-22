@@ -23,43 +23,34 @@ responses:
     schema:
       type: array
       items:
-        ad_id: 1
-        area: 서울/경기
-        title: "String"
-        title_image: "String"
-        max_recruiting_count: 1
-        recruit_count: 1
-        recruit_start_date: "String"
-        recruit_end_date: "String"
-        total_point: 100000
         properties:
           ad_id:
             type: integer
-            description: 광고 ID
+            description: 광고ID
           area:
-            type: String
-            description: 활동지역
-          title:
             type: string
-            description: 광고 제목
-          title_image:
-            type: integer
-            description: 광고 메인 이미지
+            description: 지역
           max_recruiting_count:
             type: integer
-            description: 최대 신청인원
-          recruiting_count:
-            type: integer
-            description: 현재 신청인원
-          recruit_start_date:
+            description: 모집인원
+          thumbnail_image:
             type: string
-            description: 모집 시작 날짜
-          recruit_end_date:
+            description: 썸네일 이미지
+          title:
             type: string
-            description: 모집 마감 날짜
+            description: 타이틀
           total_point:
             type: integer
-            description: 총 포인트
+            description: 총 지급 포인트
+          recruiting_start_date:
+            type: string
+            description: 모집시작일시
+          recruiting_end_date:
+            type: string
+            description: 모집마지막일시
+          recruiting_count:
+            type: integer
+            description: 현재 모집인원
 
   405:
     description: 허용되지않은 카테고리 요청
