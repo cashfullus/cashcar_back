@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/mission"
-
+MISSION_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/mission"
 
 # 미션 데이터 정보
 def get_mission_type_idx_by_stand_by(ad_mission_card_user_id):
@@ -31,7 +31,7 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
     # 필수미션 인증하기
     for key, val in image_dict.items():
         val.save(directory + "/" + secure_filename(val.filename))
-        save_to_db_dict.setdefault(key, f"/mission/{ad_mission_card_id}/" + secure_filename(val.filename))
+        save_to_db_dict.setdefault(key, f"{MISSION_IMAGE_HOST}/{ad_mission_card_id}/" + secure_filename(val.filename))
 
     # 미션 타입에 따른 db저장
     if mission_type == 0:
