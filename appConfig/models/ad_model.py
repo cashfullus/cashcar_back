@@ -7,6 +7,7 @@ import os
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/CashCar/appConfig/static/image/adverting"
+AD_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
 # Admin 광고등록하기
@@ -41,11 +42,11 @@ def admin_ad_register(other_images, ad_images, **kwargs):
 
         for key, val in other_images.items():
             val.save(directory + "/" + secure_filename(val.filename))
-            save_to_db_dict.setdefault(key, f"/adverting/{register_id['ad_id']}/" + secure_filename(val.filename))
+            save_to_db_dict.setdefault(key, f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(val.filename))
 
         for image in ad_images:
             image.save(directory + "/" + secure_filename(image.filename))
-            value = f"/adverting/{register_id['ad_id']}/{secure_filename(image.filename)}"
+            value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
             save_to_db_list.append(value)
 
         db.execute(
@@ -63,6 +64,30 @@ def admin_ad_register(other_images, ad_images, **kwargs):
                 query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
                 args=[register_id['ad_id'], save_to_db_list[i]]
             )
+
+        default_mission_items = kwargs['default_mission_items']
+        additional_mission_items = kwargs['additional_mission_items']
+
+        if default_mission_items[0]:
+            for item in default_mission_items[0]:
+                db.execute(
+                    query="INSERT INTO ad_mission_card (ad_id, mission_type, due_date, `order`) "
+                          "VALUES (%s, %s, %s, %s)",
+                    args=[register_id['ad_id'], item['mission_type'],
+                          item['due_date'], item['order']]
+                )
+
+        if additional_mission_items[0]:
+            for item in additional_mission_items[0]:
+                db.execute(
+                    query="INSERT INTO ad_mission_card "
+                          "(ad_id, mission_type, mission_name, additional_point, due_date, from_default_order) "
+                          "VALUES (%s, %s, %s, %s, %s, %s)",
+                    args=[register_id['ad_id'], item['mission_type'],
+                          item["mission_name"], item["additional_point"],
+                          item["due_date"], item["from_default_order"]
+                          ]
+                )
         db.commit()
         return True
     else:
@@ -70,7 +95,8 @@ def admin_ad_register(other_images, ad_images, **kwargs):
 
 
 # 어드민 광고 리스트 (query string)
-def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by, sort):
+def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
+                             sort):
     db = Database()
     status = {"correct_category": True}
     category_value = ""
