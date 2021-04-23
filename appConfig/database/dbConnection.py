@@ -152,6 +152,17 @@ class Database:
         rows = self.cursor.fetchall()
         return rows
 
+    def getAllAdMissionCardInfoByAcceptApply(self, ad_user_apply_id):
+        sql = "SELECT ad_mission_card_id, mission_type, mission_name, " \
+              "additional_point, due_date, `order`, from_default_order, " \
+              "from_default_order_date, based_on_activity_period " \
+              "FROM ad_user_apply as aua " \
+              "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id " \
+              "WHERE ad_user_apply_id = %s ORDER BY mission_type, `order`"
+        self.cursor.execute(query=sql, args=ad_user_apply_id)
+        rows = self.cursor.fetchall()
+        return rows
+
     def getMainMyAd(self, user_id):
         sql = "SELECT " \
               "aua.ad_user_apply_id as ad_user_apply_id, user_id, aua.ad_id as ad_id, aua.status as apply_status, " \
@@ -163,7 +174,8 @@ class Database:
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
-              "WHERE user_id = %s AND amcu.status != 'success' ORDER BY ad_mission_card_id LIMIT 1"
+              "WHERE user_id = %s AND (amcu.status NOT IN ('success') or amcu.status IS NULL) " \
+              "ORDER BY ad_mission_card_id LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
         return row

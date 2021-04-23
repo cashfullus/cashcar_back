@@ -11,7 +11,8 @@ from .models import (
     user_model as User,
     vehicle_model as Vehicle,
     ad_model as AD,
-    mission_model as Mission
+    mission_model as Mission,
+    admin_model as Admin
 )
 import os
 import logging
@@ -58,6 +59,7 @@ def allowed_image(image):
 
 # 토큰 인증 실패시 return 하는 response 의 중복적인 사용으로 인해 return 변수를 저장해서 쓰는게 낫다고 생각함.
 Unauthorized = {"status": False, "data": "Unauthorized"}
+Forbidden = {"status": False, "data": "Forbidden"}
 
 
 @app.route('/image/<location>/<idx>/<image_file>')
@@ -453,9 +455,33 @@ def home_my_ad():
 
 
 ########### ADMIN ############
+@app.route('/admin/user/register', methods=['POST'])
+def admin_user_register():
+    data = request.get_json()
+    result = Admin.register(**data)
+    return jsonify(result)
+
+
+@app.route('/admin/user/login', methods=['POST'])
+def admin_user_login():
+    data = request.get_json()
+    result = Admin.login(**data)
+    return jsonify(result)
+
+
 # 이미지 (썸네일, 스티커 이미지, 광고 이미지)
 @app.route('/admin/adverting/register', methods=['POST'])
+@jwt_required()
 def admin_adverting_register():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    if int(admin_user_id) != identity_:
+        return jsonify(Unauthorized), 401
+    # 권한 확인
+    allowed_user = Admin.allowed_in_role_user(admin_user_id)
+    if not allowed_user:
+        return jsonify(Forbidden), 403
+
     side_image = request.files.get('side_image')
     back_image = request.files.get('back_image')
     thumbnail_image = request.files.get('thumbnail_image')
@@ -485,8 +511,8 @@ def admin_adverting_register():
             'area': request.form.get('area'),
             'gender': request.form.get('gender'),
             'min_age_group': request.form.get('min_age_group', 0),
-            'max_age_group': request.form.get('max_age_group', 200),
-            'min_distance': request.form.get('min_distance'),
+            'max_age_group': request.form.get('max_age_group', 0),
+            'min_distance': request.form.get('min_distance', 0),
             'side_length': request.form.get('side_length'),
             'side_width': request.form.get('side_width'),
             'back_length': request.form.get('back_length'),
@@ -520,12 +546,10 @@ def admin_ad_list():
     avg_age = age.split('~')
     result = AD.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area, gender=gender,
                                          avg_age=avg_age, distance=distance, recruit_start=recruit_start_date,
-                                         recruit_end = recruit_end_date, order_by=order_by, sort=sort
+                                         recruit_end=recruit_end_date, order_by=order_by, sort=sort
                                          )
 
     return jsonify({"data": result})
-
-
 
 
 # 광고신청 리스트
@@ -555,10 +579,7 @@ def admin_ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             result = AD.update_ad_apply_status(ad_user_apply_id=ad_user_apply_id, **data)
-            if result["rejected"] is True and result["accept"] is True:
-                return jsonify({"status": True, "data": result}), 200
-            else:
-                return jsonify({"status": False, "Data": result}), 404
+            return jsonify(result)
         else:
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:

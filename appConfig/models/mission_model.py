@@ -32,7 +32,6 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
     for key, val in image_dict.items():
         val.save(directory + "/" + secure_filename(val.filename))
         save_to_db_dict.setdefault(key, f"{MISSION_IMAGE_HOST}/{ad_mission_card_id}/" + secure_filename(val.filename))
-
     # 미션 타입에 따른 db저장
     if mission_type == 0:
         db.execute(
