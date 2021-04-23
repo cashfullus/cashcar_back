@@ -71,10 +71,11 @@ def admin_ad_register(other_images, ad_images, **kwargs):
         if default_mission_items[0]:
             for item in default_mission_items[0]:
                 db.execute(
-                    query="INSERT INTO ad_mission_card (ad_id, mission_type, due_date, `order`) "
-                          "VALUES (%s, %s, %s, %s)",
+                    query="INSERT INTO ad_mission_card "
+                          "(ad_id, mission_type, due_date, `order`, based_on_activity_period) "
+                          "VALUES (%s, %s, %s, %s, %s)",
                     args=[register_id['ad_id'], item['mission_type'],
-                          item['due_date'], item['order']]
+                          item['due_date'], item['order'], item['based_on_activity_period']]
                 )
 
         if additional_mission_items[0]:
@@ -96,8 +97,10 @@ def admin_ad_register(other_images, ad_images, **kwargs):
 
 # 어드민 광고 리스트 (query string)
 def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
-                             sort):
+                             sort, page):
     db = Database()
+    per_page = (page - 1) * 20
+    start_at = per_page + 20
     status = {"correct_category": True}
     category_value = ""
     if category == "ongoing":
@@ -125,9 +128,9 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           "back_length, back_width, register_time FROM ad_information " \
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
-          f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort}"
+          f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
     print(sql)
-    result = db.executeAll(query=sql)
+    result = db.executeAll(query=sql, args=[start_at, per_page])
     return result
 
 
@@ -285,6 +288,7 @@ def get_ongoing_user_by_id(user_id):
     elif not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0
+        ad_information["mission_type"] = 0
         return result
     elif ad_information["mission_status"]:
         return result
@@ -318,15 +322,10 @@ def cancel_apply_user(ad_user_apply_id):
     return status
 
 
-# 신청한 광고 status 업데이트
-# 먼저 광고와 연결된 미션 을 전부 return
-# 그 해당 미션에 대해 미션하기를 누를시 데이터 생성
-# 미션을 광고 등록시에 설정하기때문에 미션카드라는 테이블을 나눌필요 없이 광고와 미션카드를 1대다로 만들어주는 테이블을 만들면 된다.
-# 승인시 flow (default = stand_by(승인 대기중) -> accept(승인) -> during_delivery(배송중) -> delivery_completed(배송완료)
-# 거절시 flow (default = stand_by(승인 대기중) -> reject(거절)
+# 광고 status 변경
 def update_ad_apply_status(ad_user_apply_id, **kwargs):
     db = Database()
-    apply_information = {"rejected": True, "accept": True}
+    apply_information = {"rejected": True, "accept": True, "mission_data": True}
     apply_status = db.getOneApplyStatus(ad_user_apply_id=ad_user_apply_id)
     if apply_status["status"] == "reject" and kwargs["status"] == "reject":
         apply_information["rejected"] = False
@@ -348,31 +347,51 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
             )
 
         elif kwargs["status"] == "accept":
-            ad_mission_card_info = db.getAdMissionCardIdxByAcceptApply(ad_user_apply_id=ad_user_apply_id)
-            # 수락후 미션 생성
-            for i in range(len(ad_mission_card_info)):
-                if i == 0:
-                    first_start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    first_end_date = date.today() + timedelta(days=ad_mission_card_info[i]["due_date"])
-                    db.execute(
-                        query="INSERT INTO "
-                              "ad_mission_card_user "
-                              "(ad_user_apply_id, ad_mission_card_id, mission_type, status, "
-                              "mission_start_date, mission_end_date, register_time) "
-                              "VALUES (%s, %s, %s, %s, %s, %s, NOW())",
-                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"],
-                              ad_mission_card_info[i]["mission_type"], "ongoing",
-                              first_start_date, first_end_date.strftime('%Y-%m-%d 23:59:59')]
-                    )
-                else:
-                    db.execute(
-                        query="INSERT INTO "
-                              "ad_mission_card_user "
-                              "(ad_user_apply_id, ad_mission_card_id, mission_type, register_time) "
-                              "VALUES (%s, %s, %s, NOW())",
-                        args=[ad_user_apply_id, ad_mission_card_info[i]["ad_mission_card_id"],
-                              ad_mission_card_info[i]["mission_type"]]
-                    )
+            mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=ad_user_apply_id)
+            if mission_items:
+                for mission in mission_items:
+                    first_start_date = date.today() + timedelta(days=2)
+                    # 필수미션 1회차 일 경우
+                    if mission["order"] == 1 and mission["mission_type"] == 0:
+                        first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))
+                        print(mission)
+                        db.execute(
+                            query="INSERT INTO ad_mission_card_user "
+                                  "(ad_user_apply_id, ad_mission_card_id, "
+                                  "mission_type, status, mission_start_date, mission_end_date) "
+                                  "VALUES (%s, %s, %s, %s, %s, %s)",
+                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
+                                  "ongoing", first_start_date.strftime('%Y-%m-%d 00:00:00'),
+                                  first_end_date.strftime('%Y-%m-%d 23:59:59')]
+                        )
+                    # 필수미션 n회차 일 경우 (1제외)
+                    elif mission["order"] != 1 and mission["mission_type"] == 0:
+                        start_date = first_start_date + timedelta(days=mission["based_on_activity_period"])
+                        end_date = start_date + timedelta(days=mission["due_date"])
+                        db.execute(
+                            query="INSERT INTO ad_mission_card_user "
+                                  "(ad_user_apply_id, ad_mission_card_id, "
+                                  "mission_type, status, mission_start_date, mission_end_date) "
+                                  "VALUES (%s, %s, %s, %s, %s, %s)",
+                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
+                                  "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'),
+                                  end_date.strftime('%Y-%m-%d 23:59:59')]
+                        )
+                    # 선택미션 일 경우(우선 활동시작 기간이 필수미션 1회 완료 후 이기때문에 0000-00-00 으로 (필수미션1회 후 시간정해짐)
+                    else:
+                        db.execute(
+                            query="INSERT INTO ad_mission_card_user "
+                                  "(ad_user_apply_id, ad_mission_card_id, "
+                                  "mission_type, status) "
+                                  "VALUES (%s, %s, %s, %s)",
+                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
+                                  "stand_by", ]
+                        )
+                db.commit()
+        else:
+            apply_information["mission_data"] = False
+            return apply_information
+
         ad_mission_card_user_info = db.executeAll(
             query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
                   "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
