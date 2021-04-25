@@ -42,6 +42,11 @@ parameters:
     type: String
     required: true
 
+  - name: owner_relationship
+    in: application/json
+    type: String
+    required: true
+
 
 responses:
   201:
@@ -54,7 +59,8 @@ responses:
             "supporters": 0,
             "user_id": 16,
             "vehicle_model_name": "아반떼",
-            "year": 2021
+            "year": 2021,
+            "owner_relationship": "본인"
         }}}
 
   400:
