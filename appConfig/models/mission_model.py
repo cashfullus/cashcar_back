@@ -15,12 +15,6 @@ def get_mission_type_idx_by_stand_by(ad_mission_card_user_id):
     )
     return amcu_id_and_mission_type
 
-# def get_mission_type_idx_by_review(ad_mission_card_user_id):
-#     db = Database()
-#     amcu_information = db.executeOne(
-#         query="SELECT "
-#     )
-
 
 # 사용자 미션 하기
 def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type, image_dict, travelled_distance):
@@ -63,4 +57,46 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
 
     db.commit()
     return True
+
+
+# 미션 review -> success
+# review -> reject -> re_review -> success or fail
+# register_time, end_date, title, mission_name, name, call_number, mission_status,
+# image
+# 사용자의 미션 인증 신청 리스트
+def admin_review_mission_list():
+    db = Database()
+    result = db.executeAll(
+        query="SELECT "
+              "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
+              "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
+              "aua.ad_user_apply_id, amc.ad_mission_card_id as mission_card_id,"
+              "ai.title, amc.mission_name, u.name, u.call_number, "
+              "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance "
+              "FROM ad_mission_card_user as amcu "
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+              "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
+              "WHERE amcu.status = 'review' OR amcu.status = 're_review'"
+    )
+    return result
+
+
+# 사용자 미션 인증 신청에서 디테일 미션 리스트
+def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
+    db = Database()
+    result = db.executeAll(
+        query="SELECT "
+              "amcu.status, amc.mission_name, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance "
+              "FROM ad_mission_card_user as amcu "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+              "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+              "WHERE amc.ad_mission_card_id NOT IN (%s) AND aua.ad_user_apply_id = %s",
+        args=[ad_mission_card_id, ad_user_apply_id]
+    )
+    return result
+
 

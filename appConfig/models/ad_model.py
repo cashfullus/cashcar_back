@@ -70,11 +70,12 @@ def admin_ad_register(other_images, ad_images, **kwargs):
 
         if default_mission_items[0]:
             for item in default_mission_items[0]:
+                mission_name = f"{item['order']}차 필수미션"
                 db.execute(
                     query="INSERT INTO ad_mission_card "
-                          "(ad_id, mission_type, due_date, `order`, based_on_activity_period) "
-                          "VALUES (%s, %s, %s, %s, %s)",
-                    args=[register_id['ad_id'], item['mission_type'],
+                          "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
+                          "VALUES (%s, %s, %s, %s, %s, %s)",
+                    args=[register_id['ad_id'], item['mission_type'], mission_name,
                           item['due_date'], item['order'], item['based_on_activity_period']]
                 )
 

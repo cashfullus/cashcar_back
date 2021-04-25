@@ -26,6 +26,7 @@ responses:
         brand: "A"
         year: 2021
         car_number: "11 가 1111"
+        owner_relationship: "본인"
         register_time: "YYYY-MM-DD hh:mm:ss"
         remove_time: "YYYY-MM-DD hh:mm:ss"
         removed: 0
@@ -54,6 +55,9 @@ responses:
           car_number:
             type: string
             description: 차량번호
+          owner_relationship:
+            type: string
+            description: 소유자 관계
           register_time:
             type: string
             description: 생성날짜

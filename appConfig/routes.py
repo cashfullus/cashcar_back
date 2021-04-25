@@ -584,3 +584,28 @@ def admin_ad_apply():
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
+# 사용자 미션 인증 요청 리스트
+@app.route('/admin/mission/list')
+def admin_mission_list():
+    result = Mission.admin_review_mission_list()
+    return jsonify({"data": result})
+
+
+# 사용자 미션 인증 요청 리스트에서 해당 사용자의 모든 미션 리스트를 볼수있는 데이터
+@app.route('/admin/mission/all/list')
+def admin_mission_list_by_user():
+    ad_user_apply_id = request.args.get('ad_user_apply_id')
+    mission_card_id = request.args.get('mission_card_id')
+    result = Mission.admin_review_detail_mission_list(
+        ad_user_apply_id=ad_user_apply_id,
+        ad_mission_card_id=mission_card_id
+    )
+    return jsonify({"data": result})
+
+
+
+
+
+

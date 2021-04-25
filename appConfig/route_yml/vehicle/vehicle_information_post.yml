@@ -47,6 +47,11 @@ parameters:
     type: String
     required: true
 
+  - name: owner_relationship
+    in: application/json
+    type: String
+    required: true
+
 responses:
   200:
     description: 업데이트 성공
