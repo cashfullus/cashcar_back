@@ -1,4 +1,5 @@
 import bcrypt
+from werkzeug.utils import secure_filename
 
 # Mysql 데이터베이스
 from ..database.dbConnection import Database
@@ -10,7 +11,8 @@ import datetime
 import re
 import os
 
-
+BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/user"
+PROFILE_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/user"
 
 # 이메일 형태 정규식 사용하여 검사
 def check_email_regex(email):
@@ -128,7 +130,8 @@ def get_user_profile(user_id):
             'gender': user['resident_registration_number_back'],
             'date_of_birth': user['resident_registration_number_front'],
             'alarm': user['alarm'],
-            'marketing': user['marketing']
+            'marketing': user['marketing'],
+            'profile_image': user['profile_image']
         }
         return result
 
@@ -136,24 +139,44 @@ def get_user_profile(user_id):
         return False
 
 
-def update_user_profile(user_id, **kwargs):
+def update_user_profile(user_id, profile_image=None, **kwargs):
     db = Database()
     user = db.getUserById(user_id=int(user_id))
     if user:
-        sql = "UPDATE user SET " \
-              "nickname = %s, email = %s, name = %s, " \
-              "call_number = %s, " \
-              "resident_registration_number_back = %s, " \
-              "resident_registration_number_front = %s, " \
-              "alarm = %s, " \
-              "marketing = %s WHERE user_id = %s"
-        value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
-                      kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
-                      kwargs['alarm'], kwargs['marketing'], int(user_id)
-                      ]
-        db.execute(query=sql, args=value_list)
-        db.commit()
-        return True
+        if profile_image:
+            directory = f"{BASE_IMAGE_LOCATION}/{user_id}"
+            os.makedirs(directory, exist_ok=True)
+            profile_image.save(directory + "/" + secure_filename(profile_image.filename))
+            save_image = f"{PROFILE_IMAGE_HOST}/{user_id}/{secure_filename(profile_image.filename)}"
+            sql = "UPDATE user SET " \
+                  "nickname = %s, email = %s, name = %s, " \
+                  "call_number = %s, " \
+                  "resident_registration_number_back = %s, " \
+                  "resident_registration_number_front = %s, " \
+                  "alarm = %s, " \
+                  "marketing = %s, profile_image = %s WHERE user_id = %s"
+            value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
+                          kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
+                          kwargs['alarm'], kwargs['marketing'], int(user_id), save_image
+                          ]
+            db.execute(query=sql, args=value_list)
+            db.commit()
+            return True
+        else:
+            sql = "UPDATE user SET " \
+                  "nickname = %s, email = %s, name = %s, " \
+                  "call_number = %s, " \
+                  "resident_registration_number_back = %s, " \
+                  "resident_registration_number_front = %s, " \
+                  "alarm = %s, " \
+                  "marketing = %s WHERE user_id = %s"
+            value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
+                          kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
+                          kwargs['alarm'], kwargs['marketing'], int(user_id)
+                          ]
+            db.execute(query=sql, args=value_list)
+            db.commit()
+            return True
     else:
         return False
 

@@ -26,6 +26,7 @@ responses:
       date_of_birth: "A"
       alarm: 0
       marketing: 1
+      profile_image: "URL"
       properties:
         user_id:
           type: integer
@@ -54,6 +55,9 @@ responses:
         marketing:
           type: integer
           description: 광고 알람 수신 유무
+        profile_image:
+          type: string
+          description: 프로필 이미지 URL
 
   400:
     description: 데이터 형식 실패
