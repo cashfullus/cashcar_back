@@ -20,30 +20,84 @@ responses:
       type: object
       properties:
         data:
-          type: array
-          items:
-            properties:
-              ad_mission_card_id:
-                type: integer
-                description: 미션 ID
-              ad_mission_card_user_id:
-                type: integer
-                description: 미션 종합 ID
-              ad_user_apply_id:
-                type: integer
-                description: 서포터즈 신청 ID
-              mission_type:
-                type: integer
-                description: 미션 종류(0 필수, 1 선택)
-              status:
-                type: string
-                description: 미선 상태
-              mission_start_date:
-                type: string
-                description: 미션 시작 날짜
-              mission_end_date:
-                type: string
-                description: 미션 마지막 날짜
+          properties:
+            images:
+              type: array
+              items:
+                image: "URL"
+                properties:
+                  image:
+                    type: string
+                    description: 이미지 URL
+            mission_information:
+              type: array
+              items:
+                ad_mission_card_id: 0
+                ad_mission_card_user_id: 0
+                ad_user_apply_id: 0
+                activity_start_date: "DATETIME"
+                activity_end_date: "DATETIME"
+                additional_point: 0
+                mission_start_date: "DATETIME"
+                mission_end_date: "DATETIME"
+                mission_name: ""
+                mission_type: 0
+                status: review
+                thumbnail_image: "URL"
+                total_point: 30000
+                properties:
+                  ad_mission_card_id:
+                    type: integer
+                    description: 해당 미션의 ID
+                    default: 58
+                  ad_mission_card_user_id:
+                    type: integer
+                    description: 해당 미션의 결과를 가지고있는 ID
+                    default: 38
+                  ad_user_apply_id:
+                    type: integer
+                    description: 사용자 광고 신청 관리 ID
+                    default: 17
+                  activity_start_date:
+                    type: string
+                    description: 첫 필수미션을 성공했을 경우 갱신
+                    default: "0000-00-00 00:00:00"
+                  activity_end_date:
+                    type: string
+                    description: 첫 필수미션 성공한 날로부터 activity_period 포함날짜
+                    default: "0000-00-00 00:00:00"
+                  additional_point:
+                    type: integer
+                    description: 필수미션은 0, 선택미션은 0 < n
+                    default: 0
+                  mission_start_date:
+                    type: string
+                    description: 해당 미션의 시작 날짜
+                    default: "2021-04-25 00:00:00"
+                  mission_end_date:
+                    type: string
+                    description: 해당 미션의 마지막 날짜
+                    default: "2021-05-02 23:59:59"
+                  mission_name:
+                    type: string
+                    description: 미션의 이름(필수미션의 경우 n차 필수미션)
+                    default: ""
+                  mission_type:
+                    type: integer
+                    description: 0일경우 필수 1일 경우 선택미션
+                    default: 0
+                  status:
+                    type: string
+                    description: 현재 미션의 진행상황
+                    default: "review"
+                  thumbnail_image:
+                    type: string
+                    description: 이미지의 url
+                    default: "http://app.api.service.cashcarplus.com:50193/image/adverting/42/thumb_l_A0A29A92582E5CFFADFC0EFC987C419B.jpeg"
+                  total_point:
+                    type: integer
+                    description: 해당 광고의 총 포인트
+                    default: 30000
 
   401:
     description: 토큰 Missing

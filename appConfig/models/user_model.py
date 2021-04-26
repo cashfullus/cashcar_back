@@ -184,6 +184,16 @@ def user_fcm(**kwargs):
 # 진행해야할 미션 리스트
 def user_mission_list(user_id):
     db = Database()
+    result = {"mission_information": [], "images": []}
     mission_information = db.getAllMyMissionByUserId(user_id=user_id)
-    return mission_information
+    if mission_information:
+        images = db.executeAll(
+            query="SELECT image FROM ad_images "
+                  "JOIN ad_user_apply aua on ad_images.ad_id = aua.ad_id WHERE aua.user_id = %s",
+            args=user_id
+        )
+        result["mission_information"] = mission_information
+        result["images"] = images
+
+    return result
 

@@ -182,12 +182,17 @@ class Database:
 
     def getAllMyMissionByUserId(self, user_id):
         sql = "SELECT " \
-              "ad_mission_card_user_id, amcu.ad_user_apply_id, ad_mission_card_id, mission_type, amcu.status, " \
-              "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "ai.thumbnail_image, ai.total_point, ad_mission_card_user_id, " \
+              "amcu.ad_user_apply_id, amc.ad_mission_card_id, " \
+              "amc.mission_type, amcu.status, amc.mission_name, amc.additional_point, " \
               "DATE_FORMAT(mission_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_start_date, " \
-              "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date " \
+              "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date, " \
+              "DATE_FORMAT(aua.activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
+              "DATE_FORMAT(aua.activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "WHERE aua.user_id = %s AND aua.status IN ('accept', 'stand_by')"
         self.cursor.execute(query=sql, args=user_id)
         rows = self.cursor.fetchall()
