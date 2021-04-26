@@ -166,7 +166,7 @@ class Database:
     def getMainMyAd(self, user_id):
         sql = "SELECT " \
               "aua.ad_user_apply_id as ad_user_apply_id, user_id, aua.ad_id as ad_id, aua.status as apply_status, " \
-              "default_mission_success_count, additional_mission_success_count, ad_mission_card_id," \
+              "default_mission_success_count, additional_mission_success_count, ad_mission_card_id, day_point," \
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
