@@ -1,6 +1,16 @@
 tags:
   - Admin
 
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: query string
+    type: integer
+    required: true
 
 
 responses:
