@@ -181,6 +181,43 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
         return False
 
 
+# 사용자 배송지 설정
+def user_address_update(user_id, **kwargs):
+    db = Database()
+    status = {"is_update": True}
+    user = db.getUserById(user_id=user_id)
+    if user:
+        db.execute(
+            query="UPDATE user SET "
+                  "name = %s, call_number = %s, main_address = %s, detail_address = %s WHERE user_id = %s",
+            args=[kwargs['name'], kwargs['call_number'], kwargs['main_address'], kwargs['detail_address'], user_id]
+        )
+        db.commit()
+        return status
+    else:
+        status["is_update"] = False
+        return status
+
+
+# 사용자 배송지 설정에서 Method == GET
+def get_user_address(user_id):
+    db = Database()
+    status = {"is_user": True, "data": {}}
+    user = db.executeOne(
+        query="SELECT name, call_number, main_address, detail_address FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    if user:
+        status['data'] = user
+        return status
+    else:
+        status['is_user'] = False
+        return status
+
+
+
+
+
 # Fcm 토큰 저장
 def user_fcm(**kwargs):
     db = Database()

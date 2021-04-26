@@ -344,8 +344,8 @@ def ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             status = AD.ad_apply(user_id=user_id, ad_id=ad_id, **data)
-            if status["user_information"] is False or status["ad_information"] is False or status[
-                "already_apply"] is False:
+            if status["user_information"] is False or status["ad_information"] is False or \
+                    status["already_apply"] is False or status["area"] is False:
                 return jsonify({"status": False, "data": status}), 404
             else:
                 return jsonify({"status": True, "data": status}), 200
@@ -460,6 +460,28 @@ def home_my_ad():
             return jsonify({"status": True, "data": result}), 200
     else:
         return jsonify({"status": False, "data": "Not Allowed Method"}), 405
+
+
+# 사용자 배송지 설정
+@app.route('/user/set/address', methods=['GET', 'POST'])
+@jwt_required()
+@swag_from('route_yml/user/user_set_address_get.yml', methods=['GET'])
+def user_set_address():
+    try:
+        user_id = request.args.get('user_id')
+        identity_ = get_jwt_identity()
+        if int(user_id) != identity_:
+            return jsonify(Unauthorized), 401
+        if request.method == 'GET':
+            result = User.get_user_address(user_id=user_id)
+            return jsonify(result)
+
+        elif request.method == 'POST':
+            data = request.get_json()
+            result = User.user_address_update(user_id=user_id, **data)
+            return jsonify(result)
+    except TypeError:
+        return jsonify({"data": "Data Not Null"}), 400
 
 
 ########### ADMIN ############
@@ -612,9 +634,3 @@ def admin_mission_list_by_user():
         ad_mission_card_id=mission_card_id
     )
     return jsonify({"data": result})
-
-
-
-
-
-
