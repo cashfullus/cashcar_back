@@ -215,9 +215,6 @@ def get_user_address(user_id):
         return status
 
 
-
-
-
 # Fcm 토큰 저장
 def user_fcm(**kwargs):
     db = Database()

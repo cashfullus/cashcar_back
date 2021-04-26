@@ -291,7 +291,7 @@ def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
-    result = {"ad_information": ad_information, "vehicle_information": vehicle_information}
+    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "is_delete": True}
     if not ad_information:
         result = {"ad_information": {}, "vehicle_information": vehicle_information}
         return result
@@ -301,6 +301,9 @@ def get_ongoing_user_by_id(user_id):
         ad_information["mission_type"] = 0
         return result
     elif ad_information["mission_status"]:
+        if ad_information["register_time"] + timedelta(hours=1) < datetime.now():
+            result["is_delete"] = False
+            return result
         return result
 
 

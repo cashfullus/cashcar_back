@@ -22,6 +22,8 @@ responses:
       properties:
         data:
           properties:
+            is_delete:
+              type: boolean
             ad_information:
               type: object
               properties:

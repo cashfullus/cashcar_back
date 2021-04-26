@@ -198,5 +198,36 @@ class Database:
         rows = self.cursor.fetchall()
         return rows
 
+    # 미션 인증에 사용
+    def getOneMissionUserInfoByIdx(self, ad_user_apply_id, ad_mission_card_id):
+        sql = "SELECT " \
+              "amcu.ad_mission_card_user_id, status, mission_fail_count, amc.mission_name, " \
+              "amc.mission_name, amc.mission_type, amc.additional_point, amc.from_default_order, " \
+              "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period " \
+              "FROM ad_mission_card_user as amcu " \
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+              "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
+              "WHERE ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s"
+        self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
+        row = self.cursor.fetchone()
+        return row
+
+    # 1차 필수미션 인증 하면서 1차 필수미션 기준으로 추가미션 시작 날짜 추가
+    def getAllAddMissionUserInfoByApplyId(self, ad_user_apply_id, ad_mission_card_id):
+        sql = "SELECT " \
+              "ad_mission_card_user_id, amc.mission_type, amc.additional_point, " \
+              "amc.order, amc.from_default_order, amc.from_default_order_date " \
+              "FROM ad_mission_card_user amcu " \
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+              "WHERE amcu.ad_user_apply_id = %s " \
+              "AND amcu.ad_mission_card_id NOT IN (%s) " \
+              "AND amc.mission_type NOT IN (0) " \
+              "AND amc.from_default_order IN (1)"
+        self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
+        rows = self.cursor.fetchall()
+        return rows
+
+
+
 
 
