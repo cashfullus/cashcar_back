@@ -1,0 +1,21 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: login_id
+    in: body
+    type: string
+    required: true
+
+  - name: password
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: 로그인 성공(login_id 가 False 일경우 ID가 틀림, password 가 False일 경우 password가 틀림)
+    examples:
+      application/json: {data: {jwt_totken: "Jwt_token", user_id: 4}, login_id: true, password: true}

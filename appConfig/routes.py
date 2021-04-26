@@ -463,6 +463,7 @@ def admin_user_register():
 
 
 @app.route('/admin/user/login', methods=['POST'])
+@swag_from('route_yml/admin/login.yml')
 def admin_user_login():
     data = request.get_json()
     result = Admin.login(**data)
