@@ -179,7 +179,15 @@ def user_profile():
 
         elif request.method == "POST":
             data = request.get_json()
-            result = User.update_user_profile(user_id, **data)
+            profile_image = request.files.get('profile_image', None)
+            if profile_image:
+                if allowed_image(profile_image):
+                    result = User.update_user_profile(user_id, profile_image, **data)
+                else:
+                    return jsonify({"status": False, "data": "Not Allowed Image"}), 405
+            else:
+                result = User.update_user_profile(user_id, **data)
+
             if result:
                 return jsonify({"status": True, "data": "Success Update"}), 201
             else:

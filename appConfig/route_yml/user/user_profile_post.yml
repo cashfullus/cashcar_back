@@ -52,6 +52,11 @@ parameters:
     type: integer
     required: true
 
+  - name: profile_image
+    in: file
+    type: integer
+    required: false
+
 
 
 responses:
