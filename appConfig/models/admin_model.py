@@ -6,8 +6,7 @@ from ..database.dbConnection import Database
 from flask_jwt_extended import create_access_token
 
 # 시간
-import datetime
-import re
+from datetime import datetime, date, timedelta
 import os
 
 
@@ -75,5 +74,61 @@ def login(**kwargs):
         status["password"] = False
         return status
 
-# 어드민이 미션 성공여부 체크
+
+# # 어드민이 미션 성공여부 체크
+def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
+    db = Database()
+    status = kwargs['status']
+    mission_information = db.getOneMissionUserInfoByIdx(ad_user_apply_id=ad_apply_id, ad_mission_card_id=mission_card_id)
+    if mission_information:
+        if status == 'success':
+            if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
+
+                start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])-1)))\
+                    .strftime('%Y-%m-%d 23:59:59')
+                db.execute(
+                    query="UPDATE ad_user_apply "
+                          "SET activity_start_date = %s, activity_end_date = %s WHERE ad_user_apply_id = %s",
+                    args=[start_date, end_date, ad_apply_id]
+                )
+                db.execute(
+                    query="UPDATE ad_mission_card_user "
+                          "SET status = 'success', mission_success_datetime = NOW() WHERE ad_mission_card_user_id = %s",
+                    args=mission_information['ad_mission_card_user_id']
+                )
+
+                additional_mission_list = db.getAllAddMissionUserInfoByApplyId(
+                    ad_user_apply_id=ad_apply_id,
+                    ad_mission_card_id=mission_card_id
+                )
+
+                if additional_mission_list:
+                    for mission in additional_mission_list:
+                        start_date = date.today() + timedelta(days=(int(mission['from_default_order_date'])))
+                        end_date = start_date + timedelta(days=(int(mission['due_date'])))
+                        db.execute(
+                            query="UPDATE ad_mission_card_user "
+                                  "SET mission_start_date = %s, mission_end_date = %s "
+                                  "WHERE ad_mission_card_user_id = %s",
+                            args=[start_date.strftime('%Y-%m-%d 00:00:00'),
+                                  end_date.strftime('%Y-%m-%d 23:59:59'),
+                                  mission['ad_mission_card_user_id']
+                                  ]
+                        )
+                    return True
+                else:
+                    return True
+            elif mission_information['mission_type'] == 0:
+                possible_mission = db.execute(
+                    query="SELECT ad_mission_card_user_id "
+                          "FROM ad_mission_card_user "
+                          "WHERE mission_start_date <= NOW() "
+                          "AND mission_end_date > NOW() "
+                          "AND ad_mission_card_user_id = %s",
+                    args=mission_information['ad_mission_card_user_id']
+                )
+
+
+
 

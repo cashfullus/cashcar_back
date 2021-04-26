@@ -647,6 +647,17 @@ def admin_ad_apply():
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
+# 사용자 미션 인증 에서 상태 변경
+@app.route('/admin/mission/apply', methods=['POST'])
+def admin_mission_apply():
+    mission_card_id = request.args.get('mission_id')
+    ad_apply_id = request.args.get('ad_apply_id')
+    data = request.get_json()
+
+
+
+
+
 # 사용자 미션 인증 요청 리스트
 @app.route('/admin/mission/list')
 def admin_mission_list():

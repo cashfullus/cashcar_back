@@ -54,7 +54,7 @@ parameters:
 
   - name: profile_image
     in: file
-    type: integer
+    type: file
     required: false
 
 
