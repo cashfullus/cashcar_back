@@ -75,3 +75,5 @@ def login(**kwargs):
         status["password"] = False
         return status
 
+# 어드민이 미션 성공여부 체크
+

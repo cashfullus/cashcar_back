@@ -42,13 +42,13 @@ responses:
   200:
     description: 신청 완료
     examples:
-      application/json: {status: true, data: {user_information: True, ad_information: True, already_apply: True}}
+      application/json: {status: true, data: {user_information: True, ad_information: True, already_apply: True, area: True}}
 
   404:
-    description: 신청 실패(false가 되어있는 것이 문제)
+    description: 신청 실패(false가 되어있는 것이 문제)(area는 광고에서 원하는 지역이 아닐때)
     examples:
       application/json:
-        application/json: {status: true, data: {user_information: false, ad_information: false, already_apply: false}}
+        application/json: {status: true, data: {user_information: false, ad_information: false, already_apply: false, area: false}}
 
   405:
     description: 잘못된 메소드 요청

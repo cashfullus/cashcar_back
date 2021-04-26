@@ -207,12 +207,17 @@ def get_information_for_ad_apply(user_id, ad_id):
 # 광고 신청 POST
 def ad_apply(user_id, ad_id, **kwargs):
     db = Database()
-    status = {"user_information": True, "ad_information": True, "already_apply": True}
+    status = {"user_information": True, "ad_information": True, "already_apply": True, "area": True}
     target_user = db.getUserById(user_id)
     target_ad = db.getOneAdApplyByAdId(ad_id)
     already_apply_ad = db.executeOne(
         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
         args=user_id
+    )
+    area = kwargs['main_address'].split(' ')[0]
+    query = "SELECT ad_id FROM ad_information WHERE area LIKE '%%{0}%%'".format(area)
+    non_delivery_area = db.executeOne(
+        query=query
     )
 
     if not target_ad:
@@ -225,6 +230,10 @@ def ad_apply(user_id, ad_id, **kwargs):
 
     elif already_apply_ad:
         status["already_apply"] = False
+        return status
+
+    elif not non_delivery_area:
+        status['area'] = False
         return status
 
     else:

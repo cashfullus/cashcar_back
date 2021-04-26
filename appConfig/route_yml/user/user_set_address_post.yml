@@ -1,0 +1,34 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: application/json
+    type: query string
+    required: true
+
+
+responses:
+  200:
+    description: 주소 업데이트 성공
+    schema:
+      type: object
+      properties:
+        is_update:
+          type: boolean
+          description: 업데이트 성공 여부
+
+  400:
+    description: 데이터 형식 실패
+    examples:
+      application/json: { status: false, data: Data Not Null }
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
