@@ -301,7 +301,7 @@ def get_ongoing_user_by_id(user_id):
         ad_information["mission_type"] = 0
         return result
     elif ad_information["mission_status"]:
-        if ad_information["register_time"] + timedelta(hours=1) < datetime.now():
+        if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(hours=1) < datetime.now():
             result["is_delete"] = False
             return result
         return result
