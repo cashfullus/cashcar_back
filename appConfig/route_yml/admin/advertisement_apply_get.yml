@@ -2,6 +2,16 @@ tags:
   - Admin
 
 parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: query string
+    type: integer
+    required: true
+
   - name: ad_user_apply_id
     in: query string
     type: integer
@@ -33,3 +43,13 @@ responses:
         user_id:
           type: integer
           description: 사용자 ID
+
+  401:
+    description: 토큰 Missing
+    examples:
+      application/json: { status: false, data: Unauthorized }
+
+  404:
+    description: 광고 신청 정보가 존재하지 않음
+    examples:
+      application/json: { status: false, data: Not Found }

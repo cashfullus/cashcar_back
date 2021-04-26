@@ -364,7 +364,6 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
                     # 필수미션 1회차 일 경우
                     if mission["order"] == 1 and mission["mission_type"] == 0:
                         first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))
-                        print(mission)
                         db.execute(
                             query="INSERT INTO ad_mission_card_user "
                                   "(ad_user_apply_id, ad_mission_card_id, "

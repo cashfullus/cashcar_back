@@ -485,6 +485,21 @@ def user_set_address():
 
 
 ########### ADMIN ############
+
+# 어드민 권한 확인
+def admin_allowed_user_check(admin_user_id, identity_):
+    if int(admin_user_id) == identity_:
+        allowed_user = Admin.allowed_in_role_user(admin_user_id)
+        if allowed_user:
+            return True, True
+        else:
+            return Forbidden, 403
+    else:
+        return Unauthorized, 401
+
+
+
+# 아이디 등록
 @app.route('/admin/user/register', methods=['POST'])
 def admin_user_register():
     data = request.get_json()
@@ -585,8 +600,15 @@ def admin_ad_list():
 
 # 광고신청 리스트
 @app.route("/admin/ad/apply/list")
+@jwt_required()
 @swag_from('route_yml/admin/advertisement_user_apply_list.yml')
 def admin_user_apply_list():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
     result = AD.ad_apply_list()
     if result:
         return jsonify({"status": True, "data": result}), 200
@@ -596,8 +618,16 @@ def admin_user_apply_list():
 
 # 광고신청 승인 or 거절
 @app.route("/admin/ad/apply", methods=["GET", "POST"])
+@jwt_required()
 @swag_from('route_yml/admin/advertisement_apply_get.yml', methods=['GET'])
+@swag_from('route_yml/admin/advertisement_apply_post.yml', methods=['POST'])
 def admin_ad_apply():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
     try:
         ad_user_apply_id = request.args.get('ad_user_apply_id')
         if request.method == "GET":
