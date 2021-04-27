@@ -2,5 +2,140 @@ tags:
   - Admin
 
 parameters:
-  - name:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: side_image
+    in: formData
+    type: file
+    required: true
+
+  - name: back_image
+    in: formData
+    type: file
+    required: true
+
+  - name: thumbnail_image
+    in: formData
+    type: file
+    required: true
+
+  - name: ad_images
+    in: formData
+    type: file
+    required: true
+
+  - name: title
+    in: formData
+    type: string
+    required: true
+
+  - name: owner_name
+    in: formData
+    type: string
+    required: true
+
+  - name: description
+    in: formData
+    type: string
+    required: true
+
+  - name: total_point
+    in: formData
+    type: integer
+    required: true
+
+  - name: activity_period
+    in: formData
+    type: integer
+    required: true
+
+  - name: recruit_start_date
+    in: formData
+    type: string
+    required: true
+
+  - name: recruit_end_date
+    in: formData
+    type: string
+    required: true
+
+  - name: max_recruiting_count
+    in: formData
+    type: integer
+    requied: true
+
+  - name: area
+    in: formData
+    type: string
+    required: true
+
+  - name: gender
+    in: formData
+    type: integer
+    required: true
+
+  - name: min_age_group
+    in: formData
+    type: integer
+    required: false
+
+  - name: max_age_group
+    in: formData
+    type: integer
+    required: false
+
+  - name: min_distance
+    in: formData
+    type: integer
+    required: false
+
+  - name: side_length
+    in: formData
+    type: integer
+    required: true
+
+  - name: side_width
+    in: formData
+    type: integer
+    required: true
+
+  - name: back_length
+    in: formData
+    type: integer
+    required: true
+
+  - name: back_width
+    in: formData
+    type: integer
+    required: true
+
+  - name: default_mission_items
+    in: FormData
+    type: Array Properties
+    enum: [{mission_type: 0, due_date: 7, order: 1, based_on_activity_period: 0}]
+    required: false
+
+  - name: additional_mission_items
+    in: formData
+    type: Array Properties
+    enum: [{mission_type: 1, mission_name: "미션이름", additional_point: 2000, due_date: 5, from_default_order: 1, from_default_order_date: 6}]
+    required: false
+
+
+responses:
+  200:
+    description: 등록 성공(등록 실패시 success false, 이미지의 잘못된 확장자 allowed_image false)
+    examples:
+      application/json: {data: {allowed_image: true, success: true}}
+
+
+
 

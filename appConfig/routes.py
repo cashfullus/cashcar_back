@@ -517,6 +517,7 @@ def admin_user_login():
 # 이미지 (썸네일, 스티커 이미지, 광고 이미지)
 @app.route('/admin/adverting/register', methods=['POST'])
 @jwt_required()
+@swag_from('route_yml/admin/advertisement_register.yml', methods=['POST'])
 def admin_adverting_register():
     identity_ = get_jwt_identity()
     admin_user_id = request.args.get('admin_user_id', 0)
@@ -648,26 +649,54 @@ def admin_ad_apply():
 
 # 사용자 미션 인증 에서 상태 변경
 @app.route('/admin/mission/apply', methods=['POST'])
+@jwt_required()
 def admin_mission_apply():
-    mission_card_id = request.args.get('mission_id')
-    ad_apply_id = request.args.get('ad_apply_id')
-    data = request.get_json()
-    result = Admin.admin_accept_mission(ad_apply_id=ad_apply_id, mission_card_id=mission_card_id, **data)
-    return jsonify({"result": result})
-
-
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+    try:
+        mission_card_id = request.args.get('mission_id')
+        ad_apply_id = request.args.get('ad_apply_id')
+        data = request.get_json()
+        result = Admin.admin_accept_mission(ad_apply_id=ad_apply_id, mission_card_id=mission_card_id, **data)
+        if result['accept'] is True:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 400
+    except TypeError:
+        return jsonify({"accept": False, "reason": "Data Not Null"}), 400
 
 
 # 사용자 미션 인증 요청 리스트
 @app.route('/admin/mission/list')
+@jwt_required()
 def admin_mission_list():
-    result = Mission.admin_review_mission_list()
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+    page = request.args.get('page')
+    if int(page) == 0:
+        page = 1
+    result = Mission.admin_review_mission_list(page=int(page))
     return jsonify({"data": result})
 
 
 # 사용자 미션 인증 요청 리스트에서 해당 사용자의 모든 미션 리스트를 볼수있는 데이터
 @app.route('/admin/mission/all/list')
+@jwt_required()
 def admin_mission_list_by_user():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
     ad_user_apply_id = request.args.get('ad_user_apply_id')
     mission_card_id = request.args.get('mission_card_id')
     result = Mission.admin_review_detail_mission_list(
