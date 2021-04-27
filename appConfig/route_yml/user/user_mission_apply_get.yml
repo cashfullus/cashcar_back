@@ -21,6 +21,29 @@ responses:
       properties:
         data:
           properties:
+            ad_user_information:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: 타이틀 제목
+                  default: "제목입니다"
+                activity_start_date:
+                  type: string
+                  description: 첫 필수미션을 성공했을 경우 갱신
+                  default: "0000-00-00 00:00:00"
+                activity_end_date:
+                  type: string
+                  description: 첫 필수미션 성공한 날로부터 activity_period 포함날짜
+                  default: "0000-00-00 00:00:00"
+                thumbnail_image:
+                  type: string
+                  description: 이미지의 url
+                  default: "http://app.api.service.cashcarplus.com:50193/image/adverting/42/thumb_l_A0A29A92582E5CFFADFC0EFC987C419B.jpeg"
+                total_point:
+                  type: integer
+                  description: 해당 광고의 총 포인트
+                  default: 30000
             images:
               type: array
               items:
@@ -35,16 +58,12 @@ responses:
                 ad_mission_card_id: 0
                 ad_mission_card_user_id: 0
                 ad_user_apply_id: 0
-                activity_start_date: "DATETIME"
-                activity_end_date: "DATETIME"
                 additional_point: 0
                 mission_start_date: "DATETIME"
                 mission_end_date: "DATETIME"
                 mission_name: ""
                 mission_type: 0
                 status: review
-                thumbnail_image: "URL"
-                total_point: 30000
                 properties:
                   ad_mission_card_id:
                     type: integer
@@ -58,14 +77,6 @@ responses:
                     type: integer
                     description: 사용자 광고 신청 관리 ID
                     default: 17
-                  activity_start_date:
-                    type: string
-                    description: 첫 필수미션을 성공했을 경우 갱신
-                    default: "0000-00-00 00:00:00"
-                  activity_end_date:
-                    type: string
-                    description: 첫 필수미션 성공한 날로부터 activity_period 포함날짜
-                    default: "0000-00-00 00:00:00"
                   additional_point:
                     type: integer
                     description: 필수미션은 0, 선택미션은 0 < n
@@ -90,14 +101,6 @@ responses:
                     type: string
                     description: 현재 미션의 진행상황
                     default: "review"
-                  thumbnail_image:
-                    type: string
-                    description: 이미지의 url
-                    default: "http://app.api.service.cashcarplus.com:50193/image/adverting/42/thumb_l_A0A29A92582E5CFFADFC0EFC987C419B.jpeg"
-                  total_point:
-                    type: integer
-                    description: 해당 광고의 총 포인트
-                    default: 30000
 
   401:
     description: 토큰 Missing

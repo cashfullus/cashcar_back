@@ -180,19 +180,17 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    #  사용자가 진행할 미션 리스트 조회
     def getAllMyMissionByUserId(self, user_id):
         sql = "SELECT " \
-              "ai.thumbnail_image, ai.total_point, ad_mission_card_user_id, " \
+              "ad_mission_card_user_id, " \
               "amcu.ad_user_apply_id, amc.ad_mission_card_id, " \
               "amc.mission_type, amcu.status, amc.mission_name, amc.additional_point, " \
               "DATE_FORMAT(mission_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_start_date, " \
-              "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date, " \
-              "DATE_FORMAT(aua.activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
-              "DATE_FORMAT(aua.activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date " \
+              "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
-              "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "WHERE aua.user_id = %s AND aua.status IN ('accept', 'stand_by')"
         self.cursor.execute(query=sql, args=user_id)
         rows = self.cursor.fetchall()
@@ -201,9 +199,10 @@ class Database:
     # 미션 인증에 사용
     def getOneMissionUserInfoByIdx(self, ad_user_apply_id, ad_mission_card_id):
         sql = "SELECT " \
-              "amcu.ad_mission_card_user_id, status, mission_fail_count, amc.mission_name, " \
+              "amcu.ad_mission_card_user_id, status, mission_fail_count, " \
               "amc.mission_name, amc.mission_type, amc.additional_point, amc.from_default_order, " \
-              "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period " \
+              "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
+              "mission_fail_count " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
               "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
@@ -212,19 +211,19 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
-    # 1차 필수미션 인증 하면서 1차 필수미션 기준으로 추가미션 시작 날짜 추가
-    def getAllAddMissionUserInfoByApplyId(self, ad_user_apply_id, ad_mission_card_id):
+    # 필수미션 기준으로 추가할 추가미션 데이터 조회
+    def getAllAddMissionUserInfoByApplyIdFirst(self, ad_user_apply_id, ad_mission_card_id, from_default_order):
         sql = "SELECT " \
               "ad_mission_card_user_id, amc.mission_type, amc.additional_point, " \
-              "amc.order, amc.from_default_order, amc.from_default_order_date " \
+              "amc.order, amc.from_default_order, amc.from_default_order_date, due_date " \
               "FROM ad_mission_card_user amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
               "WHERE amcu.ad_user_apply_id = %s " \
               "AND amcu.ad_mission_card_id NOT IN (%s) " \
               "AND amc.mission_type NOT IN (0) " \
-              "AND amc.from_default_order IN (1) " \
+              "AND amc.from_default_order IN (%s) " \
               "AND amcu.status != 'success'"
-        self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
+        self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
         rows = self.cursor.fetchall()
         return rows
 

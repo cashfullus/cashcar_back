@@ -241,7 +241,7 @@ def user_fcm(**kwargs):
 # 진행해야할 미션 리스트
 def user_mission_list(user_id):
     db = Database()
-    result = {"mission_information": [], "images": []}
+    result = {"mission_information": [], "images": [], "ad_user_information": {}}
     mission_information = db.getAllMyMissionByUserId(user_id=user_id)
     if mission_information:
         images = db.executeAll(
@@ -249,7 +249,17 @@ def user_mission_list(user_id):
                   "JOIN ad_user_apply aua on ad_images.ad_id = aua.ad_id WHERE aua.user_id = %s",
             args=user_id
         )
+        ad_user_information = db.executeOne(
+            query="SELECT total_point, title, thumbnail_image, "
+                  "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, "
+                  "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date "
+                  "FROM ad_user_apply as aua "
+                  "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                  "WHERE user_id = %s",
+            args=user_id
+        )
         result["mission_information"] = mission_information
+        result['ad_user_information'] = ad_user_information
         result["images"] = images
 
     return result

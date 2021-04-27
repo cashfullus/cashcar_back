@@ -498,7 +498,6 @@ def admin_allowed_user_check(admin_user_id, identity_):
         return Unauthorized, 401
 
 
-
 # 아이디 등록
 @app.route('/admin/user/register', methods=['POST'])
 def admin_user_register():
@@ -653,7 +652,8 @@ def admin_mission_apply():
     mission_card_id = request.args.get('mission_id')
     ad_apply_id = request.args.get('ad_apply_id')
     data = request.get_json()
-
+    result = Admin.admin_accept_mission(ad_apply_id=ad_apply_id, mission_card_id=mission_card_id, **data)
+    return jsonify({"result": result})
 
 
 
