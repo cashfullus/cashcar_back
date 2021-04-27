@@ -106,7 +106,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 if additional_mission_list:
                     for mission in additional_mission_list:
                         start_date = date.today() + timedelta(days=(int(mission['from_default_order_date'])))
-                        end_date = start_date + timedelta(days=(int(mission['due_date'])))
+                        end_date = start_date + timedelta(days=(int(mission['due_date'])-1))
                         db.execute(
                             query="UPDATE ad_mission_card_user "
                                   "SET mission_start_date = %s, mission_end_date = %s "
@@ -120,14 +120,35 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 else:
                     return True
             elif mission_information['mission_type'] == 0:
-                possible_mission = db.execute(
-                    query="SELECT ad_mission_card_user_id "
-                          "FROM ad_mission_card_user "
-                          "WHERE mission_start_date <= NOW() "
-                          "AND mission_end_date > NOW() "
-                          "AND ad_mission_card_user_id = %s",
+                db.execute(
+                    query="UPDATE ad_mission_card_user "
+                          "SET status = 'success', mission_success_datetime = NOW() WHERE ad_mission_card_user_id = %s",
                     args=mission_information['ad_mission_card_user_id']
                 )
+                additional_mission_list = db.getAllAddMissionUserInfoByApplyId(
+                    ad_user_apply_id=ad_apply_id,
+                    ad_mission_card_id=mission_card_id
+                )
+
+                if additional_mission_list:
+                    for mission in additional_mission_list:
+                        start_date = date.today() + timedelta(days=(int(mission['from_default_order_date'])))
+                        end_date = start_date + timedelta(days=(int(mission['due_date']) - 1))
+                        db.execute(
+                            query="UPDATE ad_mission_card_user "
+                                  "SET mission_start_date = %s, mission_end_date = %s "
+                                  "WHERE ad_mission_card_user_id = %s",
+                            args=[start_date.strftime('%Y-%m-%d 00:00:00'),
+                                  end_date.strftime('%Y-%m-%d 23:59:59'),
+                                  mission['ad_mission_card_user_id']
+                                  ]
+                        )
+                    return True
+                else:
+                    return True
+
+
+
 
 
 
