@@ -17,6 +17,11 @@ parameters:
     type: integer
     required: true
 
+  - name: status(accept, reject)
+    in: body
+    type: string
+    required: true
+
 
 responses:
   200:

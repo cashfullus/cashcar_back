@@ -166,7 +166,7 @@ class Database:
     def getMainMyAd(self, user_id):
         sql = "SELECT " \
               "aua.ad_user_apply_id as ad_user_apply_id, user_id, aua.ad_id as ad_id, aua.status as apply_status, " \
-              "default_mission_success_count, additional_mission_success_count, ad_mission_card_id, day_point," \
+              "default_mission_success_count, additional_mission_success_count, ad_mission_card_id, day_point as point," \
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
@@ -222,7 +222,8 @@ class Database:
               "WHERE amcu.ad_user_apply_id = %s " \
               "AND amcu.ad_mission_card_id NOT IN (%s) " \
               "AND amc.mission_type NOT IN (0) " \
-              "AND amc.from_default_order IN (1)"
+              "AND amc.from_default_order IN (1) " \
+              "AND amcu.status != 'success'"
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
         rows = self.cursor.fetchall()
         return rows

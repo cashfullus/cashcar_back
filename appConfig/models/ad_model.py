@@ -301,6 +301,13 @@ def get_ongoing_user_by_id(user_id):
         ad_information["mission_type"] = 0
         return result
     elif ad_information["mission_status"]:
+        if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
+            ad_information['point'] = 0
+        else:
+            start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d')
+            if (datetime.now().date() - start_date.date()).days > 0:
+                ad_information['point'] = (datetime.now().date() - start_date.date()).days * ad_information['point']
+
         if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(hours=1) < datetime.now():
             result["is_delete"] = False
             return result
