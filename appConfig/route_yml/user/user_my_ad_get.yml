@@ -51,9 +51,9 @@ responses:
                 title:
                   type: string
                   description: 광고 제목
-                logo_image:
+                thumbnail_image:
                   type: string
-                  description: 광고 로고 이미지
+                  description: 광고 썸네일 이미지
                 default_mission_success_count:
                   type: integer
                   description: 필수 미션 성공 횟수
@@ -69,6 +69,9 @@ responses:
                 activity_end_date:
                   type: string
                   description: 활동 끝 일시
+                point:
+                  type: integer
+                  description: 적립 포인트(실 적립은 기간 끝나고 적립)
             vehicle_information:
               type: array
               items:

@@ -83,6 +83,20 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     print(mission_information)
     if mission_information:
         if status == 'success':
+            if mission_information['mission_type'] == 0:
+                db.execute(
+                    query="UPDATE ad_user_apply "
+                          "SET default_mission_success_count = default_mission_success_count + 1 "
+                          "WHERE ad_user_apply_id = %s",
+                    args=ad_apply_id
+                )
+            else:
+                db.execute(
+                    query="UPDATE ad_user_apply "
+                          "SET additional_mission_success_count = additional_mission_success_count + 1 "
+                          "WHERE ad_user_apply_id = %s",
+                    args=ad_apply_id
+                )
             db.execute(
                 query="UPDATE ad_mission_card_user "
                       "SET status = 'success', mission_success_datetime = NOW() WHERE ad_mission_card_user_id = %s",
@@ -130,7 +144,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                         args=ad_apply_id
                     )
                     db.execute(
-
+                        query="UPDATE ad_user_apply SET status = 'fail' WHERE ad_user_apply_id = %s",
+                        args=ad_apply_id
                     )
 
 
