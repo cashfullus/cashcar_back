@@ -5,6 +5,14 @@ import os
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/mission"
 MISSION_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/mission"
 
+
+# 페이지 적용
+def pagenation(page):
+    per_page = (int(page) - 1) * 20
+    start_at = per_page + 20
+    return per_page, start_at
+
+
 # 미션 데이터 정보
 def get_mission_type_idx_by_stand_by(ad_mission_card_user_id):
     db = Database()
@@ -64,8 +72,9 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
 # register_time, end_date, title, mission_name, name, call_number, mission_status,
 # image
 # 사용자의 미션 인증 신청 리스트
-def admin_review_mission_list():
+def admin_review_mission_list(page):
     db = Database()
+    per_page, start_at = pagenation(int(page))
     result = db.executeAll(
         query="SELECT "
               "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
@@ -79,7 +88,8 @@ def admin_review_mission_list():
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
-              "WHERE amcu.status = 'review' OR amcu.status = 're_review'"
+              "WHERE amcu.status = 'review' OR amcu.status = 're_review' LIMIT %s OFFSET %s",
+        args=[start_at, per_page]
     )
     return result
 
@@ -98,5 +108,3 @@ def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
         args=[ad_mission_card_id, ad_user_apply_id]
     )
     return result
-
-

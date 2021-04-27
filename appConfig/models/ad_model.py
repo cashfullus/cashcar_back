@@ -83,11 +83,12 @@ def admin_ad_register(other_images, ad_images, **kwargs):
             for item in additional_mission_items[0]:
                 db.execute(
                     query="INSERT INTO ad_mission_card "
-                          "(ad_id, mission_type, mission_name, additional_point, due_date, from_default_order) "
+                          "(ad_id, mission_type, mission_name, additional_point, due_date, "
+                          "from_default_order, from_default_order_date) "
                           "VALUES (%s, %s, %s, %s, %s, %s)",
                     args=[register_id['ad_id'], item['mission_type'],
                           item["mission_name"], item["additional_point"],
-                          item["due_date"], item["from_default_order"]
+                          item["due_date"], item["from_default_order"], item['from_default_order_date']
                           ]
                 )
         db.commit()

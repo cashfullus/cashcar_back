@@ -222,7 +222,8 @@ class Database:
               "AND amcu.ad_mission_card_id NOT IN (%s) " \
               "AND amc.mission_type NOT IN (0) " \
               "AND amc.from_default_order IN (%s) " \
-              "AND amcu.status != 'success'"
+              "AND amcu.status = 'stand_by' " \
+              "AND mission_start_date = '0000-00-00 00:00:00'"
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
         rows = self.cursor.fetchall()
         return rows

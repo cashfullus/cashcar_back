@@ -15,7 +15,7 @@ parameters:
 
 responses:
   200:
-    description: 현재 진행중인 서포터즈에 관한 미션 리스트(미션 상태 stand_by, review, success, reject, re_review, fail)
+    description: 현재 진행중인 서포터즈에 관한 미션 리스트(미션 상태 stand_by(미션대기), ongoing(인증하기), review(검토중), success(성공), reject(재인증하기), re_review(검토중), fail(실패))
     schema:
       type: object
       properties:

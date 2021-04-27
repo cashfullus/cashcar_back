@@ -79,10 +79,26 @@ def login(**kwargs):
 def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     db = Database()
     status = kwargs['status']
+    result = {"accept": True, "reason": "Update Success"}
     mission_information = db.getOneMissionUserInfoByIdx(ad_user_apply_id=ad_apply_id, ad_mission_card_id=mission_card_id)
-    print(mission_information)
     if mission_information:
+        # 이미 바껴있는 값으로 바꿀경우 fail = fail, success = success, reject = reject
+        if status == mission_information['status']:
+            result["reason"] = "Already Change Status"
+            result["accept"] = False
+            return result
+
+        elif (status == "fail" or status == "reject") and mission_information['status'] == "success":
+            result["reason"] = "Already Success Mission"
+            result["accept"] = False
+            return result
+
+        else:
+            pass
+
+        # 미션 성공일 경우
         if status == 'success':
+            # 미션 타입에 따라(필수, 선택) 성공 횟수 추가
             if mission_information['mission_type'] == 0:
                 db.execute(
                     query="UPDATE ad_user_apply "
@@ -97,11 +113,13 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "WHERE ad_user_apply_id = %s",
                     args=ad_apply_id
                 )
+            # 미션 성공으로 업데이트
             db.execute(
                 query="UPDATE ad_mission_card_user "
                       "SET status = 'success', mission_success_datetime = NOW() WHERE ad_mission_card_user_id = %s",
                 args=mission_information['ad_mission_card_user_id']
             )
+            # 필수미션 회차에 따른 추가 미션 정보 조회
             additional_mission_list = db.getAllAddMissionUserInfoByApplyIdFirst(
                 ad_user_apply_id=ad_apply_id,
                 ad_mission_card_id=mission_card_id,
@@ -131,11 +149,12 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 )
 
             db.commit()
-            return True
+            return result
 
         elif status == 'reject':
+            # 이미 한번 실패했을 경우
             if mission_information['mission_fail_count'] == 1:
-                # 필수미션이 한번 이미 실패했을 경우
+                # 필수미션이 한번 이미 실패했을 경우 광고집행 실패
                 if mission_information['mission_type'] == 0:
                     db.execute(
                         query="UPDATE ad_mission_card_user "
@@ -147,6 +166,27 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                         query="UPDATE ad_user_apply SET status = 'fail' WHERE ad_user_apply_id = %s",
                         args=ad_apply_id
                     )
+                # 추가 미션의 경우 실패해도 상관없음(point 미지급)
+                else:
+                    db.execute(
+                        query="UPDATE ad_mission_card_user "
+                              "SET status = 'fail' "
+                              "WHERE ad_mission_card_id = %s",
+                        args=mission_card_id
+                    )
+
+                db.commit()
+                return result
+
+            else:
+                db.execute(
+                    query="UPDATE ad_mission_card_user "
+                          "SET status = 'reject', mission_fail_count = mission_fail_count + 1 "
+                          "WHERE ad_mission_card_id = %s",
+                    args=mission_card_id
+                )
+                db.commit()
+                return result
 
 
 
