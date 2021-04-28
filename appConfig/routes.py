@@ -567,6 +567,7 @@ def admin_adverting_register():
             'default_mission_items': [eval(item) for item in request.form.getlist('default_mission_items')],
             'additional_mission_items': [eval(item) for item in request.form.getlist('additional_mission_items')]
         }
+        print(data)
         result = AD.admin_ad_register(other_images=image_dict, ad_images=images, **data)
         if result:
             return jsonify({"data": {"allowed_image": True, "success": True, "registered": result}})
