@@ -23,7 +23,7 @@ logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secret_key
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
-app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 CORS(app)
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
@@ -426,9 +426,9 @@ def ad_mission_apply_with_list():
             else:
                 result_status["image_allowed"] = False
                 return jsonify({"status": False, "data": result_status})
-        # except AttributeError:
-        #     result_status["image_data"] = False
-        #     return jsonify({"status": False, "data": result_status})
+        except AttributeError:
+            result_status["image_data"] = False
+            return jsonify({"status": False, "data": result_status})
         except TypeError:
             result_status["data_not_null"] = False
             return jsonify({"status": False, "data": result_status})

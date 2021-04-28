@@ -64,6 +64,7 @@ responses:
                 mission_name: ""
                 mission_type: 0
                 status: review
+                order: 1
                 properties:
                   ad_mission_card_id:
                     type: integer
@@ -101,6 +102,8 @@ responses:
                     type: string
                     description: 현재 미션의 진행상황
                     default: "review"
+                  order:
+
 
   401:
     description: 토큰 Missing
