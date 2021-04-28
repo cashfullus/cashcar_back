@@ -24,12 +24,12 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secret_key
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-CORS(app)
+CORS(app, resource={r"/admin/*": {"origin": "*"}})
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
 
 # 이미지 파일 형식
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', ''}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 
 
