@@ -520,7 +520,7 @@ def admin_user_login():
 @swag_from('route_yml/admin/advertisement_register.yml', methods=['POST'])
 def admin_adverting_register():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
     # 권한 확인
