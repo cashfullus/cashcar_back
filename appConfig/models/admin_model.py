@@ -75,6 +75,72 @@ def login(**kwargs):
         return status
 
 
+# 어드민 광고 리스트 (query string)
+def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
+                             sort, page):
+    db = Database()
+    per_page = (page - 1) * 10
+    start_at = per_page + 10
+    status = {"correct_category": True}
+    category_value = ""
+    if category == "ongoing":
+        category_value = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
+    elif category == "scheduled":
+        category_value = "recruit_start_date > NOW()"
+    elif category == "done":
+        category_value = "recruit_end_date < NOW() OR max_recruiting_count = recruiting_count"
+    elif category == 'none':
+        category_value = "((recruit_start_date <= NOW() AND recruit_end_date >= NOW()) " \
+                         "OR (recruit_start_date > NOW()) " \
+                         "OR (recruit_end_date < NOW() OR max_recruiting_count = recruiting_count)) "
+    else:
+        status["correct_category"] = False
+
+    # 포인트가 최솟값보다 크고 최대값보다 작은 데이터
+    where_point = f"(total_point >= {avg_point[0]} AND total_point <= {avg_point[1]})"
+    if area == '':
+        where_area = f"area LIKE '%{area}%'"
+    else:
+        where_area = f"area LIKE '%%{area}%%'"
+    where_gender = f"gender IN ({gender})"
+    where_distance = f"min_distance >= {distance}"
+    where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
+    where_recruit_date = f"(recruit_start_date >= '{recruit_start}' AND recruit_end_date <= '{recruit_end}')"
+
+    sql = "SELECT ad_id, owner_name, title, thumbnail_image, activity_period, " \
+          "max_recruiting_count, recruiting_count, total_point, " \
+          "day_point, area, description, gender, min_distance, min_age_group, " \
+          "max_age_group, side_image, back_image, side_length, side_width, " \
+          "back_length, back_width, " \
+          "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
+          "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \
+          "FROM ad_information " \
+          f"WHERE {category_value} AND {where_point} " \
+          f"AND {where_area} AND {where_gender} " \
+          f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
+    result = db.executeAll(query=sql, args=[start_at, per_page])
+    if result:
+        for i in range(len(result)):
+            result[i]['ad_images'] = db.executeAll(
+                query='SELECT image FROM ad_images WHERE ad_id = %s',
+                args=result[i]['ad_id']
+            )
+            result[i]['default_mission_items'] = db.executeAll(
+                query='SELECT '
+                      'mission_type, due_date, `order`, based_on_activity_period '
+                      'FROM ad_mission_card WHERE ad_id = %s AND mission_type = 0',
+                args=result[i]['ad_id']
+            )
+            result[i]['additional_mission_items'] = db.executeAll(
+                query='SELECT '
+                      'mission_type, due_date, `order`, based_on_activity_period '
+                      'FROM ad_mission_card WHERE ad_id = %s AND mission_type = 1',
+                args=result[i]['ad_id']
+            )
+    return result
+
+
+
 # # 어드민이 미션 성공여부 체크
 def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     db = Database()
