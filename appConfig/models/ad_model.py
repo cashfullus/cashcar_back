@@ -37,6 +37,7 @@ def admin_ad_register(other_images, ad_images, **kwargs):
     if register_id:
         save_to_db_dict = {}
         save_to_db_list = []
+        res_ad_images = {}
         directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
         os.makedirs(directory, exist_ok=True)
 
@@ -78,6 +79,7 @@ def admin_ad_register(other_images, ad_images, **kwargs):
                     args=[register_id['ad_id'], item['mission_type'], mission_name,
                           item['due_date'], item['order'], item['based_on_activity_period']]
                 )
+            kwargs['default_mission_items'] = default_mission_items[0]
 
         if additional_mission_items[0]:
             for item in additional_mission_items[0]:
@@ -85,55 +87,31 @@ def admin_ad_register(other_images, ad_images, **kwargs):
                     query="INSERT INTO ad_mission_card "
                           "(ad_id, mission_type, mission_name, additional_point, due_date, "
                           "from_default_order, from_default_order_date) "
-                          "VALUES (%s, %s, %s, %s, %s, %s)",
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     args=[register_id['ad_id'], item['mission_type'],
                           item["mission_name"], item["additional_point"],
                           item["due_date"], item["from_default_order"], item['from_default_order_date']
                           ]
                 )
+            kwargs['additional_mission_items'] = additional_mission_items[0]
         db.commit()
-        return True
+        kwargs['ad_images'] = db.executeAll(
+            query="SELECT image FROM ad_images WHERE ad_id = %s",
+            args=register_id['ad_id']
+        )
+        kwargs['side_image'] = save_to_db_dict['side_image']
+        kwargs['back_image'] = save_to_db_dict['back_image']
+        kwargs['thumbnail_image'] = save_to_db_dict['thumbnail_image']
+        kwargs['activity_period'] = int(kwargs['activity_period'])
+        kwargs['gender'] = int(kwargs['gender'])
+        kwargs['max_age_group'] = int(kwargs['max_age_group'])
+        kwargs['max_recruiting_count'] = int(kwargs['max_recruiting_count'])
+        kwargs['min_age_group'] = int(kwargs['min_age_group'])
+        kwargs['min_distance'] = int(kwargs['min_distance'])
+        kwargs['total_point'] = int(kwargs['total_point'])
+        return kwargs
     else:
         return False
-
-
-# 어드민 광고 리스트 (query string)
-def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
-                             sort, page):
-    db = Database()
-    per_page = (page - 1) * 20
-    start_at = per_page + 20
-    status = {"correct_category": True}
-    category_value = ""
-    if category == "ongoing":
-        category_value = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
-    elif category == "scheduled":
-        category_value = "recruit_start_date > NOW()"
-    elif category == "done":
-        category_value = "recruit_end_date < NOW() OR recruiting_count = max_recruiting_count"
-    else:
-        status["correct_category"] = False
-
-    # 포인트가 최솟값보다 크고 최대값보다 작은 데이터
-    where_point = f"(total_point >= {avg_point[0]} AND total_point <= {avg_point[1]})"
-    where_area = f"area LIKE '%{area}%'"
-    where_gender = f"gender IN ({gender})"
-    where_distance = f"min_distance >= {distance}"
-    where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
-    where_recruit_date = f"(recruit_start_date >= {recruit_start} AND recruit_end_date <= {recruit_end})"
-
-    sql = "SELECT ad_id, owner_name, title, thumbnail_image, " \
-          "recruit_start_date, recruit_end_date, activity_period, " \
-          "max_recruiting_count, recruiting_count, total_point, " \
-          "day_point, area, description, gender, min_distance, min_age_group, " \
-          "max_age_group, side_image, back_image, side_length, side_width, " \
-          "back_length, back_width, register_time FROM ad_information " \
-          f"WHERE {category_value} AND {where_point} " \
-          f"AND {where_area} AND {where_gender} " \
-          f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
-    print(sql)
-    result = db.executeAll(query=sql, args=[start_at, per_page])
-    return result
 
 
 # 광고 리스트 (parameter query_string)
@@ -368,6 +346,10 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
                       "WHERE aua.ad_user_apply_id = %s",
                 args=ad_user_apply_id
             )
+            db.execute(
+                query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
+                args=[kwargs['status'], ad_user_apply_id]
+            )
 
         elif kwargs["status"] == "accept":
             mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=ad_user_apply_id)
@@ -409,6 +391,10 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
                             args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
                                   "stand_by", ]
                         )
+                db.execute(
+                    query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() WHERE ad_user_apply_id = %s",
+                    args=[kwargs['status'], ad_user_apply_id]
+                )
                 db.commit()
         else:
             apply_information["mission_data"] = False
@@ -428,9 +414,5 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
                       "(%s)",
                 args=ad_mission_card_user_info[i]["ad_mission_card_user_id"]
             )
-        db.execute(
-            query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
-            args=[kwargs['status'], ad_user_apply_id]
-        )
         db.commit()
         return apply_information

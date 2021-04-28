@@ -264,3 +264,26 @@ def user_mission_list(user_id):
 
     return result
 
+
+# 광고ID에 신청한 사람 조회
+def user_apply_id_by_ad_id(page, ad_id):
+    per_page = (page - 1) * 10
+    start_at = per_page + 10
+    db = Database()
+    user_information = db.executeAll(
+        query="SELECT "
+              "u. user_id, nickname, name, call_number, email, "
+              "cast('resident_registration_number_back' as unsigned) as gender, "
+              "resident_registration_number_front as birth_of_date, "
+              "car_number, vehicle_model_name, "
+              "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time "
+              "FROM ad_user_apply as aua "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN vehicle v on u.user_id = v.user_id "
+              "WHERE aua.ad_id = %s AND v.supporters = 1 "
+              "ORDER BY ad_user_apply_id LIMIT %s OFFSET %s",
+        args=[ad_id, start_at, per_page]
+    )
+    return user_information
+
+

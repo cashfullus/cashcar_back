@@ -1,0 +1,60 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer string
+    required: true
+
+  - name: admin_user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+  - name: ad_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 광고에 신청한 사람들 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              accept_status_time:
+                type: string
+                description: 광고 수락한 시간 (0000-00-00 일 경우 미수락)
+              birth_of_date:
+                type: string
+                description: 생년월일
+              call_number:
+                type: string
+              car_number:
+                type: string
+                description: 차량번호
+              email:
+                type: string
+                description: 이메일
+              gender:
+                type: integer
+              name:
+                type: string
+              nickname:
+                type: string
+              user_id:
+                type: integer
+              vehicle_model_name:
+                type: string

@@ -568,34 +568,55 @@ def admin_adverting_register():
         }
         result = AD.admin_ad_register(other_images=image_dict, ad_images=images, **data)
         if result:
-            return jsonify({"data": {"allowed_image": True, "success": True}})
+            return jsonify({"data": {"allowed_image": True, "success": True, "registered": result}})
         else:
-            return jsonify({"data": {"allowed_image": True, "success": False}})
+            return jsonify({"data": {"allowed_image": True, "success": False, "registered": {}}})
     else:
         return jsonify({"data": {"allowed_image": False, "success": False}})
 
 
 # 어드민 광고 리스트
 @app.route('/admin/ad/list')
+@jwt_required()
+@swag_from('route_yml/admin/advertisement_ad_list.yml')
 def admin_ad_list():
-    category = request.args.get('category')
-    point = request.args.get('point', '0~200000')
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    if int(admin_user_id) != identity_:
+        return jsonify(Unauthorized), 401
+    page = request.args.get('page', 1)
+    category = request.args.get('category', 'none')
+    point = request.args.get('point', '0~900000')
     area = request.args.get('area', '')
     gender = request.args.get('gender', '0')
     age = request.args.get('age', '0~200')
     distance = request.args.get('distance', '0')
     recruit_start_date = request.args.get('recruit_start', '0000-00-00 00:00:00')
-    recruit_end_date = request.args.get('recruit_end', '9999-99-99 00:00:00')
+    recruit_end_date = request.args.get('recruit_end', '9999-12-30 23:59:59')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'ASC')
     avg_point = point.split('~')
     avg_age = age.split('~')
-    result = AD.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area, gender=gender,
-                                         avg_age=avg_age, distance=distance, recruit_start=recruit_start_date,
-                                         recruit_end=recruit_end_date, order_by=order_by, sort=sort
-                                         )
-
+    result = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area, gender=gender,
+                                            avg_age=avg_age, distance=distance, recruit_start=recruit_start_date,
+                                            recruit_end=recruit_end_date, order_by=order_by, sort=sort, page=int(page)
+                                            )
     return jsonify({"data": result})
+
+
+@app.route('/admin/ad/list/user-list')
+@jwt_required()
+@swag_from('route_yml/admin/advertisement_user_list.yml')
+def admin_ad_list_user_list():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.args.get('admin_user_id', 0)
+    if int(admin_user_id) != identity_:
+        return jsonify(Unauthorized), 401
+    page = request.args.get('page', 1)
+    ad_id = request.args.get('ad_id', 0)
+    result = User.user_apply_id_by_ad_id(page=int(page), ad_id=ad_id)
+    return jsonify({"data": result})
+
 
 
 # 광고신청 리스트

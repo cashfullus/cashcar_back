@@ -133,8 +133,95 @@ parameters:
 responses:
   200:
     description: 등록 성공(등록 실패시 success false, 이미지의 잘못된 확장자 allowed_image false)
-    examples:
-      application/json: {data: {allowed_image: true, success: true}}
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            allowed_image:
+              type: boolean
+            success:
+              type: boolean
+            registered:
+              type: object
+              properties:
+                activity_period:
+                  type: integer
+                area:
+                  type: string
+                back_image:
+                  type: string
+                back_length:
+                  type: integer
+                back_width:
+                  type: integer
+                side_image:
+                  type: string
+                side_length:
+                  type: string
+                side_width:
+                  type: string
+                description:
+                  type: string
+                gender:
+                  type: integer
+                max_age_group:
+                  type: integer
+                max_recruiting_count:
+                  type: integer
+                min_age_group:
+                  type: integer
+                min_distance:
+                  type: integer
+                owner_name:
+                  type: string
+                recruit_start_date:
+                  type: string
+                recruit_end_date:
+                  type: string
+                thumbnail_image:
+                  type: string
+                title:
+                  type: string
+                total_point:
+                  type: integer
+                ad_images:
+                  type: array
+                  items:
+                    properties:
+                      image:
+                        type: string
+                additional_mission_items:
+                  type: array
+                  items:
+                    properties:
+                      additional_point:
+                        type: integer
+                      due_date:
+                        type: integer
+                      mission_name:
+                        type: string
+                      mission_type:
+                        type: integer
+                      from_default_order:
+                        type: integer
+                      from_default_order_date:
+                        type: integer
+                default_mission_items:
+                  type: array
+                  items:
+                    properties:
+                      based_on_activity_period:
+                        type: integer
+                      due_date:
+                        type: integer
+                      mission_type:
+                        type: integer
+                      order:
+                        type: integer
+
+
 
 
 
