@@ -426,9 +426,9 @@ def ad_mission_apply_with_list():
             else:
                 result_status["image_allowed"] = False
                 return jsonify({"status": False, "data": result_status})
-        except AttributeError:
-            result_status["image_data"] = False
-            return jsonify({"status": False, "data": result_status})
+        # except AttributeError:
+        #     result_status["image_data"] = False
+        #     return jsonify({"status": False, "data": result_status})
         except TypeError:
             result_status["data_not_null"] = False
             return jsonify({"status": False, "data": result_status})
@@ -546,6 +546,7 @@ def admin_adverting_register():
         # eval 의 사용이유는 getlist 로 데이터를 가져올 경우 ['{}'] 인 스트링 형태로 데이터가 들어오기 때문에 강제로 여러개의 프로퍼티 값으로 변환
         # 클라이언트와 데이터의 형식을 맞춰 사용할 경우 위험성은 없어보임.
         data = {
+            'ad_id': request.args.get('ad_id', 0),
             'title': request.form.get('title'),
             'owner_name': request.form.get('owner_name'),
             'description': request.form.get('description'),
@@ -574,6 +575,10 @@ def admin_adverting_register():
     else:
         return jsonify({"data": {"allowed_image": False, "success": False}})
 
+
+# 광고 수정 및 삭제
+@app.route('/admin/ad/update', methods=['POST', 'DELETE'])
+    # ad_id = request.args.get('ad_id')
 
 # 어드민 광고 리스트
 @app.route('/admin/ad/list')
@@ -604,6 +609,7 @@ def admin_ad_list():
     return jsonify({"data": result})
 
 
+# 광고 신청한 사용자 리스트
 @app.route('/admin/ad/list/user-list')
 @jwt_required()
 @swag_from('route_yml/admin/advertisement_user_list.yml')
@@ -616,7 +622,6 @@ def admin_ad_list_user_list():
     ad_id = request.args.get('ad_id', 0)
     result = User.user_apply_id_by_ad_id(page=int(page), ad_id=ad_id)
     return jsonify({"data": result})
-
 
 
 # 광고신청 리스트
