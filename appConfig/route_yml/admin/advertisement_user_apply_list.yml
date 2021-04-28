@@ -21,7 +21,7 @@ responses:
       items:
         ad_id: 25
         ad_user_apply_id: 6
-        change_status_time: "2021-04-18 13:48:00"
+        accept_status_time: "2021-04-18 13:48:00"
         register_time: "2021-04-18 13:45:53"
         status: "stand_by"
         user_id: 15
@@ -32,7 +32,7 @@ responses:
           ad_user_apply_id:
             type: integer
             description: 사용자의 신청 광고 ID
-          change_status_time:
+          accept_status_time:
             type: string
             description: 상태 변경 시점
           register_time:

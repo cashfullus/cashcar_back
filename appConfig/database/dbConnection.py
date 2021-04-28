@@ -129,8 +129,8 @@ class Database:
         sql = "SELECT " \
               "ad_user_apply_id, user_id, ad_id, status, " \
               "DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
-              "DATE_FORMAT(change_status_time, '%Y-%m-%d %H:%i:%s') as change_status_time " \
-              "FROM ad_user_apply"
+              "DATE_FORMAT(accept_status_time, '%Y-%m-%d %H:%i:%s') as accept_status_time " \
+              "FROM ad_user_apply ORDER BY FIELD(status, 'stand_by')"
         self.cursor.execute(query=sql)
         rows = self.cursor.fetchall()
         return rows
@@ -185,7 +185,7 @@ class Database:
         sql = "SELECT " \
               "ad_mission_card_user_id, " \
               "amcu.ad_user_apply_id, amc.ad_mission_card_id, " \
-              "amc.mission_type, amcu.status, amc.mission_name, amc.additional_point, " \
+              "amc.mission_type, amcu.status, amc.mission_name, amc.additional_point, amc.order, " \
               "DATE_FORMAT(mission_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_start_date, " \
               "DATE_FORMAT(mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date " \
               "FROM ad_mission_card_user as amcu " \
