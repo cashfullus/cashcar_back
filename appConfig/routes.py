@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = secret_key
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-CORS(app, resource={r"/admin/*": {"origin": "*"}})
+CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
 
