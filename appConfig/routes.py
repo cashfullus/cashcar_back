@@ -616,7 +616,7 @@ def admin_ad_list():
 @swag_from('route_yml/admin/advertisement_user_list.yml')
 def admin_ad_list_user_list():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
     page = request.args.get('page', 1)
@@ -631,7 +631,7 @@ def admin_ad_list_user_list():
 @swag_from('route_yml/admin/advertisement_user_apply_list.yml')
 def admin_user_apply_list():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
@@ -650,7 +650,7 @@ def admin_user_apply_list():
 @swag_from('route_yml/admin/advertisement_apply_post.yml', methods=['POST'])
 def admin_ad_apply():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     # 어드민 권한 및 사용자 확인
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
@@ -677,9 +677,10 @@ def admin_ad_apply():
 # 사용자 미션 인증 에서 상태 변경
 @app.route('/admin/mission/apply', methods=['POST'])
 @jwt_required()
+@swag_from('route_yml/admin/mission_apply_post.yml')
 def admin_mission_apply():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     # 어드민 권한 및 사용자 확인
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
@@ -700,14 +701,15 @@ def admin_mission_apply():
 # 사용자 미션 인증 요청 리스트
 @app.route('/admin/mission/list')
 @jwt_required()
+@swag_from('route_yml/admin/mission_list.yml')
 def admin_mission_list():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     # 어드민 권한 및 사용자 확인
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
-    page = request.args.get('page')
+    page = request.args.get('page', 1)
     if int(page) == 0:
         page = 1
     result = Mission.admin_review_mission_list(page=int(page))
@@ -717,9 +719,10 @@ def admin_mission_list():
 # 사용자 미션 인증 요청 리스트에서 해당 사용자의 모든 미션 리스트를 볼수있는 데이터
 @app.route('/admin/mission/all/list')
 @jwt_required()
+@swag_from('route_yml/admin/mission_list_all.yml')
 def admin_mission_list_by_user():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     # 어드민 권한 및 사용자 확인
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:

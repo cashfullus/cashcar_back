@@ -46,6 +46,7 @@ def register(**kwargs):
     check_email = check_email_regex(kwargs.get("email"))
     # Email 중복확인
     user = db.getUserByEmail(kwargs.get("email"))
+    print(user)
     # 확인사항 검사
     if check_email is False:
         result["email_regex"] = False
@@ -86,6 +87,10 @@ def register(**kwargs):
     jwt_token = create_access_token(identity=target_user["user_id"], expires_delta=False)
     update_user = f"UPDATE user SET jwt_token = %s WHERE user_id = {target_user['user_id']}"
     db.execute(query=update_user, args=jwt_token)
+    db.execute(
+        query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+        args=[target_user['user_id'], "회원가입"]
+    )
     db.commit()
 
     result["data"] = {"user_id": target_user["user_id"], "jwt_token": jwt_token}
@@ -280,7 +285,7 @@ def user_apply_id_by_ad_id(page, ad_id):
               "FROM ad_user_apply as aua "
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN vehicle v on u.user_id = v.user_id "
-              "WHERE aua.ad_id = %s AND v.supporters = 1 "
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND removed = 0 "
               "ORDER BY ad_user_apply_id LIMIT %s OFFSET %s",
         args=[ad_id, start_at, per_page]
     )

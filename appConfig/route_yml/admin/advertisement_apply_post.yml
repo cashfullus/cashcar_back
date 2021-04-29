@@ -8,7 +8,7 @@ parameters:
     required: true
 
   - name: admin_user_id
-    in: query string
+    in: Headers
     type: integer
     required: true
 

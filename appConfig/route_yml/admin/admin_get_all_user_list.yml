@@ -69,4 +69,12 @@ responses:
                       type: string
                     supporters:
                       type: string
+              activity_history:
+                type: array
+                items:
+                  properties:
+                    history_name:
+                      type: string
+                    register_time:
+                      type: string
 

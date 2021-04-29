@@ -272,7 +272,7 @@ def ad_apply(user_id, ad_id, **kwargs):
         args=user_id
     )
     area = kwargs['main_address'].split(' ')[0]
-    query = "SELECT ad_id FROM ad_information WHERE area LIKE '%%{0}%%'".format(area)
+    query = "SELECT ad_id, title FROM ad_information WHERE area LIKE '%%{0}%%'".format(area)
     non_delivery_area = db.executeOne(
         query=query
     )
@@ -307,6 +307,11 @@ def ad_apply(user_id, ad_id, **kwargs):
         db.execute(
             query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
             args=ad_id
+        )
+        history_name = f"{non_delivery_area['title']} 광고 신청"
+        db.execute(
+            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+            args=[user_id, history_name]
         )
         db.commit()
 
@@ -389,7 +394,12 @@ def cancel_apply_user(ad_user_apply_id):
     if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
         status["time_out"] = False
         return status
-
+    ad_information = db.executeOne(
+        query="SELECT title, user_id FROM ad_information as ai JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
+              "WHERE ad_user_apply_id = %s",
+        args=ad_user_apply_id
+    )
+    history_name = f"{ad_information['title']} 광고 신청 취소"
     db.execute(
         query="DELETE FROM ad_user_apply WHERE ad_user_apply_id = %s",
         args=ad_user_apply_id
@@ -397,6 +407,11 @@ def cancel_apply_user(ad_user_apply_id):
     db.execute(
         query="UPDATE ad_information SET recruiting_count = recruiting_count - 1 WHERE ad_id = %s",
         args=user_apply_information["ad_id"]
+    )
+
+    db.execute(
+        query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+        args=[ad_information['user_id'], history_name]
     )
     db.commit()
     return status
@@ -417,6 +432,7 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
 
     else:
         if kwargs["status"] == "reject":
+            history_name = f"{apply_status['title']} 광고 신청 거부"
             # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
             db.execute(
                 query="UPDATE ad_information as ad_info "
@@ -428,6 +444,10 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
             db.execute(
                 query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
                 args=[kwargs['status'], ad_user_apply_id]
+            )
+            db.execute(
+                query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                args=[apply_status['user_id'], history_name]
             )
 
         elif kwargs["status"] == "accept":
@@ -473,6 +493,11 @@ def update_ad_apply_status(ad_user_apply_id, **kwargs):
                 db.execute(
                     query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() WHERE ad_user_apply_id = %s",
                     args=[kwargs['status'], ad_user_apply_id]
+                )
+                history_name = f"{apply_status['title']} 광고 신청 승인"
+                db.execute(
+                    query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                    args=[apply_status['user_id'], history_name]
                 )
                 db.commit()
         else:

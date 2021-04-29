@@ -1,0 +1,58 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 미션 신청 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              ad_user_apply_id:
+                type: integer
+                description: 신청 ID
+              mission_card_id:
+                type: integer
+                description: 미션 ID
+              side_image:
+                type: string
+              back_image:
+                type: string
+              instrument_panel:
+                type: string
+              call_number:
+                type: string
+              mission_end_date:
+                type: string
+              mission_name:
+                type: string
+              mission_type:
+                type: integer
+              name:
+                type: string
+              register_time:
+                type: string
+              status:
+                type: string
+                description: 미션 진행 현황
+              title:
+                type: string
+              travelled_distance:
+                type: integer
+                description: 주행거리

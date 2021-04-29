@@ -1,0 +1,50 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: ad_user_apply_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: mission_card_id
+    in: query string
+    type: integer
+    required: true
+
+responses:
+  200:
+    description: 미션리스트에서 해당 ad_user_apply_id에 대한 미션 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              back_image:
+                type: string
+              side_image:
+                type: string
+              instrument_panel:
+                type: string
+              mission_name:
+                type: string
+              mission_type:
+                type: integer
+              status:
+                type: string
+              travelled_distance:
+                type: integer
+

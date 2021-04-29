@@ -140,7 +140,6 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
     return result
 
 
-
 # # 어드민이 미션 성공여부 체크
 def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     db = Database()
@@ -213,6 +212,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "SET activity_start_date = %s, activity_end_date = %s WHERE ad_user_apply_id = %s",
                     args=[start_date, end_date, ad_apply_id]
                 )
+            history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 승인"
+            db.execute(
+                query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                args=[mission_information['user_id'], history_name]
+            )
 
             db.commit()
             return result
@@ -240,7 +244,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                               "WHERE ad_mission_card_id = %s",
                         args=mission_card_id
                     )
-
+                history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
+                db.execute(
+                    query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                    args=[mission_information['user_id'], history_name]
+                )
                 db.commit()
                 return result
 
@@ -250,6 +258,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "SET status = 'reject', mission_fail_count = mission_fail_count + 1 "
                           "WHERE ad_mission_card_id = %s",
                     args=mission_card_id
+                )
+                history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
+                db.execute(
+                    query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                    args=[mission_information['user_id'], history_name]
                 )
                 db.commit()
                 return result
@@ -277,7 +290,14 @@ def get_all_user_list(page):
                       "FROM vehicle WHERE user_id = %s AND removed = 0",
                 args=user_list[i]['user_id']
             )
+            activity_history = db.executeAll(
+                query="SELECT history_name, "
+                      "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                      "FROM user_activity_history WHERE user_id = %s",
+                args=user_list[i]['user_id']
+            )
             user_list[i]['vehicle_information'] = vehicle
+            user_list[i]['activity_history'] = activity_history
 
     return user_list
 

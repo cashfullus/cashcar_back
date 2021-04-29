@@ -130,14 +130,16 @@ class Database:
               "ad_user_apply_id, user_id, ad_id, status, " \
               "DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
               "DATE_FORMAT(accept_status_time, '%Y-%m-%d %H:%i:%s') as accept_status_time " \
-              "FROM ad_user_apply ORDER BY FIELD(status, 'stand_by')"
+              "FROM ad_user_apply ORDER BY FIELD(status, 'stand_by', 'accept')"
         self.cursor.execute(query=sql)
         rows = self.cursor.fetchall()
         return rows
 
     # 신청한 광고의 status 만 가져오기
     def getOneApplyStatus(self, ad_user_apply_id):
-        sql = "SELECT status FROM ad_user_apply WHERE ad_user_apply_id = %s"
+        sql = "SELECT status, title, user_id FROM ad_user_apply aua " \
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
+              "WHERE ad_user_apply_id = %s"
         self.cursor.execute(query=sql, args=ad_user_apply_id)
         row = self.cursor.fetchone()
         return row
@@ -199,14 +201,16 @@ class Database:
     # 미션 인증에 사용
     def getOneMissionUserInfoByIdx(self, ad_user_apply_id, ad_mission_card_id):
         sql = "SELECT " \
-              "amcu.ad_mission_card_user_id, status, mission_fail_count, " \
+              "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
               "amc.mission_name, amc.mission_type, amc.additional_point, amc.from_default_order, " \
               "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
-              "mission_fail_count " \
+              "mission_fail_count, title, u.user_id as user_id " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
               "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
-              "WHERE ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s AND removed = 0"
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+              "JOIN user u on aua.user_id = u.user_id " \
+              "WHERE amcu.ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
         row = self.cursor.fetchone()
         return row

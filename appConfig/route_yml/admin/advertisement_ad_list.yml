@@ -9,7 +9,7 @@ parameters:
 
   - name: admin_user_id
     in: Headers
-    type: Bearer String
+    type: integer
     required: true
 
   - name: page

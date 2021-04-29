@@ -1,0 +1,47 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: ad_user_apply_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: mission_card_id
+    in: query string
+    type: integer
+    required: true
+
+responses:
+  200:
+    description: 미션 status 변경(reason(Update Success))
+    schema:
+      type: object
+      properties:
+        accpet:
+          type: boolean
+        reason:
+          type: string
+
+  400:
+    description: 미션 status 변경 실패 (reason (Already Change Status), (Already Success Mission))
+    schema:
+      type: object
+      properties:
+        accpet:
+          type: boolean
+          default: false
+        reason:
+          type: string
+
