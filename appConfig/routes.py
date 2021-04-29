@@ -731,3 +731,21 @@ def admin_mission_list_by_user():
         ad_mission_card_id=mission_card_id
     )
     return jsonify({"data": result})
+
+
+# 어드민 회원관리
+@app.route('/admin/user/list')
+@jwt_required()
+@swag_from('route_yml/admin/admin_get_all_user_list.yml')
+def admin_get_all_user_list():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    page = request.args.get('page', 1)
+    result = Admin.get_all_user_list(page=page)
+    return jsonify({"data": result})
+

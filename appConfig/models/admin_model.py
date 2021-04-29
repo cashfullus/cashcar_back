@@ -255,7 +255,31 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 return result
 
 
+# 어드민 회원리스트 및 회원 관리
+def get_all_user_list(page):
+    db = Database()
+    per_page = (int(page) - 1) * 10
+    start_at = per_page + 10
+    user_list = db.executeAll(
+        query="SELECT user_id, nickname, name, call_number, email, "
+              "resident_registration_number_back as gender, "
+              "resident_registration_number_front as date_of_birth, "
+              "marketing, main_address, detail_address, deposit, "
+              "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM user u LIMIT %s OFFSET %s",
+        args=[start_at, per_page]
+    )
+    if user_list:
+        for i in range(len(user_list)):
+            vehicle = db.executeAll(
+                query="SELECT "
+                      "vehicle_id, vehicle_model_name, car_number, brand,owner_relationship, supporters "
+                      "FROM vehicle WHERE user_id = %s AND removed = 0",
+                args=user_list[i]['user_id']
+            )
+            user_list[i]['vehicle_information'] = vehicle
 
+    return user_list
 
 
 
