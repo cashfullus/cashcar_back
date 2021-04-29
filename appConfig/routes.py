@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, request, render_template, send_file
+from flask import Flask, jsonify, request, render_template, send_file, send_from_directory
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -27,7 +27,6 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
-
 # 이미지 파일 형식
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', ''}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
@@ -515,7 +514,7 @@ def admin_user_login():
 
 
 # 이미지 (썸네일, 스티커 이미지, 광고 이미지)
-@app.route('/admin/adverting/register', methods=['POST'])
+@app.route('/admin/adverting/register', methods=['POST', 'DELETE'])
 @jwt_required()
 @swag_from('route_yml/admin/advertisement_register.yml', methods=['POST'])
 def admin_adverting_register():
@@ -567,8 +566,7 @@ def admin_adverting_register():
             'default_mission_items': [eval(item) for item in request.form.getlist('default_mission_items')],
             'additional_mission_items': [eval(item) for item in request.form.getlist('additional_mission_items')]
         }
-        print(data)
-        result = AD.admin_ad_register(other_images=image_dict, ad_images=images, **data)
+        result = AD.admin_ad_register(other_images=image_dict, ad_images=images, req_method=request.method, **data)
         if result:
             return jsonify({"data": {"allowed_image": True, "success": True, "registered": result}})
         else:
@@ -577,9 +575,9 @@ def admin_adverting_register():
         return jsonify({"data": {"allowed_image": False, "success": False}})
 
 
-# 광고 수정 및 삭제
-@app.route('/admin/ad/update', methods=['POST', 'DELETE'])
-    # ad_id = request.args.get('ad_id')
+# 광고 미션 수정 or 삭제
+# @app.route('/admin/ad/mission/update', methods=['POST', 'DELETE'])
+    # ad_mission_card_id = request.args.get('ad_mission_card_Id')
 
 # 어드민 광고 리스트
 @app.route('/admin/ad/list')
