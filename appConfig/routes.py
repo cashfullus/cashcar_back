@@ -752,3 +752,12 @@ def admin_get_all_user_list():
     result = Admin.get_all_user_list(page=page)
     return jsonify({"data": result})
 
+
+@app.route('/user/point')
+@jwt_required()
+@swag_from('route_yml/user/user_get_point_history.yml')
+def get_point_all_by_user_id():
+    user_id = request.args.get('user_id')
+    page = request.args.get('page', 1)
+    result = User.get_point_all_by_user(user_id=user_id, page=page)
+    return jsonify({"data": result})

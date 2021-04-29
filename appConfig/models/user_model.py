@@ -292,3 +292,15 @@ def user_apply_id_by_ad_id(page, ad_id):
     return user_information
 
 
+# 사용자 포인트 기록 조회
+def get_point_all_by_user(user_id, page):
+    per_page = (int(page) - 1) * 7
+    start_at = per_page + 7
+    db = Database()
+    user_point_history = db.executeAll(
+        query="SELECT point, contents, type, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM point_history WHERE user_id = %s LIMIT %s OFFSET %s",
+        args=[user_id, start_at, per_page]
+    )
+    return user_point_history
+

@@ -12,6 +12,11 @@ parameters:
     type: Bearer String
     required: true
 
+  - name: ad_id
+    in: query string
+    type: integer
+    required: false
+
   - name: side_image
     in: formData
     type: file
@@ -132,7 +137,7 @@ parameters:
 
 responses:
   200:
-    description: 등록 성공(등록 실패시 success false, 이미지의 잘못된 확장자 allowed_image false)
+    description: 등록 성공(등록 실패시 success false, 이미지의 잘못된 확장자 allowed_image false), ad_id 가 있을경우 update, delete 일경우 removed 가 1로 변경
     schema:
       type: object
       properties:
