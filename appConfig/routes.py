@@ -66,7 +66,7 @@ Forbidden = {"status": False, "data": "Forbidden"}
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
     try:
-        image_file = f"static/image/{location}/{idx}/{image_file}"
+        imagr_file = f"static/image/{location}/{idx}/{image_file}"
         return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
     except FileNotFoundError:
         return jsonify({"status": False, "data": "Not Found Image"}), 404
@@ -533,12 +533,14 @@ def admin_adverting_register():
     thumbnail_image = request.files.get('thumbnail_image')
     # 기타 사진들
     images = request.files.getlist('ad_images')
+    print(images)
     # 썸네일, 좌측, 후면 사진
     image_dict = {
         "side_image": side_image,
         "back_image": back_image,
         "thumbnail_image": thumbnail_image
     }
+    print(image_dict)
 
     allowed_ad_images = allowed_files(images)
     allowed_other_images = allowed_image_for_dict(image_dict)
