@@ -1,0 +1,42 @@
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: page
+    in: query string
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: 사용자 포인트 리트스
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              contents:
+                type: string
+                default: "타이틀 입니다 서포터즈 활동 성공"
+              point:
+                type: integer
+                default: 33000
+              register_time:
+                type: string
+                default: "2021-04-29 17:32:18"
+              type:
+                type: string
+                default: "ad_apply"
