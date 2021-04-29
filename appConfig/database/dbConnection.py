@@ -83,7 +83,7 @@ class Database:
               "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
               "activity_period, max_recruiting_count, recruiting_count, " \
               "total_point, area, description " \
-              "FROM ad_information WHERE ad_id = %s"
+              "FROM ad_information WHERE ad_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=ad_id)
         row = self.cursor.fetchone()
         return row
@@ -108,7 +108,7 @@ class Database:
               "FROM ad_information WHERE " \
               "recruiting_count < max_recruiting_count " \
               "AND NOW() BETWEEN recruit_start_date AND recruit_end_date AND " \
-              "ad_id = %s"
+              "ad_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=ad_id)
         row = self.cursor.fetchone()
         return row
@@ -118,7 +118,7 @@ class Database:
         sql = "SELECT " \
               "ad_user_apply_id, user_id, ad_id, status, " \
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
-              "DATE_FORMAT(change_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as change_status_time " \
+              "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time " \
               "FROM ad_user_apply WHERE ad_user_apply_id = %s"
         self.cursor.execute(query=sql, args=ad_user_apply_id)
         row = self.cursor.fetchone()
@@ -174,7 +174,7 @@ class Database:
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
-              "WHERE user_id = %s AND (amcu.status NOT IN ('success') or amcu.status IS NULL) " \
+              "WHERE user_id = %s AND (amcu.status NOT IN ('success') or amcu.status IS NULL) AND removed = 0 " \
               "ORDER BY FIELD(mission_start_date, ad_mission_card_id) LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
@@ -206,7 +206,7 @@ class Database:
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
               "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
-              "WHERE ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s"
+              "WHERE ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
         row = self.cursor.fetchone()
         return row

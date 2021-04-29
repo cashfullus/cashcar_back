@@ -11,45 +11,138 @@ AD_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
 # Admin 광고등록하기
-def admin_ad_register(other_images, ad_images, **kwargs):
+def admin_ad_register(other_images, ad_images, req_method, **kwargs):
     db = Database()
     # 데이터 준비
-    kwargs['recruit_start_date'] = kwargs['recruit_start_date'] + " 00:00:00"
-    kwargs['recruit_end_date'] = kwargs['recruit_end_date'] + " 23:59:59"
-    value_list = [kwargs['owner_name'], kwargs['title'], kwargs['recruit_start_date'],
-                  kwargs['recruit_end_date'], kwargs['activity_period'], kwargs['max_recruiting_count'],
-                  kwargs['total_point'], int(kwargs['total_point']) // int(kwargs['activity_period']),
-                  kwargs['area'], kwargs['description'], kwargs['min_distance'], kwargs['gender'],
-                  kwargs['min_age_group'], kwargs['max_age_group'], kwargs['side_length'], kwargs['side_width'],
-                  kwargs['back_length'], kwargs['back_width']
-                  ]
-    if kwargs.get('ad_id') == 0:
-        sql = "INSERT INTO ad_information " \
-              "(owner_name, title, recruit_start_date, recruit_end_date, " \
-              "activity_period, max_recruiting_count, " \
-              "total_point, day_point, area, description, min_distance, gender, " \
-              "min_age_group, max_age_group, side_length, side_width, back_length, back_width) " \
-              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    if req_method != 'DELETE':
+        kwargs['recruit_start_date'] = kwargs['recruit_start_date'] + " 00:00:00"
+        kwargs['recruit_end_date'] = kwargs['recruit_end_date'] + " 23:59:59"
+        value_list = [kwargs['owner_name'], kwargs['title'], kwargs['recruit_start_date'],
+                      kwargs['recruit_end_date'], kwargs['activity_period'], kwargs['max_recruiting_count'],
+                      kwargs['total_point'], int(kwargs['total_point']) // int(kwargs['activity_period']),
+                      kwargs['area'], kwargs['description'], kwargs['min_distance'], kwargs['gender'],
+                      kwargs['min_age_group'], kwargs['max_age_group'], kwargs['side_length'], kwargs['side_width'],
+                      kwargs['back_length'], kwargs['back_width']
+                      ]
+        if kwargs.get('ad_id') == 0:
+            sql = "INSERT INTO ad_information " \
+                  "(owner_name, title, recruit_start_date, recruit_end_date, " \
+                  "activity_period, max_recruiting_count, " \
+                  "total_point, day_point, area, description, min_distance, gender, " \
+                  "min_age_group, max_age_group, side_length, side_width, back_length, back_width) " \
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-        db.execute(query=sql, args=value_list)
-        db.commit()
-        register_id = db.executeOne(query="SELECT ad_id FROM ad_information ORDER BY register_time DESC LIMIT 1")
-        if register_id:
+            db.execute(query=sql, args=value_list)
+            db.commit()
+            register_id = db.executeOne(query="SELECT ad_id FROM ad_information ORDER BY register_time DESC LIMIT 1")
+            if register_id:
+                save_to_db_dict = {}
+                save_to_db_list = []
+                directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
+                os.makedirs(directory, exist_ok=True)
+
+                for key, val in other_images.items():
+                    val.save(directory + "/" + secure_filename(val.filename))
+                    save_to_db_dict.setdefault(key,
+                                               f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(
+                                                   val.filename))
+
+                for image in ad_images:
+                    image.save(directory + "/" + secure_filename(image.filename))
+                    value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
+                    save_to_db_list.append(value)
+
+                db.execute(
+                    query="UPDATE ad_information "
+                          "SET thumbnail_image = %s, side_image = %s, back_image = %s "
+                          "WHERE ad_id = %s",
+                    args=[save_to_db_dict['thumbnail_image'],
+                          save_to_db_dict['side_image'],
+                          save_to_db_dict['back_image'],
+                          register_id['ad_id']
+                          ]
+                )
+                for i in range(len(save_to_db_list)):
+                    db.execute(
+                        query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
+                        args=[register_id['ad_id'], save_to_db_list[i]]
+                    )
+
+                default_mission_items = kwargs['default_mission_items']
+                additional_mission_items = kwargs['additional_mission_items']
+
+                if default_mission_items[0]:
+                    for item in default_mission_items[0]:
+                        mission_name = f"{item['order']}차 필수미션"
+                        db.execute(
+                            query="INSERT INTO ad_mission_card "
+                                  "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
+                                  "VALUES (%s, %s, %s, %s, %s, %s)",
+                            args=[register_id['ad_id'], item['mission_type'], mission_name,
+                                  item['due_date'], item['order'], item['based_on_activity_period']]
+                        )
+                    kwargs['default_mission_items'] = default_mission_items[0]
+
+                if additional_mission_items[0]:
+                    for item in additional_mission_items[0]:
+                        db.execute(
+                            query="INSERT INTO ad_mission_card "
+                                  "(ad_id, mission_type, mission_name, additional_point, due_date, "
+                                  "from_default_order, from_default_order_date) "
+                                  "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                            args=[register_id['ad_id'], item['mission_type'],
+                                  item["mission_name"], item["additional_point"],
+                                  item["due_date"], item["from_default_order"], item['from_default_order_date']
+                                  ]
+                        )
+                    kwargs['additional_mission_items'] = additional_mission_items[0]
+                db.commit()
+                kwargs['ad_images'] = db.executeAll(
+                    query="SELECT image FROM ad_images WHERE ad_id = %s",
+                    args=register_id['ad_id']
+                )
+                kwargs['ad_id'] = register_id['ad_id']
+                kwargs['side_image'] = save_to_db_dict['side_image']
+                kwargs['back_image'] = save_to_db_dict['back_image']
+                kwargs['thumbnail_image'] = save_to_db_dict['thumbnail_image']
+                kwargs['activity_period'] = int(kwargs['activity_period'])
+                kwargs['gender'] = int(kwargs['gender'])
+                kwargs['max_age_group'] = int(kwargs['max_age_group'])
+                kwargs['max_recruiting_count'] = int(kwargs['max_recruiting_count'])
+                kwargs['min_age_group'] = int(kwargs['min_age_group'])
+                kwargs['min_distance'] = int(kwargs['min_distance'])
+                kwargs['total_point'] = int(kwargs['total_point'])
+                return kwargs
+            else:
+                return False
+        else:
+            value_list.append(kwargs.get('ad_id'))
+            db.execute(
+                query="UPDATE ad_information "
+                      "SET owner_name = %s, title = %s, recruit_start_date = %s, recruit_end_date = %s, "
+                      "activity_period = %s, max_recruiting_count = %s, total_point = %s, day_point = %s, "
+                      "area = %s, description = %s, min_distance = %s, gender = %s, "
+                      "min_age_group = %s, max_age_group = %s, side_length = %s, side_width = %s, "
+                      "back_length = %s, back_width = %s "
+                      "WHERE ad_id = %s",
+                args=value_list
+            )
             save_to_db_dict = {}
             save_to_db_list = []
-            directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
+            directory = f"{BASE_IMAGE_LOCATION}/{kwargs.get('ad_id')}"
             os.makedirs(directory, exist_ok=True)
-
             for key, val in other_images.items():
                 val.save(directory + "/" + secure_filename(val.filename))
                 save_to_db_dict.setdefault(key,
-                                           f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(val.filename))
-
+                                           f"{AD_IMAGE_HOST}/{kwargs.get('ad_id')}/" + secure_filename(val.filename))
             for image in ad_images:
                 image.save(directory + "/" + secure_filename(image.filename))
-                value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
+                value = f"{AD_IMAGE_HOST}/{kwargs.get('ad_id')}/{secure_filename(image.filename)}"
                 save_to_db_list.append(value)
-
+            db.execute(
+                query="DELETE FROM ad_images WHERE ad_id = %s",
+                args=kwargs.get('ad_id')
+            )
             db.execute(
                 query="UPDATE ad_information "
                       "SET thumbnail_image = %s, side_image = %s, back_image = %s "
@@ -57,47 +150,19 @@ def admin_ad_register(other_images, ad_images, **kwargs):
                 args=[save_to_db_dict['thumbnail_image'],
                       save_to_db_dict['side_image'],
                       save_to_db_dict['back_image'],
-                      register_id['ad_id']
+                      kwargs.get('ad_id')
                       ]
             )
             for i in range(len(save_to_db_list)):
                 db.execute(
                     query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
-                    args=[register_id['ad_id'], save_to_db_list[i]]
+                    args=[kwargs.get('ad_id'), save_to_db_list[i]]
                 )
 
-            default_mission_items = kwargs['default_mission_items']
-            additional_mission_items = kwargs['additional_mission_items']
-
-            if default_mission_items[0]:
-                for item in default_mission_items[0]:
-                    mission_name = f"{item['order']}차 필수미션"
-                    db.execute(
-                        query="INSERT INTO ad_mission_card "
-                              "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
-                              "VALUES (%s, %s, %s, %s, %s, %s)",
-                        args=[register_id['ad_id'], item['mission_type'], mission_name,
-                              item['due_date'], item['order'], item['based_on_activity_period']]
-                    )
-                kwargs['default_mission_items'] = default_mission_items[0]
-
-            if additional_mission_items[0]:
-                for item in additional_mission_items[0]:
-                    db.execute(
-                        query="INSERT INTO ad_mission_card "
-                              "(ad_id, mission_type, mission_name, additional_point, due_date, "
-                              "from_default_order, from_default_order_date) "
-                              "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        args=[register_id['ad_id'], item['mission_type'],
-                              item["mission_name"], item["additional_point"],
-                              item["due_date"], item["from_default_order"], item['from_default_order_date']
-                              ]
-                    )
-                kwargs['additional_mission_items'] = additional_mission_items[0]
             db.commit()
             kwargs['ad_images'] = db.executeAll(
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
-                args=register_id['ad_id']
+                args=kwargs.get('ad_id')
             )
             kwargs['side_image'] = save_to_db_dict['side_image']
             kwargs['back_image'] = save_to_db_dict['back_image']
@@ -110,29 +175,21 @@ def admin_ad_register(other_images, ad_images, **kwargs):
             kwargs['min_distance'] = int(kwargs['min_distance'])
             kwargs['total_point'] = int(kwargs['total_point'])
             return kwargs
-        else:
-            return False
     else:
-        db.execute(
-            query="UPDATE ad_information "
-                  "SET owner_name = %s, title = %s, recruit_start_date = %s, recruit_end_date, "
-                  "activity_period = %s, max_recruiting_count = %s, total_point = %s, day_point = %s, "
-                  "area = %s, description = %s, min_distance = %s, gender = %s, "
-                  "min_age_group = %s, max_age_group = %s, side_length = %s, side_width = %s, "
-                  "back_length = %s, back_width = %s "
-                  "WHERE ad_id = %s",
-            args=value_list.append(kwargs.get('ad_id'))
+        apply_information = db.executeOne(
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE ad_id = %s AND status IN ('stand_by', 'accept')",
+            args=kwargs.get('ad_id')
         )
-        # for key, val in other_images.items():
-        #     val.save(directory + "/" + secure_filename(val.filename))
-        #     save_to_db_dict.setdefault(key,
-        #                                f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(val.filename))
-        #
-        # for image in ad_images:
-        #     image.save(directory + "/" + secure_filename(image.filename))
-        #     value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
-        #     save_to_db_list.append(value)
 
+        if apply_information:
+            return False
+        else:
+            db.execute(
+                query="UPDATE ad_information SET removed = 1, removed_time = NOW() WHERE ad_id = %s",
+                args=kwargs.get('ad_id')
+            )
+            db.commit()
+            return True
 
 
 # 광고 리스트 (parameter query_string)
@@ -156,7 +213,7 @@ def get_all_by_category_ad_list(page, category):
           "max_recruiting_count, recruiting_count, total_point, area," \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \
-          f"FROM ad_information WHERE {sql_parameter_val} " \
+          f"FROM ad_information WHERE {sql_parameter_val} AND removed = 0 " \
           "LIMIT %s OFFSET %s"
 
     result = db.executeAll(query=sql, args=[start_at, per_page])
