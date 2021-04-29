@@ -65,7 +65,7 @@ Forbidden = {"status": False, "data": "Forbidden"}
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
     try:
-        imagr_file = f"/static/image/{location}/{idx}/{image_file}"
+        image_file = f"static/image/{location}/{idx}/{image_file}"
         return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
     except FileNotFoundError:
         return jsonify({"status": False, "data": "Not Found Image"}), 404
