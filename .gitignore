@@ -18,6 +18,7 @@ nuhup.out
 # Icon must end with two \r
 Icon
 
+run.py
 
 # Thumbnails
 ._*
