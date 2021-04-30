@@ -19,7 +19,7 @@ nuhup.out
 Icon
 
 run.py
-
+appConfig/firebaseConfig
 # Thumbnails
 ._*
 .png
