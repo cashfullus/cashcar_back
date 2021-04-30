@@ -10,6 +10,11 @@ from datetime import datetime, date, timedelta
 import os
 
 
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+
 def allowed_in_role_user(user_id):
     db = Database()
     user_role = db.executeOne(
@@ -300,6 +305,25 @@ def get_all_user_list(page):
             user_list[i]['activity_history'] = activity_history
 
     return user_list
+
+
+# 어드민 회원 정보 수정
+# def admin_user_profile_modify(user_id, req_method, **kwargs):
+#     db = Database()
+#     target_user = db.getUserById(user_id=user_id)
+#     if target_user:
+#         if req_method == 'DELETE':
+#             db.execute(
+#                 query="UPDATE user SET withdrawn = 1, withdraw_time = NOW() WHERE user_id = %s",
+#                 args=user_id
+#             )
+#             db.commit()
+#             return True
+#
+#         elif req_method == 'POST':
+#             db.execute(
+#                 query="UPDATE "
+#             )
 
 
 

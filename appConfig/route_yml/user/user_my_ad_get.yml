@@ -72,6 +72,9 @@ responses:
                 point:
                   type: integer
                   description: 적립 포인트(실 적립은 기간 끝나고 적립)
+                ongoing_day_percent:
+                  type: integer
+                  description: 하루 24시간 기준 진행률
             vehicle_information:
               type: array
               items:
