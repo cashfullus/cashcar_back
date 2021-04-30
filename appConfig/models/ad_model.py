@@ -391,9 +391,9 @@ def cancel_apply_user(ad_user_apply_id):
         status["apply_information"] = False
         return status
 
-    if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
-        status["time_out"] = False
-        return status
+    #if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
+    #    status["time_out"] = False
+    #    return status
     ad_information = db.executeOne(
         query="SELECT title, user_id FROM ad_information as ai JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
               "WHERE ad_user_apply_id = %s",
