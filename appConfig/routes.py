@@ -22,7 +22,7 @@ from flasgger import Swagger, swag_from
 # Firebase push Notification Config
 import firebase_admin
 from firebase_admin import credentials
-cred = credentials.Certificate('CashCar/appConfig/firebaseConfig/cashcarServiceAccountKey.json')
+cred = credentials.Certificate('appConfig/firebaseConfig/cashcarServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 
 
