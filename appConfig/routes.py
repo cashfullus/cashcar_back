@@ -594,9 +594,13 @@ def admin_adverting_register():
 @swag_from('route_yml/admin/advertisement_ad_list.yml')
 def admin_ad_list():
     identity_ = get_jwt_identity()
-    admin_user_id = request.args.get('admin_user_id', 0)
+    admin_user_id = request.headers['admin_user_id']
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
+    # 권한 확인
+    allowed_user = Admin.allowed_in_role_user(admin_user_id)
+    if not allowed_user:
+        return jsonify(Forbidden), 403
     page = request.args.get('page', 1)
     category = request.args.get('category', 'none')
     point = request.args.get('point', '0~900000')
@@ -777,9 +781,45 @@ def get_point_all_by_user_id():
     return jsonify({"data": result})
 
 
-# 회원 정보 어드민 수정
-@app.route('/admin/user/profile', methods=['POST', 'DELETE'])
-def admin_user_profile():
-    user_id = request.args.get('user_id')
+# 어드민 출금 신청 리스트
+@app.route('/admin/user/withdrawal/point', methods=['GET', 'POST'])
+@jwt_required()
+def get_withdrawal_self_point_all():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+    page = request.args.get('page', 1)
+    if request.method == 'GET':
+        result = Admin.get_all_withdrawal_point(page=page)
+        return jsonify({"data": result})
+
+    elif request.method == 'POST':
+        withdrawal_self_id = request.args.get('withdrawal_self_id', 0)
+        if withdrawal_self_id != 0:
+            data = request.get_json()
+            result = Admin.update_withdrawal_point(withdrawal_self_id=withdrawal_self_id, **data)
+            return jsonify({"data": result})
+
+
+
+# 어드민 기부 신청 리스트
+@app.route('/admin/user/withdrawal/donate')
+@jwt_required()
+def get_withdrawal_donate_point_all():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    result = Admin.get_all_withdrawal_donate()
+    return jsonify({"data": result})
+
+
+
 
 
