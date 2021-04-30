@@ -87,6 +87,8 @@ responses:
               registered:
                 type: object
                 properties:
+                  ad_id:
+                    type: integer
                   activity_period:
                     type: integer
                   area:
@@ -110,6 +112,8 @@ responses:
                   max_age_group:
                     type: integer
                   max_recruiting_count:
+                    type: integer
+                  recruiting_count:
                     type: integer
                   min_age_group:
                     type: integer

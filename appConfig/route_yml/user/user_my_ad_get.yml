@@ -27,6 +27,8 @@ responses:
             ad_information:
               type: object
               properties:
+                ad_mission_card_user_id:
+                  type: integer
                 ad_user_apply_id:
                   type: integer
                   description: 신청했던 ID
@@ -72,6 +74,8 @@ responses:
                 point:
                   type: integer
                   description: 적립 포인트(실 적립은 기간 끝나고 적립)
+                order:
+                  type: integer
                 ongoing_day_percent:
                   type: integer
                   description: 하루 24시간 기준 진행률

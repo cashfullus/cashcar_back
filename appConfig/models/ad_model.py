@@ -348,11 +348,16 @@ def get_ad_apply(ad_user_apply_id):
         return False
 
 
-# 메인화면 본인이 진행중인 광고 카드의 정보
+# 메인화면 본인이 진행중인 광고 카드의 정보 order 와 ad_mission_card_user_id,
 def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
+    order_information = db.executeOne(
+        query="SELECT `order` FROM ad_mission_card WHERe ad_mission_card_id = %s",
+        args=ad_information['ad_mission_card_id']
+    )
+    ad_information['order'] = order_information['order']
     result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "is_delete": True}
     if not ad_information:
         result = {"ad_information": {}, "vehicle_information": vehicle_information}

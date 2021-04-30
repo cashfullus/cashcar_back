@@ -22,7 +22,7 @@ from flasgger import Swagger, swag_from
 # Firebase push Notification Config
 import firebase_admin
 from firebase_admin import credentials
-cred = credentials.Certificate('CashCar/appConfig/firebaseConfig/cashcarServiceAccountKey.json')
+cred = credentials.Certificate('appConfig/firebaseConfig/cashcarServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 
 
@@ -608,8 +608,8 @@ def admin_ad_list():
     gender = request.args.get('gender', '0')
     age = request.args.get('age', '0~200')
     distance = request.args.get('distance', '0')
-    recruit_start_date = request.args.get('recruit_start', '0000-00-00 00:00:00')
-    recruit_end_date = request.args.get('recruit_end', '9999-12-30 23:59:59')
+    recruit_start_date = request.args.get('recruit_start', '0000-00-00')
+    recruit_end_date = request.args.get('recruit_end', '9999-12-30')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'ASC')
     avg_point = point.split('~')
