@@ -361,6 +361,9 @@ def get_ongoing_user_by_id(user_id):
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0
         ad_information["mission_type"] = 0
+        ad_information['activity_start_date'] = ''
+        ad_information['activity_end_date'] = ''
+        ad_information['ongoing_day_percent'] = 0
         return result
     elif ad_information["mission_status"]:
         if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
