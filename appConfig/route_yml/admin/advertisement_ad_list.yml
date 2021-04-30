@@ -74,6 +74,8 @@ responses:
     schema:
       type: object
       properties:
+        page_count:
+          type: integer
         data:
           type: array
           items:

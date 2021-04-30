@@ -22,7 +22,7 @@ from flasgger import Swagger, swag_from
 # Firebase push Notification Config
 import firebase_admin
 from firebase_admin import credentials
-cred = credentials.Certificate('CashCar/appConfig/firebaseConfig/cashcarServiceAccountKey.json')
+cred = credentials.Certificate('appConfig/firebaseConfig/cashcarServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 
 
@@ -614,11 +614,12 @@ def admin_ad_list():
     sort = request.args.get('sort', 'ASC')
     avg_point = point.split('~')
     avg_age = age.split('~')
-    result = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area, gender=gender,
-                                            avg_age=avg_age, distance=distance, recruit_start=recruit_start_date,
-                                            recruit_end=recruit_end_date, order_by=order_by, sort=sort, page=int(page)
-                                            )
-    return jsonify({"data": result})
+    result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area,
+                                                        gender=gender, avg_age=avg_age, distance=distance,
+                                                        recruit_start=recruit_start_date, recruit_end=recruit_end_date,
+                                                        order_by=order_by, sort=sort, page=int(page)
+                                                        )
+    return jsonify({"data": result, "page_count": page_count})
 
 
 # 광고 신청한 사용자 리스트
