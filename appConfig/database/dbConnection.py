@@ -34,7 +34,7 @@ class Database:
         self.db.commit()
 
     def getUserById(self, user_id):
-        sql = f"SELECT * FROM user WHERE user_id = {user_id}"
+        sql = f"SELECT * FROM user WHERE user_id = {user_id} AND withdrawn = 0"
         self.cursor.execute(sql)
         row = self.cursor.fetchone()
         return row
@@ -135,7 +135,7 @@ class Database:
         rows = self.cursor.fetchall()
         return rows
 
-    # 신청한 광고의 status 만 가져오기
+    # 신청한 광고의 status, title, user_id, recruting_count 조회
     def getOneApplyStatus(self, ad_user_apply_id):
         sql = "SELECT status, title, user_id FROM ad_user_apply aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \

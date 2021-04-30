@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, request, render_template, send_file, send_from_directory
+from flask import Flask, jsonify, request, render_template, send_file
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -18,6 +18,13 @@ import os
 import logging
 
 from flasgger import Swagger, swag_from
+
+# Firebase push Notification Config
+import firebase_admin
+from firebase_admin import credentials
+cred = credentials.Certificate('appConfig/firebaseConfig/cashcarServiceAccountKey.json')
+firebase_admin.initialize_app(cred)
+
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
@@ -749,10 +756,17 @@ def admin_get_all_user_list():
         return jsonify(status), code
 
     page = request.args.get('page', 1)
+    # area = request.args.get('area', '')
+    # gender = request.args.get('gender', 0)
+    # age = request.args.get('age', '0~200')
+    # register_time = request.args.get('register_time', '0000-00-00 00:00:00 ~ 9999-12-30 00:00:00')
+    # avg_register_time = register_time.split('~')
+    # avg_age = age.split('~')
     result = Admin.get_all_user_list(page=page)
     return jsonify({"data": result})
 
 
+# 회원 정보에서 보유 포인트 이력
 @app.route('/user/point')
 @jwt_required()
 @swag_from('route_yml/user/user_get_point_history.yml')
@@ -761,3 +775,11 @@ def get_point_all_by_user_id():
     page = request.args.get('page', 1)
     result = User.get_point_all_by_user(user_id=user_id, page=page)
     return jsonify({"data": result})
+
+
+# 회원 정보 어드민 수정
+@app.route('/admin/user/profile', methods=['POST', 'DELETE'])
+def admin_user_profile():
+    user_id = request.args.get('user_id')
+
+
