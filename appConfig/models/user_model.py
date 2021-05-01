@@ -229,7 +229,7 @@ def user_fcm(**kwargs):
         if fcm_row:
             db.execute(query="UPDATE user_fcm SET fcm_token = %s, "
                              "last_check_time = NOW() WHERE fcm_id = %s",
-                       args=[fcm_row["fcm_token"], fcm_row["fcm_id"]]
+                       args=[kwargs.get('fcm_token'), fcm_row["fcm_id"]]
                        )
             db.commit()
             return True
