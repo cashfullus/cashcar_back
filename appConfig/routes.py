@@ -794,8 +794,8 @@ def get_withdrawal_self_point_all():
         return jsonify(status), code
     page = request.args.get('page', 1)
     if request.method == 'GET':
-        result = Admin.get_all_withdrawal_point(page=page)
-        return jsonify({"data": result})
+        result, item_count = Admin.get_all_withdrawal_point(page=page)
+        return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
         withdrawal_self_id = request.args.get('withdrawal_self_id', 0)
@@ -803,11 +803,12 @@ def get_withdrawal_self_point_all():
             data = request.get_json()
             result = Admin.update_withdrawal_point(withdrawal_self_id=withdrawal_self_id, **data)
             return jsonify({"data": result})
-
+        else:
+            return jsonify({"data": False})
 
 
 # 어드민 기부 신청 리스트
-@app.route('/admin/user/withdrawal/donate')
+@app.route('/admin/user/withdrawal/donate', methods=['GET', 'POST'])
 @jwt_required()
 def get_withdrawal_donate_point_all():
     identity_ = get_jwt_identity()
@@ -817,8 +818,19 @@ def get_withdrawal_donate_point_all():
     if status is not True:
         return jsonify(status), code
 
-    result = Admin.get_all_withdrawal_donate()
-    return jsonify({"data": result})
+    page = request.args.get('page', 1)
+    if request.method == 'GET':
+        result, item_count = Admin.get_all_withdrawal_donate(page=page)
+        return jsonify({"data": result, "item_count": item_count})
+
+    elif request.method == 'POST':
+        withdrawal_donate_id = request.args.get('withdrawal_donate_id', 0)
+        if withdrawal_donate_id != 0:
+            data = request.get_json()
+            result = Admin.update_withdrawal_donate(withdrawal_donate_id=withdrawal_donate_id, **data)
+            return jsonify({"data": result})
+        else:
+            return jsonify({"data": False})
 
 
 

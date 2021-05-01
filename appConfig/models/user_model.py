@@ -12,7 +12,7 @@ import re
 import os
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/user"
-PROFILE_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/user"
+PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
 
 # 이메일 형태 정규식 사용하여 검사
 def check_email_regex(email):

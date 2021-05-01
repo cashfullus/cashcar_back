@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/mission"
-MISSION_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/mission"
+MISSION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/mission"
 
 
 # 페이지 적용

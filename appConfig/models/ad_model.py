@@ -7,7 +7,7 @@ import os
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/CashCar/appConfig/static/image/adverting"
-AD_IMAGE_HOST = "http://app.api.service.cashcarplus.com:50193/image/adverting"
+AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
 # Admin 광고등록하기

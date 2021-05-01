@@ -348,17 +348,21 @@ def get_all_withdrawal_point(page):
               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
         args=[start_at, per_page]
     )
-    return result
+    item_count = db.executeOne(
+        query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
+    )
+    return result, item_count['item_count']
 
 
-# 어드민 포인트 출금 상태 변경
+# 어드민 포인트 출금 상태 변경  (waiting(대기중), checking(확인중), done(승인), reject(반려))
 def update_withdrawal_point(withdrawal_self_id, **kwargs):
     db = Database()
     change_time = f"change_{kwargs['status']}"
     sql = f"UPDATE withdrawal_self SET status = %s, {change_time} = NOW() WHERE withdrawal_self_id = %s"
     value_list = [kwargs['status'], withdrawal_self_id]
     if kwargs['status'] == "reject":
-        sql = f"UPDATE withdrawal_self SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_self_id = %s"
+        sql = "UPDATE withdrawal_self " \
+              f"SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_self_id = %s"
         value_list = [kwargs['status'], kwargs['comment'], withdrawal_self_id]
 
     db.execute(
@@ -369,11 +373,11 @@ def update_withdrawal_point(withdrawal_self_id, **kwargs):
     return True
 
 
-
-
 # 어드민 기부 신청 리스트
-def get_all_withdrawal_donate():
+def get_all_withdrawal_donate(page):
     db = Database()
+    per_page = (int(page) - 1) * 10
+    start_at = per_page + 10
     result = db.executeAll(
         query="SELECT "
               "name, user.user_id, amount, `status`, wd.donation_organization, receipt, name_of_donor,"
@@ -382,13 +386,33 @@ def get_all_withdrawal_donate():
               "WHEN wd.change_done IS NOT NULL "
               "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
               "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
-              "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done')"
+              "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
+              "LIMIT %s OFFSET %s",
+        args=[start_at, per_page]
     )
-    return result
+    item_count = db.executeOne(
+        query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
+    )
+    return result, item_count['item_count']
 
 
-# 어드민 기부 출금 상태 변경
-# def update_withdrawal_donate(withdrawal_donate_id, status):
+# 어드민 기부 출금 상태 변경 (waiting(대기중), checking(확인중), done(승인), reject(반려))
+def update_withdrawal_donate(withdrawal_donate_id, kwargs):
+    db = Database()
+    change_time = f"change_{kwargs['status']}"
+    sql = f"UPDATE withdrawal_donate SET status = %s, {change_time} = NOW() WHERE withdrawal_donate_id = %s"
+    value_list = [kwargs['status'], withdrawal_donate_id]
+    if kwargs['status'] == "reject":
+        sql = "UPDATE withdrawal_donate " \
+              f"SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_donate_id = %s"
+        value_list = [kwargs['status'], kwargs['comment'], withdrawal_donate_id]
+
+    db.execute(
+        query=sql,
+        args=value_list
+    )
+    db.commit()
+    return True
 
 
 
