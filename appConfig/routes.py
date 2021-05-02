@@ -20,10 +20,10 @@ import logging
 from flasgger import Swagger, swag_from
 
 # Firebase push Notification Config
-#import firebase_admin
-#from firebase_admin import credentials
-#cred = credentials.Certificate('CashCar/appConfig/firebaseConfig/cashcarServiceAccountKey.json')
-#firebase_admin.initialize_app(cred)
+import firebase_admin
+from firebase_admin import credentials
+cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
+firebase_admin.initialize_app(cred)
 
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
@@ -204,7 +204,7 @@ def user_profile():
                 result = User.update_user_profile(user_id, **data)
 
             if result:
-                return jsonify({"status": True, "data": "Success Update"}), 201
+                return jsonify({"status": True, "data": "Success Update", "image": result}), 201
             else:
                 return jsonify({"status": False, "data": "Not Found"}), 404
         else:
@@ -797,6 +797,7 @@ def get_point_all_by_user_id():
 @app.route('/admin/user/withdrawal/point', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/admin/admin_withdrawal_self_point_get.yml', methods=['GET'])
+@swag_from('route_yml/admin/admin_withdrawal_self_point_post.yml', methods=['POST'])
 def get_withdrawal_self_point_all():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -823,6 +824,8 @@ def get_withdrawal_self_point_all():
 # 어드민 기부 신청 리스트
 @app.route('/admin/user/withdrawal/donate', methods=['GET', 'POST'])
 @jwt_required()
+@swag_from('route_yml/admin/admin_withdrawal_donate_point_get.yml', methods=['GET'])
+@swag_from('route_yml/admin/admin_withdrawal_donate_point_post.yml', methods=['POST'])
 def get_withdrawal_donate_point_all():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -832,8 +835,9 @@ def get_withdrawal_donate_point_all():
         return jsonify(status), code
 
     page = request.args.get('page', 1)
+    count = request.args.get('count', 10)
     if request.method == 'GET':
-        result, item_count = Admin.get_all_withdrawal_donate(page=page)
+        result, item_count = Admin.get_all_withdrawal_donate(page=page, count=count)
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':

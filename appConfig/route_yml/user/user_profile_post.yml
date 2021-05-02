@@ -63,7 +63,7 @@ responses:
   201:
     description: 업데이트 성공
     examples:
-      application/json: {status: true, data: Success Update}
+      application/json: {status: true, data: Success Update, image: image url}
 
   400:
     description: 데이터 형식 실패

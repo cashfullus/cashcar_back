@@ -168,7 +168,7 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
             print(value_list)
             db.execute(query=sql, args=value_list)
             db.commit()
-            return True
+            return save_image
         else:
             sql = "UPDATE user SET " \
                   "nickname = %s, email = %s, name = %s, " \
