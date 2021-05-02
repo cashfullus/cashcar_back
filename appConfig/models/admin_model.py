@@ -143,7 +143,8 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
             )
             result[i]['additional_mission_items'] = db.executeAll(
                 query='SELECT '
-                      'mission_type, due_date, `order`, based_on_activity_period '
+                      'mission_type, due_date, `order`, based_on_activity_period, '
+                      'from_default_order_date, from_default_order, mission_name '
                       'FROM ad_mission_card WHERE ad_id = %s AND mission_type = 1',
                 args=result[i]['ad_id']
             )
