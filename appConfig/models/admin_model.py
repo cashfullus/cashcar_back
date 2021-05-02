@@ -373,11 +373,16 @@ def update_withdrawal_point(withdrawal_self_id, **kwargs):
               f"SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_self_id = %s"
         value_list = [kwargs['status'], kwargs['comment'], withdrawal_self_id]
 
-    db.execute(
-        query=sql,
-        args=value_list
-    )
-    db.commit()
+        db.execute(
+            query=sql,
+            args=value_list
+        )
+        db.commit()
+    # elif kwargs['status'] == 'done':
+    #     db.execute(
+    #         query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+    #         args=
+    #     )
     return True
 
 

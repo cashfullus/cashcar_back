@@ -365,7 +365,8 @@ def ad_apply():
 
         elif request.method == "POST":
             data = request.get_json()
-            status = AD.ad_apply(user_id=user_id, ad_id=ad_id, **data)
+            vehicle_id = request.args.get('vehicle_id', 0)
+            status = AD.ad_apply(user_id=user_id, ad_id=ad_id, vehicle_id=vehicle_id, **data)
             if status["user_information"] is False or status["ad_information"] is False or \
                     status["already_apply"] is False or status["area"] is False:
                 return jsonify({"status": False, "data": status}), 404
@@ -504,6 +505,27 @@ def user_set_address():
             return jsonify(result)
     except TypeError:
         return jsonify({"data": "Data Not Null"}), 400
+
+
+# 사용자 포인트 히스토리
+@app.route('/user/point/history')
+def user_point_history():
+    user_id = request.args.get('user_id')
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+
+# 사용자 포인트 출금
+@app.route('/user/withdrawal/point', methods=['GET'])
+def user_withdrawal():
+    user_id = request.args.get('user_id')
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+
+
 
 
 ########### ADMIN ############

@@ -316,3 +316,21 @@ def get_fcm_token_by_user_id(user_id):
     )
     return user_fcm_token
 
+
+# 사용자 포인트 창
+def get_user_point_history(user_id):
+    db = Database()
+    point = db.executeOne(
+        query="SELECT deposit FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    point_history = db.executeAll(
+        query="SELECT  FROM point_history WHERE user_id = %s",
+        args=user_id
+    )
+
+# 사용자 출금신청시 GET
+# def get_user_withdrawal_data(user_id):
+
+
+
