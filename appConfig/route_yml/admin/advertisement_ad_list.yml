@@ -67,6 +67,11 @@ parameters:
     type: string
     required: false
 
+  - name: count(아이템 갯수)
+    in: query string
+    type: integer
+    required: true
+
 
 responses:
   200:
