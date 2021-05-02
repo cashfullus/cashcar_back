@@ -262,11 +262,12 @@ def get_information_for_ad_apply(user_id, ad_id):
 
 
 # 광고 신청 POST
-def ad_apply(user_id, ad_id, **kwargs):
+def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
     db = Database()
-    status = {"user_information": True, "ad_information": True, "already_apply": True, "area": True}
+    status = {"user_information": True, "ad_information": True, "already_apply": True, "area": True, "vehicle": True}
     target_user = db.getUserById(user_id)
     target_ad = db.getOneAdApplyByAdId(ad_id)
+    vehicle = db.getOneVehicleByVehicleIdAndUserId(user_id=user_id, vehicle_id=vehicle_id)
     already_apply_ad = db.executeOne(
         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
         args=user_id
@@ -293,6 +294,10 @@ def ad_apply(user_id, ad_id, **kwargs):
         status['area'] = False
         return status
 
+    elif not vehicle:
+        status['vehicle'] = False
+        return status
+
     else:
         db.execute(
             query="UPDATE user SET main_address = %s, "
@@ -312,6 +317,14 @@ def ad_apply(user_id, ad_id, **kwargs):
         db.execute(
             query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
             args=[user_id, history_name]
+        )
+        db.execute(
+            query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
+            args=[user_id, vehicle['vehicle_id']]
+        )
+        db.execute(
+            query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
+            args=[user_id, vehicle['vehicle_id']]
         )
         db.commit()
 
