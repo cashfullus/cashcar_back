@@ -17,17 +17,37 @@ responses:
   200:
     description: 광고 신청 리스트
     schema:
-      type: array
-      items:
-        properties:
-          ad_user_apply_id:
-            type: integer
-          user_id:
-            type: integer
-          register_time:
-            type: string
-          accept_status_time:
-            type: string
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              ad_user_apply_id:
+                type: integer
+              user_id:
+                type: integer
+              register_time:
+                type: string
+              accept_status_time:
+                type: string
+              main_address:
+                type: string
+              detail_address:
+                type: string
+              name:
+                type: string
+              owner_name:
+                type: string
+              title:
+                type: string
+              recruit_number:
+                type: integer
+              max_recruiting_count:
+                type: integer
+              status:
+                type: string
+
 
 
 
