@@ -82,10 +82,9 @@ def login(**kwargs):
 
 # 어드민 광고 리스트 (query string)
 def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
-                             sort, page):
+                             sort, page, item_count):
     db = Database()
     per_page = (page - 1) * 10
-    start_at = per_page + 10
     status = {"correct_category": True}
     category_value = ""
     if category == "ongoing":
@@ -123,7 +122,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
           f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
-    result = db.executeAll(query=sql, args=[10, per_page])
+    result = db.executeAll(query=sql, args=[item_count, per_page])
     page_count = db.executeOne(
         query="SELECT count(ad_id) as page_count FROM ad_information "
               f"WHERE {category_value} AND {where_point} "

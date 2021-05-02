@@ -612,12 +612,14 @@ def admin_ad_list():
     recruit_end_date = request.args.get('recruit_end', '9999-12-30')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'ASC')
+    item_count = request.args.get('count')
     avg_point = point.split('~')
     avg_age = age.split('~')
     result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area,
                                                         gender=gender, avg_age=avg_age, distance=distance,
                                                         recruit_start=recruit_start_date, recruit_end=recruit_end_date,
-                                                        order_by=order_by, sort=sort, page=int(page)
+                                                        order_by=order_by, sort=sort,
+                                                        page=int(page), item_count=item_count
                                                         )
     return jsonify({"data": result, "page_count": page_count})
 
