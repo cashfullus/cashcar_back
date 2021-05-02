@@ -1,0 +1,58 @@
+tags:
+  - Admin
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+  - name: count
+    in: query string
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: 출금신청 목록
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              user_id:
+                type: integer
+                default: 15
+              withdrawal_self_id:
+                type: integer
+                default: 51
+              account_banck:
+                type: string
+                default: "하나은행"
+              account_number:
+                type: string
+                default: "00001123-3231-3231"
+              name:
+                type: string
+                default: "park"
+              change_done:
+                type: string
+                description: 입금 완료 시간
+                default: ""
+              register_time:
+                type: string
+                description: 신청시간
+                default: "2021-04-30 14:24:23"

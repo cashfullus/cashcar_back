@@ -184,7 +184,16 @@ def user_profile():
                 return jsonify({"status": False, "data": "Not Found"}), 404
 
         elif request.method == "POST":
-            data = request.get_json()
+            data = {
+                "nickname": request.form['nickname'],
+                "email": request.form["email"],
+                "name": request.form["name"],
+                "call_number": request.form["call_number"],
+                "gender": request.form["gender"],
+                "date_of_birth": request.form["date_of_birth"],
+                "alarm": request.form["alarm"],
+                "marketing": request.form["marketing"]
+            }
             profile_image = request.files.get('profile_image', None)
             if profile_image:
                 if allowed_image(profile_image):
@@ -787,6 +796,7 @@ def get_point_all_by_user_id():
 # 어드민 출금 신청 리스트
 @app.route('/admin/user/withdrawal/point', methods=['GET', 'POST'])
 @jwt_required()
+@swag_from('route_yml/admin/admin_withdrawal_self_point_get.yml', methods=['GET'])
 def get_withdrawal_self_point_all():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -795,8 +805,9 @@ def get_withdrawal_self_point_all():
     if status is not True:
         return jsonify(status), code
     page = request.args.get('page', 1)
+    count = request.args.get('count', 10)
     if request.method == 'GET':
-        result, item_count = Admin.get_all_withdrawal_point(page=page)
+        result, item_count = Admin.get_all_withdrawal_point(page=page, count=count)
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':

@@ -13,42 +13,42 @@ parameters:
     required: true
 
   - name: nickname
-    in: application/json
+    in: formData
     type: String
     required: true
 
   - name: email
-    in: application/json
+    in: formData
     type: string
     required: true
 
   - name: name
-    in: application/json
+    in: formData
     type: string
     required: true
 
   - name: call_number
-    in: application/json
+    in: formData
     type: string
     required: true
 
   - name: gender(1 or 2)
-    in: application/json
+    in: formData
     type: string
     required: true
 
   - name: date_of_birth
-    in: application/json
+    in: formData
     type: string
     required: true
 
   - name: alarm
-    in: application/json
+    in: formData
     type: integer
     required: true
 
   - name: marketing
-    in: application/json
+    in: formData
     type: integer
     required: true
 
