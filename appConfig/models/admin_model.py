@@ -115,7 +115,6 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
             else:
                 where_area.append(f"area LIKE '%%{area[i]}%%'")
         where_area = "({0})".format(''.join(where_area))
-        print(where_area)
     where_gender = f"gender IN ({gender})"
     where_distance = f"min_distance >= {distance}"
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
