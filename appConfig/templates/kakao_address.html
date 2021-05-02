@@ -29,7 +29,8 @@
     }
 
     function postMessageToiOS(postData) {
-        window.webkit.messageHandlers.callBackHandler.postMessage(postData);
+        {#window.webkit.messageHandlers.callBackHandler.postMessage(postData);#}
+        window.webkit.postMessage(postData);
     }
 
     var element_layer = document.getElementById('layer');

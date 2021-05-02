@@ -1,0 +1,53 @@
+tags:
+  - Admin
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+  - name: count
+    in: query string
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: 기부신청 목록
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              amount:
+                type: integer
+              change_done:
+                type: string
+              donation_organization:
+                type: string
+              name:
+                type: string
+              name_of_donor:
+                type: string
+              receipt:
+                type: integer
+              register_time:
+                type: string
+              status:
+                type: string
+              user_id:
+                type: integer

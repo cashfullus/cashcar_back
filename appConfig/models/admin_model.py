@@ -373,21 +373,20 @@ def update_withdrawal_point(withdrawal_self_id, **kwargs):
 
 
 # 어드민 기부 신청 리스트
-def get_all_withdrawal_donate(page):
+def get_all_withdrawal_donate(page, count):
     db = Database()
-    per_page = (int(page) - 1) * 10
-    start_at = per_page + 10
+    per_page = (int(page) - 1) * int(count)
     result = db.executeAll(
         query="SELECT "
               "name, user.user_id, amount, `status`, wd.donation_organization, receipt, name_of_donor,"
               "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
               "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
               "WHEN wd.change_done IS NOT NULL "
-              "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
+              "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done, withdrawal_donate_id "
               "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
               "LIMIT %s OFFSET %s",
-        args=[start_at, per_page]
+        args=[int(count), per_page]
     )
     item_count = db.executeOne(
         query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
@@ -396,7 +395,7 @@ def get_all_withdrawal_donate(page):
 
 
 # 어드민 기부 출금 상태 변경 (waiting(대기중), checking(확인중), done(승인), reject(반려))
-def update_withdrawal_donate(withdrawal_donate_id, kwargs):
+def update_withdrawal_donate(withdrawal_donate_id, **kwargs):
     db = Database()
     change_time = f"change_{kwargs['status']}"
     sql = f"UPDATE withdrawal_donate SET status = %s, {change_time} = NOW() WHERE withdrawal_donate_id = %s"

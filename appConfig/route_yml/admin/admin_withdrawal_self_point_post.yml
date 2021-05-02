@@ -1,0 +1,34 @@
+tags:
+  - Admin
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: withdrawal_self_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: status
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: 포인트 출금 상태 변경
+    schema:
+      type: object
+      properties:
+        data:
+          type: boolean
+          default: true
