@@ -102,10 +102,17 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
 
     # 포인트가 최솟값보다 크고 최대값보다 작은 데이터
     where_point = f"(total_point >= {avg_point[0]} AND total_point <= {avg_point[1]})"
-    if area == '':
+    where_area = []
+    print(len(area))
+    if len(area) == 0:
         where_area = f"area LIKE '%{area}%'"
     else:
-        where_area = f"area LIKE '%%{area}%%'"
+        for i in range(len(area)):
+            if i != len(area):
+                where_area.append(f"area LIKE {area[i]} OR ")
+            else:
+                where_area.append(f"area LIKE {area[i]}")
+    print(where_area)
     where_gender = f"gender IN ({gender})"
     where_distance = f"min_distance >= {distance}"
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"

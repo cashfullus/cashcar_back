@@ -85,6 +85,13 @@ def kakao_address():
     return render_template('kakao_address.html')
 
 
+# 안드로이드 지도
+@app.route('/kakao/postcode/and', methods=['GET'])
+@swag_from('route_yml/address/kakao_address.yml')
+def kakao_address_and():
+    return render_template('kakao_address_and.yml')
+
+
 # 이미지 업로드
 @app.route("/upload/image/<location>", methods=["POST"])
 @jwt_required()
@@ -620,9 +627,13 @@ def admin_ad_list():
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'ASC')
     item_count = request.args.get('count', 10)
+    if area == '':
+        area_list = area
+    else:
+        area_list = area.split(',')
     avg_point = point.split('~')
     avg_age = age.split('~')
-    result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area,
+    result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area_list,
                                                         gender=gender, avg_age=avg_age, distance=distance,
                                                         recruit_start=recruit_start_date, recruit_end=recruit_end_date,
                                                         order_by=order_by, sort=sort,

@@ -306,3 +306,13 @@ def get_point_all_by_user(user_id, page):
     )
     return user_point_history
 
+
+#fcm token 가져오기
+def get_fcm_token_by_user_id(user_id):
+    db = Database()
+    user_fcm_token = db.executeOne(
+        query="SELECT fcm_token FROM user_fcm WHERE user_id = %s",
+        args=user_id
+    )
+    return user_fcm_token
+
