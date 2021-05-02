@@ -353,16 +353,16 @@ def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
+    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "is_delete": True}
+    if not ad_information:
+        result = {"ad_information": {}, "vehicle_information": vehicle_information}
+        return result
     order_information = db.executeOne(
         query="SELECT `order` FROM ad_mission_card WHERe ad_mission_card_id = %s",
         args=ad_information['ad_mission_card_id']
     )
     ad_information['order'] = order_information['order']
-    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "is_delete": True}
-    if not ad_information:
-        result = {"ad_information": {}, "vehicle_information": vehicle_information}
-        return result
-    elif not ad_information["mission_status"]:
+    if not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0
         ad_information["mission_type"] = 0
