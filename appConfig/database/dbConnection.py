@@ -179,7 +179,7 @@ class Database:
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
               "WHERE user_id = %s AND (amcu.status NOT IN ('success') or amcu.status IS NULL) AND removed = 0 " \
-              "ORDER BY mission_start_date, ad_mission_card_id LIMIT 1"
+              "ORDER BY FIELD(amcu.status, 'ongoing', 'stand_by'), amcu.mission_start_date LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
         return row
