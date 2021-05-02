@@ -13,8 +13,12 @@ def send_to_one_firebase_cloud_messaging(token, title, notification):
     response = messaging.send(message)
     return response
 
+
 #
-# def send_to_many_firebase_cloud_messaging(tokens, title, notification):
-#     message = messaging.MulticastMessage(
-#         data
-#     )
+def send_to_many_firebase_cloud_messaging(tokens, title, notification):
+    message = messaging.MulticastMessage(
+        data={title: notification},
+        tokens=tokens
+    )
+    response = messaging.send_multicast(message)
+    return response.success_count
