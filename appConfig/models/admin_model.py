@@ -84,7 +84,7 @@ def login(**kwargs):
 def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
                              sort, page, item_count):
     db = Database()
-    per_page = (page - 1) * 10
+    per_page = (page - 1) * int(item_count)
     status = {"correct_category": True}
     category_value = ""
     if category == "ongoing":
@@ -122,7 +122,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
           f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
-    result = db.executeAll(query=sql, args=[item_count, per_page])
+    result = db.executeAll(query=sql, args=[int(item_count), per_page])
     page_count = db.executeOne(
         query="SELECT count(ad_id) as page_count FROM ad_information "
               f"WHERE {category_value} AND {where_point} "
