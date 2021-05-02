@@ -127,10 +127,15 @@ class Database:
     # 광고 신청한 건에 대하여
     def getAllAdUserApply(self):
         sql = "SELECT " \
-              "ad_user_apply_id, user_id, ad_id, status, " \
-              "DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
+              "title, owner_name, name, main_address, detail_address, " \
+              "aua.recurit_number, max_recruiting_count, aua.status, " \
+              "u.user_id, aua.ad_user_apply_id," \
+              "DATE_FORMAT(aua.register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
               "DATE_FORMAT(accept_status_time, '%Y-%m-%d %H:%i:%s') as accept_status_time " \
-              "FROM ad_user_apply ORDER BY FIELD(status, 'stand_by', 'accept')"
+              "FROM ad_user_apply aua " \
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
+              "JOIN user u on aua.user_id = u.user_id " \
+              "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject')"
         self.cursor.execute(query=sql)
         rows = self.cursor.fetchall()
         return rows
@@ -172,7 +177,9 @@ class Database:
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as apply_register_time, " \
               "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, " \
               "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, " \
-              "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as mission_end_date, " \
+              "CASE WHEN mission_end_date IS NULL THEN '0000-00-00 00:00:00' " \
+              "WHEN mission_end_date IS NOT NULL THEN DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') " \
+              "END as mission_end_date, " \
               "title, thumbnail_image, amcu.status as mission_status, amcu.mission_type as mission_type, " \
               "ad_mission_card_user_id " \
               "FROM ad_user_apply as aua " \

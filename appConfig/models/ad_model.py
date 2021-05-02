@@ -370,11 +370,15 @@ def get_ongoing_user_by_id(user_id):
     if not ad_information:
         result = {"ad_information": {}, "vehicle_information": vehicle_information}
         return result
-    order_information = db.executeOne(
-        query="SELECT `order` FROM ad_mission_card WHERe ad_mission_card_id = %s",
-        args=ad_information['ad_mission_card_id']
-    )
-    ad_information['order'] = order_information['order']
+
+    if ad_information['ad_mission_card_user_id']:
+        order_information = db.executeOne(
+            query="SELECT `order` FROM ad_mission_card WHERe ad_mission_card_id = %s",
+            args=ad_information['ad_mission_card_id']
+        )
+        ad_information['order'] = order_information['order']
+    if ad_information['ad_mission_card_user_id'] is None:
+        ad_information['ad_mission_card_user_id'] = 0
     if not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0

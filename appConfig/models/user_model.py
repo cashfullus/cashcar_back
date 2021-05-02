@@ -325,8 +325,11 @@ def get_user_point_history(user_id):
         args=user_id
     )
     point_history = db.executeAll(
-        query="SELECT  FROM point_history WHERE user_id = %s",
+        query="SELECT point, contents, register_time FROM point_history WHERE user_id = %s",
         args=user_id
+    )
+    scheduled_point = db.executeAll(
+
     )
 
 # 사용자 출금신청시 GET
