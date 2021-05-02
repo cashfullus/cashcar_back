@@ -333,10 +333,9 @@ def get_all_user_list(page):
 
 
 # 어드민 포인트 출금 신청 리스트
-def get_all_withdrawal_point(page):
+def get_all_withdrawal_point(page, count):
     db = Database()
-    per_page = (int(page) - 1) * 10
-    start_at = per_page + 10
+    per_page = (int(page) - 1) * int(count)
     result = db.executeAll(
         query="SELECT "
               "withdrawal_self_id, account_bank, name, account_number, user.user_id, amount, `status`, "
@@ -346,7 +345,7 @@ def get_all_withdrawal_point(page):
               "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
               "FROM user JOIN withdrawal_self w on user.user_id = w.user_id "
               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
-        args=[start_at, per_page]
+        args=[int(count), per_page]
     )
     item_count = db.executeOne(
         query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
