@@ -22,7 +22,7 @@ from flasgger import Swagger, swag_from
 # Firebase push Notification Config
 import firebase_admin
 from firebase_admin import credentials
-cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
+cred = credentials.Certificate('appConfig/cashCarServiceAccount.json')
 firebase_admin.initialize_app(cred)
 
 
@@ -89,7 +89,7 @@ def kakao_address():
 @app.route('/kakao/postcode/and', methods=['GET'])
 @swag_from('route_yml/address/kakao_address.yml')
 def kakao_address_and():
-    return render_template('kakao_address_and.yml')
+    return render_template('kakao_address_and.html')
 
 
 # 이미지 업로드
@@ -632,7 +632,10 @@ def admin_ad_list():
     if area == '':
         area_list = area
     else:
-        area_list = area.split(',')
+        if len(area.split(',')) <= 1:
+            area_list = area
+        else:
+            area_list = area.split(',')
     avg_point = point.split('~')
     avg_age = age.split('~')
     result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area_list,
