@@ -81,6 +81,8 @@ responses:
                   description: 하루 24시간 기준 진행률
                 mission_end_date:
                   type: string
+                ongoing_days:
+                  type: integer
             vehicle_information:
               type: array
               items:

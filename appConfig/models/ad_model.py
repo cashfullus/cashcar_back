@@ -361,9 +361,14 @@ def get_ongoing_user_by_id(user_id):
         result = {"ad_information": {}, "vehicle_information": vehicle_information}
         return result
 
+    if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
+        ad_information['ongoing_days'] = 0
+    else:
+        start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
+        ad_information['ongoing_days'] = (date.today() - start_date).days
     if ad_information['ad_mission_card_user_id']:
         order_information = db.executeOne(
-            query="SELECT `order` FROM ad_mission_card WHERe ad_mission_card_id = %s",
+            query="SELECT `order` FROM ad_mission_card WHERE ad_mission_card_id = %s",
             args=ad_information['ad_mission_card_id']
         )
         ad_information['order'] = order_information['order']
@@ -389,7 +394,6 @@ def get_ongoing_user_by_id(user_id):
                 ad_information['point'] = (datetime.now().date() - start_date.date()).days * ad_information['point']
             else:
                 ad_information['point'] = ad_information['point']
-
             ad_information['ongoing_day_percent'] = int(datetime.now().hour/24*100)
 
         # if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
