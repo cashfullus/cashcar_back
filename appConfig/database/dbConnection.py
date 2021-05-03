@@ -246,7 +246,7 @@ class Database:
     def getOneReason(self, ad_user_apply_id):
         self.cursor.execute(
             query="SELECT ad_mission_reason_id as reason_id, title, reason, is_read FROM ad_mission_reason "
-                  "WHERE ad_user_apply_id = %s",
+                  "WHERE ad_user_apply_id = %s AND is_read = 0",
             args=ad_user_apply_id
         )
         row = self.cursor.fetchone()
