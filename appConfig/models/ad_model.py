@@ -358,9 +358,9 @@ def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
-    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "is_delete": True}
+    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "message": {}, "is_delete": True}
     if not ad_information:
-        result = {"ad_information": {}, "vehicle_information": vehicle_information}
+        result = {"ad_information": {}, "vehicle_information": vehicle_information, "message": {}}
         return result
 
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
@@ -402,6 +402,8 @@ def get_ongoing_user_by_id(user_id):
         #         hours=1) < datetime.now():
         #     result["is_delete"] = False
         #     return result
+        message = db.getOneReason(ad_user_apply_id=ad_information['ad_user_apply_id'])
+        result["message"] = message
         return result
 
 
@@ -466,6 +468,7 @@ def update_ad_apply_status(**kwargs):
         else:
             if kwargs["status"] == "reject":
                 history_name = f"{apply_status['title']} 광고 신청 거부"
+                # 광고 신청 실패시 토스트 메세지 추가
                 title = "서포터즈 신청에 실패하였습니다:("
                 reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
                 # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
@@ -485,7 +488,7 @@ def update_ad_apply_status(**kwargs):
                     args=[apply_status['user_id'], history_name]
                 )
                 db.execute(
-                    query="INSERT INTO ad_mission_fail_reason (ad_apply_id, reason, fail_title, is_read) "
+                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, reason, title, is_read) "
                           "VALUE (%s, %s, %s, %s)",
                     args=[apply_user_list[i], reason, title, 0]
                 )

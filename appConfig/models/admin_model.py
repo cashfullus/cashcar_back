@@ -249,9 +249,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
             if mission_information['mission_fail_count'] == 1:
                 # 필수미션이 한번 이미 실패했을 경우 광고집행 실패
                 if mission_information['mission_type'] == 0:
+                    title = "신청한 서포터즈 활동에 실패했습니다:("
+                    reason = """서포터즈 활동 미션 인증에 실패하였습니다. 활동 미행으로 리워드는 지급해드리지 않으며 다른 서포터즈 활동에 지원해주세요."""
                     db.execute(
                         query="UPDATE ad_mission_card_user "
-                              "SET status = 'fail' "
+                              "SET status = 'fail', mission_fail_count = mission_fail_count + 1 "
                               "WHERE ad_user_apply_id = %s",
                         args=ad_apply_id
                     )
@@ -259,11 +261,16 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                         query="UPDATE ad_user_apply SET status = 'fail' WHERE ad_user_apply_id = %s",
                         args=ad_apply_id
                     )
+                    db.execute(
+                        query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
+                              "VALUES (%s, %s, %s, %s)",
+                        args=[ad_apply_id, title, reason, 0]
+                    )
                 # 추가 미션의 경우 실패해도 상관없음(point 미지급)
                 else:
                     db.execute(
                         query="UPDATE ad_mission_card_user "
-                              "SET status = 'fail' "
+                              "SET status = 'fail', mission_fail_count =  mission_fail_count + 1 "
                               "WHERE ad_mission_card_id = %s",
                         args=mission_card_id
                     )
@@ -276,6 +283,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 return result
 
             else:
+                title = "미션 인증에 실패하였습니다:("
+                reason = f"""{kwargs['reason']} 재인증에도 실패할 경우, 리워드가 지급되지 않으니 기한 내 재인증 부탁드립니다!"""
                 db.execute(
                     query="UPDATE ad_mission_card_user "
                           "SET status = 'reject', mission_fail_count = mission_fail_count + 1 "
@@ -286,6 +295,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[mission_information['user_id'], history_name]
+                )
+                db.execute(
+                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
+                          "VALUE (%s, %s, %s, %s)",
+                    args=[ad_apply_id, title, reason, 0]
                 )
                 db.commit()
                 return result
