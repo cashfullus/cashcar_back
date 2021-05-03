@@ -358,9 +358,39 @@ def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
-    result = {"ad_information": ad_information, "vehicle_information": vehicle_information, "message": {}, "is_delete": True}
+    result = {"ad_information": {
+        "activity_end_date": "", "activity_start_date": "", "ad_id": 0,
+        "ad_mission_card_id": 0, "ad_mission_card_user_id": 0, "ad_user_apply_id": 0,
+        "additional_mission_success_count": 0, "apply_register_time": "",
+        "apply_status": "", "default_mission_success_count": 0, "mission_end_date": "", "mission_status": "",
+        "mission_type": 0, "ongoing_day_percent": 0, "ongoing_days": 0,
+        "order": 0, "point": 0, "thumbnail_image": "", "title": "", "user_id": 0
+    }, "is_delete": True,
+        "vehicle_information": [{
+            "brand": "",
+            "car_number": "",
+            "is_foreign_car": "",
+            "owner_relationship": "",
+            "register_time": "",
+            "remove_time": "0000-00-00 00:00:00",
+            "removed": 0,
+            "supporters": 0,
+            "user_id": 0,
+            "vehicle_id": 0,
+            "vehicle_model_name": "",
+            "year": 0
+        }],
+        "message": {
+            "is_read": 1,
+            "reason": "",
+            "reason_id": 0,
+            "title": ""
+        }
+    }
+    if vehicle_information:
+        result["vehicle_information"] = vehicle_information
+
     if not ad_information:
-        result = {"ad_information": {}, "vehicle_information": vehicle_information, "message": {}}
         return result
 
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
@@ -368,6 +398,7 @@ def get_ongoing_user_by_id(user_id):
     else:
         start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
         ad_information['ongoing_days'] = (date.today() - start_date).days
+
     if ad_information['ad_mission_card_user_id']:
         order_information = db.executeOne(
             query="SELECT `order` FROM ad_mission_card WHERE ad_mission_card_id = %s",
@@ -376,6 +407,7 @@ def get_ongoing_user_by_id(user_id):
         ad_information['order'] = order_information['order']
     if ad_information['ad_mission_card_user_id'] is None:
         ad_information['ad_mission_card_user_id'] = 0
+
     if not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = 0
@@ -383,7 +415,9 @@ def get_ongoing_user_by_id(user_id):
         ad_information['activity_start_date'] = ''
         ad_information['activity_end_date'] = ''
         ad_information['ongoing_day_percent'] = 0
+        result['ad_information'] = result
         return result
+
     elif ad_information["mission_status"]:
         if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
             ad_information['point'] = 0
@@ -402,8 +436,10 @@ def get_ongoing_user_by_id(user_id):
         #         hours=1) < datetime.now():
         #     result["is_delete"] = False
         #     return result
+        result['ad_information'] = ad_information
         message = db.getOneReason(ad_user_apply_id=ad_information['ad_user_apply_id'])
-        result["message"] = message
+        if message:
+            result["message"] = message
         return result
 
 
