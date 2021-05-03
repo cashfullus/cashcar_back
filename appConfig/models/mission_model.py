@@ -34,6 +34,15 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
     for key, val in image_dict.items():
         val.save(directory + "/" + secure_filename(val.filename))
         save_to_db_dict.setdefault(key, f"{MISSION_IMAGE_HOST}/{ad_mission_card_id}/" + secure_filename(val.filename))
+    # mission_fail_count 조회
+    fail_count = db.executeOne(
+        query="SELECT mission_fail_count FROM ad_mission_card_user WHERE ad_mission_card_user_id = %s",
+        args=ad_mission_card_user_id
+    )
+    if fail_count['mission_fail_count'] >= 1:
+        review_status = "re_review"
+    else:
+        review_status = "review"
     # 미션 타입에 따른 db저장
     if mission_type == 0:
         db.execute(
@@ -45,8 +54,8 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
                   save_to_db_dict["instrument_panel_image"], travelled_distance, ad_mission_card_user_id]
         )
         db.execute(
-            query="UPDATE ad_mission_card_user SET status = 'review' WHERE ad_mission_card_user_id = %s",
-            args=ad_mission_card_user_id
+            query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",
+            args=[review_status, ad_mission_card_user_id]
         )
     # 선택미션인 경우
     elif mission_type == 1:
@@ -57,8 +66,8 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
             args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"], ad_mission_card_user_id]
         )
         db.execute(
-            query="UPDATE ad_mission_card_user SET status = 'review' WHERE ad_mission_card_user_id = %s",
-            args=ad_mission_card_user_id
+            query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",
+            args=[review_status, ad_mission_card_user_id]
         )
     else:
         return False
