@@ -35,7 +35,7 @@ CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
 swagger = Swagger(app)
 # 이미지 파일 형식
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', ''}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 
 
