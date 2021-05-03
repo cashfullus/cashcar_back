@@ -259,12 +259,14 @@ def user_mission_list(user_id):
         ad_user_information = db.executeOne(
             query="SELECT total_point, title, thumbnail_image, "
                   "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, "
-                  "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date "
+                  "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, "
+                  "TIMESTAMPDIFF(DAY, activity_start_date, NOW()) as day_diff "
                   "FROM ad_user_apply as aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                   "WHERE user_id = %s",
             args=user_id
         )
+
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information
         result["images"] = images

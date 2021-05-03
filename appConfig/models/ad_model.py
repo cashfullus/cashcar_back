@@ -531,6 +531,12 @@ def update_ad_apply_status(**kwargs):
                           "VALUE (%s, %s, %s, %s, %s)",
                     args=[apply_user_list[i], reason, title, 0, "apply_fail"]
                 )
+                db.execute(
+                    query="UPDATE ad_user_apply "
+                          "SET recruit_number = recruit_number - 1 "
+                          "WHERE ad_user_apply_id NOT IN (%s) AND ad_id = %s AND recruit_number > %s",
+                    args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
+                )
 
             elif kwargs["status"] == "accept":
                 mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=apply_user_list[i])

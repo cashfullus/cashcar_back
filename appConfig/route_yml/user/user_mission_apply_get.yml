@@ -44,6 +44,10 @@ responses:
                   type: integer
                   description: 해당 광고의 총 포인트
                   default: 30000
+                day_diff:
+                  type: integer
+                  description: 진행일수
+                  default: 0
             images:
               type: array
               items:
