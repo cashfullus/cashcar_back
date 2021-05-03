@@ -384,7 +384,8 @@ def get_ongoing_user_by_id(user_id):
             "is_read": -1,
             "reason": "",
             "reason_id": 0,
-            "title": ""
+            "title": "",
+            "message_type": ""
         }
     }
     if vehicle_information:

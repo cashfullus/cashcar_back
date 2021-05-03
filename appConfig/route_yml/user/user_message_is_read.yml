@@ -3,7 +3,7 @@ tags:
 
 
 parameters:
-  - name: reason_id
+  - name: reason_id (apply_fail (미션 최종 실패) apply_success(최종 미션 성공), mission_fail(미션 실패))
     in: query string
     type: integer
     required: true
