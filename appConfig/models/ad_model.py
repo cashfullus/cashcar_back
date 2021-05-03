@@ -275,7 +275,7 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
         args=user_id
     )
     area = kwargs['main_address'].split(' ')[0]
-    query = "SELECT ad_id, title FROM ad_information WHERE area LIKE '%%{0}%%'".format(area)
+    query = "SELECT ad_id, title FROM ad_information WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
     non_delivery_area = db.executeOne(
         query=query
     )
@@ -466,6 +466,7 @@ def update_ad_apply_status(**kwargs):
         else:
             if kwargs["status"] == "reject":
                 history_name = f"{apply_status['title']} 광고 신청 거부"
+                reasson =
                 # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
                 db.execute(
                     query="UPDATE ad_information as ad_info "
@@ -481,6 +482,11 @@ def update_ad_apply_status(**kwargs):
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[apply_status['user_id'], history_name]
+                )
+                db.execute(
+                    query="INSERT INTO ad_mission_fail_reason (ad_apply_id, reason, mission_type, fail_title, is_read) "
+                          "VALUE (%s, %s, %s, %s, %s)",
+                    args=apply_user_list[i],
                 )
 
             elif kwargs["status"] == "accept":
