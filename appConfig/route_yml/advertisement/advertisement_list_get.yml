@@ -51,6 +51,8 @@ responses:
           recruiting_count:
             type: integer
             description: 현재 모집인원
+          time_diff:
+            type: integer
 
   405:
     description: 허용되지않은 카테고리 요청
