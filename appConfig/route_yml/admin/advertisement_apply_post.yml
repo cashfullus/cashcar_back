@@ -12,7 +12,7 @@ parameters:
     type: integer
     required: true
 
-  - name: ad_user_apply_id
+  - name: apply_user_list
     in: body
     type: array(integer)
     required: true

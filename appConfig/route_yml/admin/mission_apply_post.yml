@@ -23,6 +23,16 @@ parameters:
     type: integer
     required: true
 
+  - name: status
+    in: body
+    type: string
+    required: true
+
+  - name: reason(실패 처리에만 필요)
+    in: body
+    type: string
+    required: false
+
 responses:
   200:
     description: 미션 status 변경(reason(Update Success))

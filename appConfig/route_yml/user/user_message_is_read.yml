@@ -1,0 +1,11 @@
+tags:
+  - User
+
+
+parameters:
+  - name: reason_id
+    in: query string
+    type: integer
+    required: true
+
+

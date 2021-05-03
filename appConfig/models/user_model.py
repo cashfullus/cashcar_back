@@ -336,4 +336,15 @@ def get_user_point_history(user_id):
 # def get_user_withdrawal_data(user_id):
 
 
+# 토스트메시지 읽음 처리
+def update_reason_by_user(reason_id):
+    db = Database()
+    db.execute(
+        query="UPDATE ad_mission_reason SET is_read = 1 WHERE ad_mission_reason_id = %s",
+        args=reason_id
+    )
+    db.commit()
+    return
+
+
 

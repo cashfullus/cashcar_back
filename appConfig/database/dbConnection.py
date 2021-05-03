@@ -186,7 +186,7 @@ class Database:
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
-              "WHERE user_id = %s AND (amcu.status NOT IN ('success') or amcu.status IS NULL) AND removed = 0 " \
+              "WHERE user_id = %s AND (amcu.status NOT IN ('success', 'fail') or amcu.status IS NULL) AND removed = 0 " \
               "ORDER BY FIELD(amcu.status, 'ongoing', 'stand_by'), amcu.mission_start_date LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()
@@ -241,6 +241,17 @@ class Database:
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
         rows = self.cursor.fetchall()
         return rows
+
+    # 사용자의 광고 상태 및 미션 처리 메세지 가져오기
+    def getOneReason(self, ad_user_apply_id):
+        self.cursor.execute(
+            query="SELECT ad_mission_reason_id as reason_id, title, reason, is_read FROM ad_mission_reason "
+                  "WHERE ad_user_apply_id = %s",
+            args=ad_user_apply_id
+        )
+        row = self.cursor.fetchone()
+        return row
+
 
 
 
