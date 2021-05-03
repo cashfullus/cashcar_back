@@ -352,19 +352,19 @@ def ad_apply_list():
     result = db.getAllAdUserApply()
     return result
 
-
+#
 # 메인화면 본인이 진행중인 광고 카드의 정보 order 와 ad_mission_card_user_id,
 def get_ongoing_user_by_id(user_id):
     db = Database()
     ad_information = db.getMainMyAd(user_id=user_id)
     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
     result = {"ad_information": {
-        "activity_end_date": "", "activity_start_date": "", "ad_id": 0,
-        "ad_mission_card_id": 0, "ad_mission_card_user_id": 0, "ad_user_apply_id": 0,
-        "additional_mission_success_count": 0, "apply_register_time": "",
-        "apply_status": "", "default_mission_success_count": 0, "mission_end_date": "", "mission_status": "",
-        "mission_type": 0, "ongoing_day_percent": 0, "ongoing_days": 0,
-        "order": 0, "point": 0, "thumbnail_image": "", "title": "", "user_id": 0
+        "activity_end_date": "", "activity_start_date": "", "ad_id": -1,
+        "ad_mission_card_id": -1, "ad_mission_card_user_id": -1, "ad_user_apply_id": -1,
+        "additional_mission_success_count": -1, "apply_register_time": "",
+        "apply_status": "", "default_mission_success_count": -1, "mission_end_date": "", "mission_status": "",
+        "mission_type": -1, "ongoing_day_percent": -1, "ongoing_days": -1,
+        "order": -1, "point": -1, "thumbnail_image": "", "title": "", "user_id": -1
     }, "is_delete": True,
         "vehicle_information": [{
             "brand": "",
@@ -373,15 +373,15 @@ def get_ongoing_user_by_id(user_id):
             "owner_relationship": "",
             "register_time": "",
             "remove_time": "0000-00-00 00:00:00",
-            "removed": 0,
-            "supporters": 0,
-            "user_id": 0,
-            "vehicle_id": 0,
+            "removed": -1,
+            "supporters": -1,
+            "user_id": -1,
+            "vehicle_id": -1,
             "vehicle_model_name": "",
-            "year": 0
+            "year": -1
         }],
         "message": {
-            "is_read": 1,
+            "is_read": -1,
             "reason": "",
             "reason_id": 0,
             "title": ""
@@ -392,6 +392,10 @@ def get_ongoing_user_by_id(user_id):
 
     if not ad_information:
         return result
+
+    message = db.getOneReason(ad_user_apply_id=ad_information['ad_user_apply_id'])
+    if message:
+        result["message"] = message
 
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
         ad_information['ongoing_days'] = 0
@@ -405,20 +409,21 @@ def get_ongoing_user_by_id(user_id):
             args=ad_information['ad_mission_card_id']
         )
         ad_information['order'] = order_information['order']
+
     if ad_information['ad_mission_card_user_id'] is None:
-        ad_information['ad_mission_card_user_id'] = 0
+        ad_information['ad_mission_card_user_id'] = -1
 
     if not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
-        ad_information["ad_mission_card_id"] = 0
-        ad_information["mission_type"] = 0
+        ad_information["ad_mission_card_id"] = -1
+        ad_information["mission_type"] = -1
         ad_information['activity_start_date'] = ''
         ad_information['activity_end_date'] = ''
         ad_information['ongoing_day_percent'] = 0
-        result['ad_information'] = result
+        result['ad_information'] = ad_information
         return result
 
-    elif ad_information["mission_status"]:
+    if ad_information["mission_status"]:
         if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
             ad_information['point'] = 0
             ad_information['ongoing_day_percent'] = 0
@@ -436,11 +441,8 @@ def get_ongoing_user_by_id(user_id):
         #         hours=1) < datetime.now():
         #     result["is_delete"] = False
         #     return result
-        result['ad_information'] = ad_information
-        message = db.getOneReason(ad_user_apply_id=ad_information['ad_user_apply_id'])
-        if message:
-            result["message"] = message
-        return result
+    result['ad_information'] = ad_information
+    return result
 
 
 # 신청한 광고 취소 (사용자)
