@@ -212,7 +212,9 @@ def get_all_by_category_ad_list(page, category):
     sql = "SELECT ad_id, title, thumbnail_image, " \
           "max_recruiting_count, recruiting_count, total_point, area," \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
-          "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \
+          "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
+          "TIMESTAMPDIFF(day, DATE_FORMAT(NOW(), '%%Y-%%m-%%d %%H:%%i:%%s'), " \
+          "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s')) as time_diff " \
           f"FROM ad_information WHERE {sql_parameter_val} AND removed = 0 " \
           "LIMIT %s OFFSET %s"
 
