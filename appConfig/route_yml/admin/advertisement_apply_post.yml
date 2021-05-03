@@ -13,8 +13,8 @@ parameters:
     required: true
 
   - name: ad_user_apply_id
-    in: query string
-    type: integer
+    in: body
+    type: array(integer)
     required: true
 
   - name: status(accept, reject)

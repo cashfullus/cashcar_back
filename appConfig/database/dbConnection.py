@@ -129,7 +129,7 @@ class Database:
         sql = "SELECT " \
               "title, owner_name, name, main_address, detail_address, " \
               "aua.recurit_number, max_recruiting_count, aua.status, " \
-              "u.user_id, aua.ad_user_apply_id," \
+              "u.user_id, aua.ad_user_apply_id, call_number," \
               "DATE_FORMAT(aua.register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
               "DATE_FORMAT(accept_status_time, '%Y-%m-%d %H:%i:%s') as accept_status_time " \
               "FROM ad_user_apply aua " \
@@ -142,8 +142,9 @@ class Database:
 
     # 신청한 광고의 status, title, user_id, recruting_count 조회
     def getOneApplyStatus(self, ad_user_apply_id):
-        sql = "SELECT status, title, user_id FROM ad_user_apply aua " \
+        sql = "SELECT status, title, aua.user_id, name FROM ad_user_apply aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
+              "JOIN user u on aua.user_id = u.user_id " \
               "WHERE ad_user_apply_id = %s"
         self.cursor.execute(query=sql, args=ad_user_apply_id)
         row = self.cursor.fetchone()

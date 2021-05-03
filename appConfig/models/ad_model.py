@@ -351,16 +351,6 @@ def ad_apply_list():
     return result
 
 
-# 광고신청 목록 -> Detail
-def get_ad_apply(ad_user_apply_id):
-    db = Database()
-    result = db.getOneAdUserApplyById(ad_user_apply_id=ad_user_apply_id)
-    if result:
-        return result
-    else:
-        return False
-
-
 # 메인화면 본인이 진행중인 광고 카드의 정보 order 와 ad_mission_card_user_id,
 def get_ongoing_user_by_id(user_id):
     db = Database()
@@ -448,105 +438,112 @@ def cancel_apply_user(ad_user_apply_id):
 
 
 # 광고 status 변경
-def update_ad_apply_status(ad_user_apply_id, **kwargs):
+def update_ad_apply_status(**kwargs):
     db = Database()
-    apply_information = {"rejected": True, "accept": True, "mission_data": True}
-    apply_status = db.getOneApplyStatus(ad_user_apply_id=ad_user_apply_id)
-    if apply_status["status"] == "reject" and kwargs["status"] == "reject":
-        apply_information["rejected"] = False
-        return apply_information
+    apply_user_list = kwargs['apply_user_list']
+    apply_information = {"rejected": True, "accept": True, "mission_data": True, "name": ""}
+    result = []
+    for i in range(len(apply_user_list)):
+        # 현재 apply 의 데이터 가져오기
+        apply_status = db.getOneApplyStatus(ad_user_apply_id=apply_user_list[i])
+        # apply status 에 대한 중복 데이터 변경시 false
+        if apply_status["status"] == "reject" and kwargs["status"] == "reject":
+            apply_information["rejected"] = False
 
-    elif apply_status["status"] == "accept" and kwargs["status"] == "accept":
-        apply_information["accept"] = False
-        return apply_information
+        if apply_status["status"] == "accept" and kwargs["status"] == "accept":
+            apply_information["accept"] = False
 
-    else:
-        if kwargs["status"] == "reject":
-            history_name = f"{apply_status['title']} 광고 신청 거부"
-            # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
-            db.execute(
-                query="UPDATE ad_information as ad_info "
-                      "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                      "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
-                      "WHERE aua.ad_user_apply_id = %s",
-                args=ad_user_apply_id
-            )
-            db.execute(
-                query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
-                args=[kwargs['status'], ad_user_apply_id]
-            )
-            db.execute(
-                query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-                args=[apply_status['user_id'], history_name]
-            )
-
-        elif kwargs["status"] == "accept":
-            mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=ad_user_apply_id)
-            if mission_items:
-                for mission in mission_items:
-                    first_start_date = date.today() + timedelta(days=2)
-                    # 필수미션 1회차 일 경우
-                    if mission["order"] == 1 and mission["mission_type"] == 0:
-                        first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))
-                        db.execute(
-                            query="INSERT INTO ad_mission_card_user "
-                                  "(ad_user_apply_id, ad_mission_card_id, "
-                                  "mission_type, status, mission_start_date, mission_end_date) "
-                                  "VALUES (%s, %s, %s, %s, %s, %s)",
-                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
-                                  "ongoing", first_start_date.strftime('%Y-%m-%d 00:00:00'),
-                                  first_end_date.strftime('%Y-%m-%d 23:59:59')]
-                        )
-                    # 필수미션 n회차 일 경우 (1제외)
-                    elif mission["order"] != 1 and mission["mission_type"] == 0:
-                        start_date = first_start_date + timedelta(days=mission["based_on_activity_period"])
-                        end_date = start_date + timedelta(days=mission["due_date"])
-                        db.execute(
-                            query="INSERT INTO ad_mission_card_user "
-                                  "(ad_user_apply_id, ad_mission_card_id, "
-                                  "mission_type, status, mission_start_date, mission_end_date) "
-                                  "VALUES (%s, %s, %s, %s, %s, %s)",
-                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
-                                  "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'),
-                                  end_date.strftime('%Y-%m-%d 23:59:59')]
-                        )
-                    # 선택미션 일 경우(우선 활동시작 기간이 필수미션 1회 완료 후 이기때문에 0000-00-00 으로 (필수미션1회 후 시간정해짐)
-                    else:
-                        db.execute(
-                            query="INSERT INTO ad_mission_card_user "
-                                  "(ad_user_apply_id, ad_mission_card_id, "
-                                  "mission_type, status) "
-                                  "VALUES (%s, %s, %s, %s)",
-                            args=[ad_user_apply_id, mission["ad_mission_card_id"], mission["mission_type"],
-                                  "stand_by", ]
-                        )
+        if False in apply_information:
+            apply_information['name'] = apply_status['name']
+            result.append(apply_information)
+            continue
+        else:
+            if kwargs["status"] == "reject":
+                history_name = f"{apply_status['title']} 광고 신청 거부"
+                # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
                 db.execute(
-                    query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() WHERE ad_user_apply_id = %s",
-                    args=[kwargs['status'], ad_user_apply_id]
+                    query="UPDATE ad_information as ad_info "
+                          "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                          "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
+                          "WHERE aua.ad_user_apply_id = %s",
+                    args=apply_user_list[i]
                 )
-                history_name = f"{apply_status['title']} 광고 신청 승인"
+                db.execute(
+                    query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
+                    args=[kwargs['status'], apply_user_list[i]]
+                )
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[apply_status['user_id'], history_name]
                 )
-                db.commit()
-        else:
-            apply_information["mission_data"] = False
-            return apply_information
 
-        ad_mission_card_user_info = db.executeAll(
-            query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
-                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-                  "WHERE aua.ad_user_apply_id = %s",
-            args=ad_user_apply_id
-        )
-        for i in range(len(ad_mission_card_user_info)):
-            db.execute(
-                query="INSERT INTO "
-                      "mission_images (ad_mission_card_user_id) "
-                      "VALUES "
-                      "(%s)",
-                args=ad_mission_card_user_info[i]["ad_mission_card_user_id"]
+            elif kwargs["status"] == "accept":
+                mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=apply_user_list[i])
+                if mission_items:
+                    for mission in mission_items:
+                        first_start_date = date.today() + timedelta(days=2)
+                        # 필수미션 1회차 일 경우
+                        if mission["order"] == 1 and mission["mission_type"] == 0:
+                            first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))
+                            db.execute(
+                                query="INSERT INTO ad_mission_card_user "
+                                      "(ad_user_apply_id, ad_mission_card_id, "
+                                      "mission_type, status, mission_start_date, mission_end_date) "
+                                      "VALUES (%s, %s, %s, %s, %s, %s)",
+                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
+                                      "ongoing", first_start_date.strftime('%Y-%m-%d 00:00:00'),
+                                      first_end_date.strftime('%Y-%m-%d 23:59:59')]
+                            )
+                        # 필수미션 n회차 일 경우 (1제외)
+                        elif mission["order"] != 1 and mission["mission_type"] == 0:
+                            start_date = first_start_date + timedelta(days=mission["based_on_activity_period"])
+                            end_date = start_date + timedelta(days=mission["due_date"])
+                            db.execute(
+                                query="INSERT INTO ad_mission_card_user "
+                                      "(ad_user_apply_id, ad_mission_card_id, "
+                                      "mission_type, status, mission_start_date, mission_end_date) "
+                                      "VALUES (%s, %s, %s, %s, %s, %s)",
+                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
+                                      "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'),
+                                      end_date.strftime('%Y-%m-%d 23:59:59')]
+                            )
+                        # 선택미션 일 경우(우선 활동시작 기간이 필수미션 1회 완료 후 이기때문에 0000-00-00 으로 (필수미션1회 후 시간정해짐)
+                        else:
+                            db.execute(
+                                query="INSERT INTO ad_mission_card_user "
+                                      "(ad_user_apply_id, ad_mission_card_id, "
+                                      "mission_type, status) "
+                                      "VALUES (%s, %s, %s, %s)",
+                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
+                                      "stand_by", ]
+                            )
+                    db.execute(
+                        query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() WHERE ad_user_apply_id = %s",
+                        args=[kwargs['status'], apply_user_list[i]]
+                    )
+                    history_name = f"{apply_status['title']} 광고 신청 승인"
+                    db.execute(
+                        query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                        args=[apply_status['user_id'], history_name]
+                    )
+                    db.commit()
+            else:
+                apply_information["mission_data"] = False
+                return apply_information
+
+            ad_mission_card_user_info = db.executeAll(
+                query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
+                      "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+                      "WHERE aua.ad_user_apply_id = %s",
+                args=apply_user_list[i]
             )
-        db.commit()
-        return apply_information
+            for j in range(len(ad_mission_card_user_info)):
+                db.execute(
+                    query="INSERT INTO "
+                          "mission_images (ad_mission_card_user_id) "
+                          "VALUES "
+                          "(%s)",
+                    args=ad_mission_card_user_info[j]["ad_mission_card_user_id"]
+                )
+            db.commit()
+    return result
