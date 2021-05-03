@@ -254,6 +254,16 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    # 사용자의 광고 상태 및 미션 처리 메세지 INSERT
+    def saveStatusMessage(self, ad_user_apply_id, title, reason, message_type):
+        self.cursor.execute(
+            query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, message_type) "
+                  "VALUE (%s, %s, %s, %s)",
+            args=[ad_user_apply_id, title, reason, message_type]
+        )
+        self.commit()
+        return
+
 
 
 

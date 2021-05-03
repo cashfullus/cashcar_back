@@ -261,18 +261,23 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                         query="UPDATE ad_user_apply SET status = 'fail' WHERE ad_user_apply_id = %s",
                         args=ad_apply_id
                     )
-                    db.execute(
-                        query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
-                              "VALUES (%s, %s, %s, %s)",
-                        args=[ad_apply_id, title, reason, 0]
+                    db.saveStatusMessage(
+                        ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="apply_fail"
                     )
+                    db.commit()
+                    return result
                 # 추가 미션의 경우 실패해도 상관없음(point 미지급)
                 else:
+                    title = "미션 인증에 실패하였습니다:("
+                    reason = "또 다른 미션을 통해 리워드를 지급받으세요!"
                     db.execute(
                         query="UPDATE ad_mission_card_user "
                               "SET status = 'fail', mission_fail_count =  mission_fail_count + 1 "
                               "WHERE ad_mission_card_id = %s",
                         args=mission_card_id
+                    )
+                    db.saveStatusMessage(
+                        ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
                     )
                 history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
                 db.execute(
@@ -296,10 +301,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[mission_information['user_id'], history_name]
                 )
-                db.execute(
-                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
-                          "VALUE (%s, %s, %s, %s)",
-                    args=[ad_apply_id, title, reason, 0]
+                db.saveStatusMessage(
+                    ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
                 )
                 db.commit()
                 return result
