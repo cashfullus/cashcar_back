@@ -243,11 +243,13 @@ class Database:
         return rows
 
     # 사용자의 광고 상태 및 미션 처리 메세지 가져오기
-    def getOneReason(self, ad_user_apply_id):
+    def getOneReason(self, user_id):
         self.cursor.execute(
-            query="SELECT ad_mission_reason_id as reason_id, title, reason, is_read FROM ad_mission_reason "
-                  "WHERE ad_user_apply_id = %s AND is_read = 0",
-            args=ad_user_apply_id
+            query="SELECT ad_mission_reason_id as reason_id, title, reason, is_read FROM ad_mission_reason amr "
+                  "JOIN ad_user_apply aua on amr.ad_user_apply_id = aua.ad_user_apply_id "
+                  "JOIN user u on aua.user_id = u.user_id "
+                  "WHERE u.user_id = %s AND is_read = 0",
+            args=user_id
         )
         row = self.cursor.fetchone()
         return row
