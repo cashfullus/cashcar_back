@@ -13,7 +13,12 @@ parameters:
     type: Bearer String
     required: true
 
-  - name: page(10개)
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+  - name: count
     in: query string
     type: integer
     required: true

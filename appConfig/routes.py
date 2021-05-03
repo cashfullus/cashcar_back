@@ -703,7 +703,7 @@ def admin_user_apply_list():
 # 광고신청 승인 or 거절
 @app.route("/admin/ad/apply", methods=["GET", "POST"])
 @jwt_required()
-@swag_from('route_yml/admin/advertisement_apply_get.yml', methods=['GET'])
+# @swag_from('route_yml/admin/advertisement_apply_get.yml', methods=['GET'])
 @swag_from('route_yml/admin/advertisement_apply_post.yml', methods=['POST'])
 def admin_ad_apply():
     identity_ = get_jwt_identity()
@@ -713,18 +713,10 @@ def admin_ad_apply():
     if status is not True:
         return jsonify(status), code
     try:
-        ad_user_apply_id = request.args.get('ad_user_apply_id')
-        if request.method == "GET":
-            result = AD.get_ad_apply(ad_user_apply_id)
-            if result:
-                return jsonify({"status": True, "data": result}), 200
-            else:
-                return jsonify({"status": False, "data": "Not Found"}), 404
-
-        elif request.method == "POST":
+        if request.method == "POST":
             data = request.get_json()
-            result = AD.update_ad_apply_status(ad_user_apply_id=ad_user_apply_id, **data)
-            return jsonify(result)
+            result = AD.update_ad_apply_status(**data)
+            return jsonify({"data": result})
         else:
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
@@ -806,13 +798,14 @@ def admin_get_all_user_list():
         return jsonify(status), code
 
     page = request.args.get('page', 1)
+    count = request.args.get('count', 10)
     # area = request.args.get('area', '')
     # gender = request.args.get('gender', 0)
     # age = request.args.get('age', '0~200')
     # register_time = request.args.get('register_time', '0000-00-00 00:00:00 ~ 9999-12-30 00:00:00')
     # avg_register_time = register_time.split('~')
     # avg_age = age.split('~')
-    result = Admin.get_all_user_list(page=page)
+    result = Admin.get_all_user_list(page=page, count=count)
     return jsonify({"data": result})
 
 

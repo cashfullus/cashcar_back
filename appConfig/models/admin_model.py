@@ -115,10 +115,13 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
             else:
                 where_area.append(f"area LIKE '%%{area[i]}%%'")
         where_area = "({0})".format(''.join(where_area))
-    where_gender = f"gender IN ({gender})"
+    if int(gender) == 0:
+        where_gender = f"gender IN (0, 1, 2)"
+    else:
+        where_gender = f"gender IN ({gender})"
     where_distance = f"min_distance >= {distance}"
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
-    where_recruit_date = f"(recruit_start_date >= '{recruit_start}' AND recruit_end_date <= '{recruit_end}')"
+    where_recruit_date = f"(recruit_start_date >= '{recruit_start} 00:00:00' AND recruit_end_date <= '{recruit_end} 00:00:00')"
 
     sql = "SELECT ad_id, owner_name, title, thumbnail_image, activity_period, " \
           "max_recruiting_count, recruiting_count, total_point, " \
@@ -131,6 +134,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
           f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
+    print(sql)
     result = db.executeAll(query=sql, args=[int(item_count), per_page])
     page_count = db.executeOne(
         query="SELECT count(ad_id) as page_count FROM ad_information "
@@ -289,10 +293,9 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
 
 
 # 어드민 회원리스트 및 회원 관리
-def get_all_user_list(page):
+def get_all_user_list(page, count):
     db = Database()
-    per_page = (int(page) - 1) * 10
-    start_at = per_page + 10
+    per_page = (int(page) - 1) * int(count)
     user_list = db.executeAll(
         query="SELECT user_id, nickname, name, call_number, email, "
               "resident_registration_number_back as gender, "
@@ -300,7 +303,7 @@ def get_all_user_list(page):
               "marketing, main_address, detail_address, deposit, "
               "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
               "FROM user u LIMIT %s OFFSET %s",
-        args=[start_at, per_page]
+        args=[int(count), per_page]
     )
     if user_list:
         for i in range(len(user_list)):
