@@ -134,7 +134,6 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
           f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
-    print(sql)
     result = db.executeAll(query=sql, args=[int(item_count), per_page])
     page_count = db.executeOne(
         query="SELECT count(ad_id) as page_count FROM ad_information "
