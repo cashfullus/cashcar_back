@@ -710,7 +710,6 @@ def admin_user_apply_list():
 # 광고신청 승인 or 거절
 @app.route("/admin/ad/apply", methods=["GET", "POST"])
 @jwt_required()
-# @swag_from('route_yml/admin/advertisement_apply_get.yml', methods=['GET'])
 @swag_from('route_yml/admin/advertisement_apply_post.yml', methods=['POST'])
 def admin_ad_apply():
     identity_ = get_jwt_identity()
@@ -719,15 +718,15 @@ def admin_ad_apply():
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
-    # try:
-    if request.method == "POST":
-        data = request.get_json()
-        result = AD.update_ad_apply_status(**data)
-        return jsonify({"data": result})
-    else:
-        return jsonify({"status": False, "data": "Not Allowed Method"}), 405
-    # except TypeError:
-    #     return jsonify({"status": False, "data": "Data Not Null"}), 400
+    try:
+        if request.method == "POST":
+            data = request.get_json()
+            result = AD.update_ad_apply_status(**data)
+            return jsonify({"data": result})
+        else:
+            return jsonify({"status": False, "data": "Not Allowed Method"}), 405
+    except TypeError:
+        return jsonify({"status": False, "data": "Data Not Null"}), 400
 
 
 # 사용자 미션 인증 에서 상태 변경
