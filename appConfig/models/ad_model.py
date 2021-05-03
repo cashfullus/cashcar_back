@@ -466,7 +466,8 @@ def update_ad_apply_status(**kwargs):
         else:
             if kwargs["status"] == "reject":
                 history_name = f"{apply_status['title']} 광고 신청 거부"
-                reasson =
+                title = "서포터즈 신청에 실패하였습니다:("
+                reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
                 # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
                 db.execute(
                     query="UPDATE ad_information as ad_info "
@@ -484,9 +485,9 @@ def update_ad_apply_status(**kwargs):
                     args=[apply_status['user_id'], history_name]
                 )
                 db.execute(
-                    query="INSERT INTO ad_mission_fail_reason (ad_apply_id, reason, mission_type, fail_title, is_read) "
-                          "VALUE (%s, %s, %s, %s, %s)",
-                    args=apply_user_list[i],
+                    query="INSERT INTO ad_mission_fail_reason (ad_apply_id, reason, fail_title, is_read) "
+                          "VALUE (%s, %s, %s, %s)",
+                    args=[apply_user_list[i], reason, title, 0]
                 )
 
             elif kwargs["status"] == "accept":
