@@ -37,7 +37,7 @@ def update_point():
                 title = "신청한 서포터즈 활동에 실패했습니다:("
                 reason = """서포터즈 활동 미션 인증에 실패하였습니다. 활동 미행으로 리워드는 지급해드리지 않으며 다른 서포터즈 활동에 지원해주세요."""
                 db.execute(
-                    query="INSERT INTO ad_mission_reason (ad_apply_id, title, reason, is_read) "
+                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
                           "VALUES (%s, %s, %s, %s)",
                     args=[users[i]['ad_user_apply_id'], title, reason, 0]
                 )
@@ -79,7 +79,7 @@ def update_point():
                 title = "서포터즈 활동에 성공하였습니다:)"
                 reason = """열심히 활동해주신 고객님께 감사드리며 이제 차량에서 스티커를 제거하셔도 됩니다. 다음 활동도 잘 부탁드립니다."""
                 db.execute(
-                    query="INSERT INTO ad_mission_reason (ad_apply_id, title, reason, is_read) "
+                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, is_read) "
                           "VALUES (%s, %s, %s, %s)",
                     args=[users[i]['ad_user_apply_id'], title, reason, 0]
                 )

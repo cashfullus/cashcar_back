@@ -456,6 +456,7 @@ def ad_mission_apply_with_list():
             result_status["data_not_null"] = False
             return jsonify({"status": False, "data": result_status})
 
+
 # /ad/mission
 # 사용자의 진행중인 광고 정보 카드(광고 취소 기능 포함)
 @app.route("/main/my-ad", methods=["GET", "DELETE"])

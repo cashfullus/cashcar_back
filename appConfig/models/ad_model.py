@@ -390,12 +390,12 @@ def get_ongoing_user_by_id(user_id):
     if vehicle_information:
         result["vehicle_information"] = vehicle_information
 
-    if not ad_information:
-        return result
-
-    message = db.getOneReason(ad_user_apply_id=ad_information['ad_user_apply_id'])
+    message = db.getOneReason(user_id=user_id)
     if message:
         result["message"] = message
+
+    if not ad_information:
+        return result
 
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
         ad_information['ongoing_days'] = 0
