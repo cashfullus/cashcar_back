@@ -58,3 +58,8 @@ responses:
                 type: integer
               vehicle_model_name:
                 type: string
+              max_recruiting_count:
+                type: integer
+              recruit_number:
+                type: integer
+                description: 모집번호

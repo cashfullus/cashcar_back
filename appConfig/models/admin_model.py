@@ -309,7 +309,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 return result
 
 
-# 어드민 회원리스트 및 회원 관리
+# 어드민 회원리스트 및 회원 관리  모집번호 추가
 def get_all_user_list(page, count):
     db = Database()
     per_page = (int(page) - 1) * int(count)
