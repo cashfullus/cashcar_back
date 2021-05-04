@@ -186,7 +186,9 @@ class Database:
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
-              "WHERE user_id = %s AND (amcu.status NOT IN ('success', 'fail') or amcu.status IS NULL) AND removed = 0 " \
+              "WHERE user_id = %s " \
+              "AND (amcu.status NOT IN ('success', 'fail') or amcu.status IS NULL) " \
+              "AND removed = 0 AND aua.status NOT IN ('success', 'fail') " \
               "ORDER BY FIELD(amcu.status, 'ongoing', 'stand_by'), amcu.mission_start_date LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)
         row = self.cursor.fetchone()

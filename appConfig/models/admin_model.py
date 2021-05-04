@@ -381,28 +381,42 @@ def get_all_withdrawal_point(page, count):
     return result, item_count['item_count']
 
 
-# 어드민 포인트 출금 상태 변경  (waiting(대기중), checking(확인중), done(승인), reject(반려))
+# 어드민 포인트 출금 상태 변경  (waiting(대기중), confirm(확인), done(승인), reject(반려))
 def update_withdrawal_point(withdrawal_self_id, **kwargs):
     db = Database()
-    change_time = f"change_{kwargs['status']}"
-    sql = f"UPDATE withdrawal_self SET status = %s, {change_time} = NOW() WHERE withdrawal_self_id = %s"
-    value_list = [kwargs['status'], withdrawal_self_id]
-    if kwargs['status'] == "reject":
-        sql = "UPDATE withdrawal_self " \
-              f"SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_self_id = %s"
-        value_list = [kwargs['status'], kwargs['comment'], withdrawal_self_id]
+    status = {"deposit": True, "user": True}
+    user_information = db.executeOne(
+        query="SELECT u.user_id, deposit, amount FROM withdrawal_self ws "
+              "JOIN user u on ws.user_id = u.user_id "
+              "WHERE withdrawal_self_id = %s",
+        args=withdrawal_self_id
+    )
+    if user_information:
+        # 사용자의 총 금액과 출금 신청한 금액 확인
+        if (int(user_information['deposit']) - int(user_information['amount'])) < 0:
+            status['deposit'] = False
+            return status
 
-        db.execute(
-            query=sql,
-            args=value_list
-        )
+        change_time = f"change_{kwargs['status']}"
+        if kwargs['status'] == "reject":
+            db.execute(
+                query="UPDATE withdrawal_self SET status = %s, %s = NOW() WHERE withdrawal_self_id = %s",
+                args=[kwargs['status'], change_time, withdrawal_self_id]
+            )
+
+        if kwargs['status'] == "done":
+            db.execute(
+                query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                args=[int(user_information['amount']), user_information['user_id']]
+            )
+        sql = f"UPDATE withdrawal_self SET status = '{kwargs['status']}', " \
+              f"{change_time} = NOW() WHERE withdrawal_self_id = {withdrawal_self_id}"
+
         db.commit()
-    # elif kwargs['status'] == 'done':
-    #     db.execute(
-    #         query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
-    #         args=
-    #     )
-    return True
+        return status
+    else:
+        status['user'] = False
+        return status
 
 
 # 어드민 기부 신청 리스트
