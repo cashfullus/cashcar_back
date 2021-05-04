@@ -28,7 +28,7 @@ firebase_admin.initialize_app(cred)
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = secret_key
+app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 CORS(app, resources={r"*": {"origins": "*"}})
