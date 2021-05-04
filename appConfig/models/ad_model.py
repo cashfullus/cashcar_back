@@ -516,7 +516,7 @@ def update_ad_apply_status(**kwargs):
                 db.execute(
                     query="INSERT INTO ad_mission_reason (ad_user_apply_id, reason, title, is_read, message_type) "
                           "VALUE (%s, %s, %s, %s, %s)",
-                    args=[apply_user_list[i], reason, title, 0, "apply_fail"]
+                    args=[apply_user_list[i], reason, title, 0, "apply_reject"]
                 )
                 db.execute(
                     query="UPDATE ad_user_apply "

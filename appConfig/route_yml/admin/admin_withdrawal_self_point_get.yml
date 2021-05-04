@@ -39,7 +39,7 @@ responses:
               withdrawal_self_id:
                 type: integer
                 default: 51
-              account_banck:
+              account_bank:
                 type: string
                 default: "하나은행"
               account_number:
@@ -56,3 +56,11 @@ responses:
                 type: string
                 description: 신청시간
                 default: "2021-04-30 14:24:23"
+              status:
+                type: string
+                description: 진행 스테이터스
+                default: "waiting"
+              amount:
+                type: integer
+                description: 신청 금액
+                default: 3000000000000
