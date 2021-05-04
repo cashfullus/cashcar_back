@@ -142,7 +142,9 @@ class Database:
 
     # 신청한 광고의 status, title, user_id, recruting_count 조회
     def getOneApplyStatus(self, ad_user_apply_id):
-        sql = "SELECT status, title, aua.user_id, name, recruit_number, aua.ad_id FROM ad_user_apply aua " \
+        sql = "SELECT status, title, aua.user_id, name, recruit_number, aua.ad_id, ad_status, " \
+              "max_recruiting_count, recruiting_count " \
+              "FROM ad_user_apply aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "JOIN user u on aua.user_id = u.user_id " \
               "WHERE ad_user_apply_id = %s"
