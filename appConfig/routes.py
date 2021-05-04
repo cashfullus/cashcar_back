@@ -536,9 +536,9 @@ def user_is_read_message():
 
 
 # 마이페이지 (마이캐시카)
-@app.route('/user/mypage')
-@jwt_required()
-def user_mypage():
+# @app.route('/user/mypage')
+# @jwt_required()
+# def user_mypage():
 
 
 
