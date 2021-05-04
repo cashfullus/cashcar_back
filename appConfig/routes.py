@@ -846,13 +846,9 @@ def get_withdrawal_self_point_all():
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
-        withdrawal_self_id = request.args.get('withdrawal_self_id', 0)
-        if withdrawal_self_id != 0:
-            data = request.get_json()
-            result = Admin.update_withdrawal_point(withdrawal_self_id=withdrawal_self_id, **data)
-            return jsonify({"data": result})
-        else:
-            return jsonify({"data": False})
+        data = request.get_json()
+        result = Admin.update_withdrawal_point(**data)
+        return jsonify({"data": result})
 
 
 # 어드민 기부 신청 리스트
