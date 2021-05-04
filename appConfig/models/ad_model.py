@@ -198,27 +198,16 @@ def get_all_by_category_ad_list(page, category):
     per_page = (page - 1) * 20
     start_at = per_page + 20
     status = {"correct_category": True}
-    sql_parameter_val = ""
-    # 모집중인 광고
-    if category == "ongoing":
-        sql_parameter_val = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
-    elif category == "scheduled":
-        sql_parameter_val = "recruit_start_date > NOW()"
-    elif category == "done":
-        sql_parameter_val = "recruit_end_date < NOW() OR recruiting_count = max_recruiting_count"
-    else:
-        status["correct_category"] = False
-
     sql = "SELECT ad_id, title, thumbnail_image, " \
           "max_recruiting_count, recruiting_count, total_point, area," \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
           "TIMESTAMPDIFF(day, DATE_FORMAT(NOW(), '%%Y-%%m-%%d %%H:%%i:%%s'), " \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s')) as time_diff " \
-          f"FROM ad_information WHERE {sql_parameter_val} AND removed = 0 " \
+          f"FROM ad_information WHERE ad_status = %s AND removed = 0 " \
           "LIMIT %s OFFSET %s"
 
-    result = db.executeAll(query=sql, args=[start_at, per_page])
+    result = db.executeAll(query=sql, args=[category, start_at, per_page])
     return result, status
 
 
