@@ -308,7 +308,7 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
             args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
         )
         db.execute(
-            query="INSERT INTO ad_user_apply (user_id, ad_id, recurit_number,register_time) VALUES (%s, %s, %s, NOW())",
+            query="INSERT INTO ad_user_apply (user_id, ad_id, recruit_number, register_time) VALUES (%s, %s, %s, NOW())",
             args=[user_id, ad_id, int(target_ad['recruiting_count']) + 1]
         )
         db.execute(
@@ -366,20 +366,7 @@ def get_ongoing_user_by_id(user_id):
         "mission_type": -1, "ongoing_day_percent": -1, "ongoing_days": -1,
         "order": -1, "point": -1, "thumbnail_image": "", "title": "", "user_id": -1
     }, "is_delete": True,
-        "vehicle_information": [{
-            "brand": "",
-            "car_number": "",
-            "is_foreign_car": "",
-            "owner_relationship": "",
-            "register_time": "",
-            "remove_time": "0000-00-00 00:00:00",
-            "removed": -1,
-            "supporters": -1,
-            "user_id": -1,
-            "vehicle_id": -1,
-            "vehicle_model_name": "",
-            "year": -1
-        }],
+        "vehicle_information": [],
         "message": {
             "is_read": -1,
             "reason": "",
