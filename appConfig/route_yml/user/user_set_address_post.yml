@@ -12,6 +12,25 @@ parameters:
     type: query string
     required: true
 
+  - name: name
+    in: body
+    type: string
+    required: true
+
+  - name: call_number
+    in: body
+    type: string
+    required: true
+
+  - name: main_address
+    in: body
+    type: string
+    required: true
+
+  - name: detail_address
+    in: body
+    type: string
+    required: true
 
 responses:
   200:

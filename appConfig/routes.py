@@ -489,6 +489,7 @@ def home_my_ad():
 @app.route('/user/set/address', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/user/user_set_address_get.yml', methods=['GET'])
+@swag_from('route_yml/user/user_set_address_post.yml', methods=['POST'])
 def user_set_address():
     try:
         user_id = request.args.get('user_id')
@@ -525,12 +526,21 @@ def user_withdrawal():
         return jsonify(Unauthorized), 401
 
 
+# 메세지 읽음표시
 @app.route('/user/is-read', methods=['POST'])
 @swag_from('route_yml/user/user_message_is_read.yml')
 def user_is_read_message():
     ad_mission_reason_id = request.args.get('reason_id')
     User.update_reason_by_user(reason_id=ad_mission_reason_id)
     return jsonify(True)
+
+
+# 마이페이지 (마이캐시카)
+@app.route('/user/mypage')
+@jwt_required()
+def user_mypage():
+
+
 
 
 
