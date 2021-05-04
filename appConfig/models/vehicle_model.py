@@ -7,7 +7,7 @@ def datetime_to_str(time):
     return time.strftime('%Y-%m-%d %H:%M:%S')
 
 
-# 차량 등록
+# 차량 등록 supporters 걸러내기
 def register_vehicle(**kwargs):
     db = Database()
     result = {"user": True, "register": True, "double_check_number": True}
@@ -41,6 +41,18 @@ def register_vehicle(**kwargs):
     else:
         pass
 
+    all_vehicle = db.executeAll(
+        query="SELECT vehicle_id FROM vehicle WHERE user_id = %s",
+        args=kwargs['user_id']
+    )
+
+    if all_vehicle:
+        if int(kwargs['supporters']) == 1:
+            for i in range(len(all_vehicle)):
+                db.execute(
+                    query="UPDATE vehicle SET supporters = 0 WHERE vehicle_id = %s",
+                    args=all_vehicle[i]['vehicle_id']
+                )
     # INSERT
     sql = "INSERT INTO vehicle " \
           "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \

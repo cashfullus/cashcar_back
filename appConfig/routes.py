@@ -674,7 +674,7 @@ def admin_ad_list():
     return jsonify({"data": result, "page_count": page_count})
 
 
-# 광고 신청한 사용자 리스트
+# 광고 신청한 사용자 리스트 모집번호 추가
 @app.route('/admin/ad/list/user-list')
 @jwt_required()
 @swag_from('route_yml/admin/advertisement_user_list.yml')
@@ -826,7 +826,7 @@ def get_point_all_by_user_id():
     return jsonify({"data": result})
 
 
-# 어드민 출금 신청 리스트
+# 어드민 출금 신청 리스트  ## status 의 값들 swagger 추가
 @app.route('/admin/user/withdrawal/point', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/admin/admin_withdrawal_self_point_get.yml', methods=['GET'])

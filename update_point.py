@@ -1,4 +1,4 @@
-from database.dbConnection import Database
+from appConfig.database.dbConnection import Database
 
 
 def select_user():

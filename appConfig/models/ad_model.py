@@ -275,8 +275,9 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
         args=user_id
     )
     area = kwargs['main_address'].split(' ')[0]
-    query = "SELECT ad_id, title FROM ad_information WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
-    non_delivery_area = db.executeOne(
+    query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
+            "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
+    delivery_area = db.executeOne(
         query=query
     )
 
@@ -292,7 +293,7 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
         status["already_apply"] = False
         return status
 
-    elif not non_delivery_area:
+    elif not delivery_area:
         status['area'] = False
         return status
 
@@ -301,36 +302,52 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
         return status
 
     else:
-        db.execute(
-            query="UPDATE user SET main_address = %s, "
-                  "detail_address = %s, call_number = %s, name = %s "
-                  "WHERE user_id = %s",
-            args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
-        )
-        db.execute(
-            query="INSERT INTO ad_user_apply (user_id, ad_id, recruit_number, register_time) VALUES (%s, %s, %s, NOW())",
-            args=[user_id, ad_id, int(target_ad['recruiting_count']) + 1]
-        )
-        db.execute(
-            query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
-            args=ad_id
-        )
-        history_name = f"{non_delivery_area['title']} 광고 신청"
-        db.execute(
-            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-            args=[user_id, history_name]
-        )
-        db.execute(
-            query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
-            args=[user_id, vehicle['vehicle_id']]
-        )
-        db.execute(
-            query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
-            args=[user_id, vehicle['vehicle_id']]
-        )
-        db.commit()
+        if int(delivery_area['recruiting_count']) == int(delivery_area['max_recruiting_count']):
+            status['ad_information'] = False
+            return status
+        else:
+            if int(delivery_area['recruiting_count']) + 1 == int(delivery_area['max_recruiting_count']):
+                db.execute(
+                    query="UPDATE ad_information SET recruiting_count = recruiting_count + 1, ad_status = 'done' "
+                          "WHERE ad_id = %s",
+                    args=ad_id
+                )
+            else:
+                db.execute(
+                    query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
+                    args=ad_id
+                )
+            db.execute(
+                query="UPDATE user SET main_address = %s, "
+                      "detail_address = %s, call_number = %s, name = %s "
+                      "WHERE user_id = %s",
+                args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
+            )
+            db.execute(
+                query="INSERT INTO ad_user_apply (user_id, ad_id, recruit_number, register_time) "
+                      "VALUES (%s, %s, %s, NOW())",
+                args=[user_id, ad_id, int(target_ad['recruiting_count']) + 1]
+            )
+            db.execute(
+                query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
+                args=ad_id
+            )
+            history_name = f"{delivery_area['title']} 광고 신청"
+            db.execute(
+                query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+                args=[user_id, history_name]
+            )
+            db.execute(
+                query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
+                args=[user_id, vehicle['vehicle_id']]
+            )
+            db.execute(
+                query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
+                args=[user_id, vehicle['vehicle_id']]
+            )
+            db.commit()
 
-        return status
+            return status
 
 
 # 진행중인 광고 By User
@@ -498,13 +515,28 @@ def update_ad_apply_status(**kwargs):
                 title = "서포터즈 신청에 실패하였습니다:("
                 reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
                 # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
-                db.execute(
-                    query="UPDATE ad_information as ad_info "
+                ad_information = db.executeOne(
+                    query="SELECT max_recruiting_count, recruiting_count FROM ad_information as ad_info "
                           "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                          "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
                           "WHERE aua.ad_user_apply_id = %s",
                     args=apply_user_list[i]
                 )
+                if int(ad_information['max_recruiting_count']) == int(ad_information['recruiting_count']):
+                    db.execute(
+                        query="UPDATE ad_information as ad_info "
+                              "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                              "SET ad_info.recruiting_count = ad_info.recruiting_count - 1, ad_status = 'ongoing' "
+                              "WHERE aua.ad_user_apply_id = %s",
+                        args=apply_user_list[i]
+                    )
+                else:
+                    db.execute(
+                        query="UPDATE ad_information as ad_info "
+                              "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                              "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
+                              "WHERE aua.ad_user_apply_id = %s",
+                        args=apply_user_list[i]
+                    )
                 db.execute(
                     query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
                     args=[kwargs['status'], apply_user_list[i]]
