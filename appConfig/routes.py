@@ -5,7 +5,6 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-from appConfig import secret_key
 
 from .models import (
     user_model as User,
