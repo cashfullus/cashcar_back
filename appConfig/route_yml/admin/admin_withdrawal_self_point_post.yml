@@ -12,9 +12,9 @@ parameters:
     type: Bearer String
     required: true
 
-  - name: withdrawal_self_id
-    in: query string
-    type: integer
+  - name: withdrawal_list
+    in: body
+    type: array
     required: true
 
   - name: status

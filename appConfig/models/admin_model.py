@@ -110,7 +110,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
             where_area = f"area LIKE '%%{area}%%'"
     else:
         for i in range(len(area)):
-            if i+1 != len(area):
+            if i + 1 != len(area):
                 where_area.append(f"area LIKE '%%{area[i]}%%' OR ")
             else:
                 where_area.append(f"area LIKE '%%{area[i]}%%'")
@@ -168,7 +168,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     db = Database()
     status = kwargs['status']
     result = {"accept": True, "reason": "Update Success"}
-    mission_information = db.getOneMissionUserInfoByIdx(ad_user_apply_id=ad_apply_id, ad_mission_card_id=mission_card_id)
+    mission_information = db.getOneMissionUserInfoByIdx(ad_user_apply_id=ad_apply_id,
+                                                        ad_mission_card_id=mission_card_id)
     if mission_information:
         # 이미 바껴있는 값으로 바꿀경우 fail = fail, success = success, reject = reject
         if status == mission_information['status']:
@@ -228,7 +229,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     )
             if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
                 start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])-1)))\
+                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period']) - 1))) \
                     .strftime('%Y-%m-%d 23:59:59')
                 db.execute(
                     query="UPDATE ad_user_apply "
@@ -382,41 +383,57 @@ def get_all_withdrawal_point(page, count):
 
 
 # 어드민 포인트 출금 상태 변경  (waiting(대기중), confirm(확인), done(승인), reject(반려))
-def update_withdrawal_point(withdrawal_self_id, **kwargs):
+def update_withdrawal_point(**kwargs):
     db = Database()
-    status = {"deposit": True, "user": True}
-    user_information = db.executeOne(
-        query="SELECT u.user_id, deposit, amount FROM withdrawal_self ws "
-              "JOIN user u on ws.user_id = u.user_id "
-              "WHERE withdrawal_self_id = %s",
-        args=withdrawal_self_id
-    )
-    if user_information:
-        # 사용자의 총 금액과 출금 신청한 금액 확인
-        if (int(user_information['deposit']) - int(user_information['amount'])) < 0:
-            status['deposit'] = False
-            return status
-
-        change_time = f"change_{kwargs['status']}"
-        if kwargs['status'] == "reject":
-            db.execute(
-                query="UPDATE withdrawal_self SET status = %s, %s = NOW() WHERE withdrawal_self_id = %s",
-                args=[kwargs['status'], change_time, withdrawal_self_id]
-            )
-
+    status_list = []
+    user_list = kwargs['withdrawal_list']
+    if user_list:
         if kwargs['status'] == "done":
-            db.execute(
-                query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
-                args=[int(user_information['amount']), user_information['user_id']]
-            )
-        sql = f"UPDATE withdrawal_self SET status = '{kwargs['status']}', " \
-              f"{change_time} = NOW() WHERE withdrawal_self_id = {withdrawal_self_id}"
-
-        db.commit()
-        return status
+            for i in range(len(user_list)):
+                user_information = db.executeOne(
+                    query="SELECT u.user_id, deposit, amount FROM withdrawal_self "
+                          "JOIN user u on withdrawal_self.user_id = u.user_id WHERE withdrawal_self_id = %s",
+                    args=user_list[i]
+                )
+                if int(user_information['deposit']) - int(user_information["amount"]) >= 0:
+                    db.execute(
+                        query="UPDATE withdrawal_self "
+                              "SET status = 'done', change_done = NOW() "
+                              "WHERE withdrawal_self_id = %s",
+                        args=user_list[i]
+                    )
+                    db.execute(
+                        query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                        args=[int(user_information['amount']), user_information['user_id']]
+                    )
+                else:
+                    status_list.append({i: False})
+            db.commit()
+            return True
+        elif kwargs['status'] == "reject":
+            for i in range(len(user_list)):
+                db.execute(
+                    query="UPDATE withdrawal_self "
+                          "SET status = 'reject', change_reject = NOW() "
+                          "WHERE withdrawal_self_id = %s",
+                    args=user_list[i]
+                )
+            db.commit()
+            return True
+        elif kwargs['status'] == "confirm":
+            for i in range(len(user_list)):
+                db.execute(
+                    query="UPDATE withdrawal_self "
+                          "SET status = %s, change_confirm = NOW() "
+                          "WHERE withdrawal_self_id = %s",
+                    args=[kwargs['status'], user_list[i]]
+                )
+            db.commit()
+            return True
+        else:
+            return False
     else:
-        status['user'] = False
-        return status
+        return False
 
 
 # 어드민 기부 신청 리스트
@@ -458,10 +475,3 @@ def update_withdrawal_donate(withdrawal_donate_id, **kwargs):
     )
     db.commit()
     return True
-
-
-
-
-
-
-
