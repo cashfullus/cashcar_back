@@ -350,4 +350,22 @@ def update_reason_by_user(reason_id):
     return
 
 
+# 사용자 마이페이지
+def get_user_my_page(user_id):
+    db = Database()
+    user_information = db.executeOne(
+        query="SELECT user_id, profile_image, name, email, deposit FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    badge_list = db.executeAll(
+        query="SELECT status, title FROM ad_user_apply aua "
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+              "JOIN user u on aua.user_id = u.user_id "
+              "WHERe u.user_id = %s",
+        args=user_id
+    )
+    return {"user_information": user_information, "badge_list": badge_list}
+
+
+
 

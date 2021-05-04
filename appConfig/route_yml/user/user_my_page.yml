@@ -1,0 +1,50 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Header
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 사용자의 정보와 뱃지 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user_information:
+              type: object
+              properties:
+                deposit:
+                  type: integer
+                  description: 사용자 포인트
+                email:
+                  type: string
+                  description: 사용자 이메일
+                name:
+                  type: string
+                profile_image:
+                  type: image url
+                user_id:
+                  type: integer
+            badge_list:
+              type: array
+              items:
+                properties:
+                  status:
+                    type: string
+                    description: 실패(fail, reject), 진행중(accept), 성공(success)
+                  title:
+                    type: string
+                    description: 광고 타이틀

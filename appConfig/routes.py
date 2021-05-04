@@ -536,9 +536,21 @@ def user_is_read_message():
 
 
 # 마이페이지 (마이캐시카)
-# @app.route('/user/mypage')
-# @jwt_required()
-# def user_mypage():
+@app.route('/user/my-page')
+@jwt_required()
+@swag_from('route_yml/user/user_my_page.yml')
+def user_my_page():
+    try:
+        user_id = request.args.get('user_id', 0)
+        identity_ = get_jwt_identity()
+        if int(user_id) != identity_:
+            return jsonify(Unauthorized), 401
+
+        result = User.get_user_my_page(user_id)
+        return jsonify({"data": result})
+
+    except KeyError:
+        return jsonify({"data": "Data Not Null"}), 400
 
 
 
