@@ -303,6 +303,11 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
 
     else:
         if int(delivery_area['recruiting_count']) == int(delivery_area['max_recruiting_count']):
+            db.execute(
+                query="UPDATE ad_information SET ad_status = 'done' WHERE ad_id = %s",
+                args=ad_id
+            )
+            db.commit()
             status['ad_information'] = False
             return status
         else:
@@ -515,13 +520,7 @@ def update_ad_apply_status(**kwargs):
                 title = "서포터즈 신청에 실패하였습니다:("
                 reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
                 # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
-                ad_information = db.executeOne(
-                    query="SELECT max_recruiting_count, recruiting_count FROM ad_information as ad_info "
-                          "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                          "WHERE aua.ad_user_apply_id = %s",
-                    args=apply_user_list[i]
-                )
-                if int(ad_information['max_recruiting_count']) == int(ad_information['recruiting_count']):
+                if int(apply_status['max_recruiting_count']) == int(apply_status['recruiting_count']):
                     db.execute(
                         query="UPDATE ad_information as ad_info "
                               "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
