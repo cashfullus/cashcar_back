@@ -68,10 +68,21 @@ def register_vehicle(**kwargs):
     return result
 
 
-# 사용자 ID로 등록한 차량 GET ALL
+# 사용자 ID로 등록한 차량 GET ALL    차량삭제 유무 확인
 def vehicle_list_by_user_id(user_id):
     db = Database()
     vehicle_list = db.getAllVehicleByUserId(user_id)
+    if vehicle_list:
+        for i in range(len(vehicle_list)):
+            is_supporters = db.executeOne(
+                query="SELECT vehicle_id FROM ad_user_apply "
+                      "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
+                args=[user_id, vehicle_list[i]['vehicle_id']]
+            )
+            if is_supporters:
+                vehicle_list[i]['is_delete'] = False
+            else:
+                vehicle_list[i]['is_delete'] = True
     return vehicle_list
 
 
@@ -82,6 +93,17 @@ def vehicle_detail_by_id(user_id, vehicle_id):
         vehicle_id=vehicle_id,
         user_id=user_id
     )
+    if target_vehicle:
+        is_delete = db.executeOne(
+            query="SELECT vehicle_id FROM ad_user_apply "
+                  "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
+            args=[user_id, vehicle_id]
+        )
+        if is_delete:
+            target_vehicle['is_delete'] = False
+        else:
+            target_vehicle['is_delete'] = True
+
     return target_vehicle
 
 
@@ -140,7 +162,7 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
         return result
 
 
-# 차량 ID로 차량 삭제
+# 차량 ID로 차량 삭제 서포터즈 진행시 미삭제 불가
 def vehicle_delete_by_id(vehicle_id, user_id):
     db = Database()
     sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0"
@@ -150,12 +172,19 @@ def vehicle_delete_by_id(vehicle_id, user_id):
     )
 
     if target_vehicle:
-        db.execute(
-            query="UPDATE vehicle SET removed = 1, remove_time = NOW() WHERE vehicle_id = %s AND user_id = %s",
-            args=[vehicle_id, user_id]
+        is_delete = db.executeOne(
+            query="SELECT vehicle_id FROM ad_user_apply "
+                  "WHERE vehicle_id = %s AND user_id = %s AND status NOT IN ('success', 'fail')"
         )
-        db.commit()
-        return True
+        if is_delete:
+            return False
+        else:
+            db.execute(
+                query="UPDATE vehicle SET removed = 1, remove_time = NOW() WHERE vehicle_id = %s AND user_id = %s",
+                args=[vehicle_id, user_id]
+            )
+            db.commit()
+            return True
 
     else:
         return False

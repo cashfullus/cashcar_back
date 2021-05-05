@@ -318,9 +318,9 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
                 args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
             )
             db.execute(
-                query="INSERT INTO ad_user_apply (user_id, ad_id, recruit_number, register_time) "
-                      "VALUES (%s, %s, %s, NOW())",
-                args=[user_id, ad_id, int(target_ad['recruiting_count']) + 1]
+                query="INSERT INTO ad_user_apply (user_id, ad_id, vehicle_id,recruit_number, register_time) "
+                      "VALUES (%s, %s, %s,%s, NOW())",
+                args=[user_id, ad_id, vehicle['vehicle_id'], int(target_ad['recruiting_count']) + 1]
             )
             db.execute(
                 query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
@@ -362,6 +362,7 @@ def ad_apply_list():
     db = Database()
     result = db.getAllAdUserApply()
     return result
+
 
 #
 # 메인화면 본인이 진행중인 광고 카드의 정보 order 와 ad_mission_card_user_id,
@@ -434,7 +435,7 @@ def get_ongoing_user_by_id(user_id):
                 ad_information['point'] = (datetime.now().date() - start_date.date()).days * ad_information['point']
             else:
                 ad_information['point'] = ad_information['point']
-            ad_information['ongoing_day_percent'] = int(datetime.now().hour/24*100)
+            ad_information['ongoing_day_percent'] = int(datetime.now().hour / 24 * 100)
 
         # if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
         #         hours=1) < datetime.now():
@@ -456,7 +457,7 @@ def cancel_apply_user(ad_user_apply_id):
         status["apply_information"] = False
         return status
 
-    #if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
+    # if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
     #    status["time_out"] = False
     #    return status
     ad_information = db.executeOne(
