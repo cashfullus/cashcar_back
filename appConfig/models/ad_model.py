@@ -361,6 +361,14 @@ def get_ongoing_ad(user_id):
 def ad_apply_list():
     db = Database()
     result = db.getAllAdUserApply()
+    item_count = db.executeAll(query="SELECT "
+                                     "count(aua.ad_user_apply_id) as item_count "
+                                     "FROM ad_user_apply aua "
+                                     "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                                     "JOIN user u on aua.user_id = u.user_id "
+                                     "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject')"
+                               )
+    result['item_count'] = item_count
     return result
 
 
