@@ -21,7 +21,7 @@ from flasgger import Swagger, swag_from
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate('appConfig/cashCarServiceAccount.json')
+cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
 firebase_admin.initialize_app(cred)
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
