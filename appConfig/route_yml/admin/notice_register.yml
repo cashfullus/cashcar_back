@@ -1,0 +1,37 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: title
+    in: body
+    type: string
+    required: true
+    default: "제목"
+
+  - name: description
+    in: body
+    type: string
+    required: true
+    default: "설명"
+
+
+responses:
+  200:
+    description: 공지사항 등록
+    schema:
+      type: object
+      properties:
+        status:
+          type: boolean
+
