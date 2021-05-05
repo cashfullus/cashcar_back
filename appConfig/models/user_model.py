@@ -14,6 +14,7 @@ import os
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/user"
 PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
 
+
 # 이메일 형태 정규식 사용하여 검사
 def check_email_regex(email):
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
@@ -280,13 +281,12 @@ def user_mission_list(user_id):
 
 
 # 광고ID에 신청한 사람 조회
-def user_apply_id_by_ad_id(page, ad_id):
+def user_apply_id_by_ad_id(page, count, ad_id):
     per_page = (page - 1) * 10
-    start_at = per_page + 10
     db = Database()
     user_information = db.executeAll(
         query="SELECT "
-              "u. user_id, nickname, name, call_number, email, "
+              "u.user_id, nickname, name, call_number, email, "
               "cast('resident_registration_number_back' as unsigned) as gender, "
               "resident_registration_number_front as birth_of_date, "
               "car_number, vehicle_model_name, recruit_number, max_recruiting_count,"
@@ -297,25 +297,36 @@ def user_apply_id_by_ad_id(page, ad_id):
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
               "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 "
               "ORDER BY ad_user_apply_id LIMIT %s OFFSET %s",
-        args=[ad_id, start_at, per_page]
+        args=[ad_id, count, per_page]
     )
-    return user_information
+    item_count = db.executeOne(
+        query="SELECT count(u.user_id) as item_count FROM ad_user_apply aua "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN vehicle v on u.user_id = v.user_id "
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0",
+        args=ad_id
+    )
+    return user_information, item_count['item_count']
 
 
 # 사용자 포인트 기록 조회
-def get_point_all_by_user(user_id, page):
-    per_page = (int(page) - 1) * 7
-    start_at = per_page + 7
+def get_point_all_by_user(user_id, page, count):
+    per_page = (int(page) - 1) * 10
     db = Database()
     user_point_history = db.executeAll(
         query="SELECT point, contents, type, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
               "FROM point_history WHERE user_id = %s LIMIT %s OFFSET %s",
-        args=[user_id, start_at, per_page]
+        args=[user_id, int(count), per_page]
     )
-    return user_point_history
+    item_count = db.executeOne(
+        query="SELECT count(user_id) as item_count FROM point_history WHERE user_id = %s",
+        args=user_id
+    )
+    return user_point_history, item_count['item_count']
 
 
-#fcm token 가져오기
+# fcm token 가져오기
 def get_fcm_token_by_user_id(user_id):
     db = Database()
     user_fcm_token = db.executeOne(
@@ -339,6 +350,7 @@ def get_user_point_history(user_id):
     scheduled_point = db.executeAll(
 
     )
+
 
 # 사용자 출금신청시 GET
 # def get_user_withdrawal_data(user_id):
@@ -370,7 +382,3 @@ def get_user_my_page(user_id):
         args=user_id
     )
     return {"user_information": user_information, "badge_list": badge_list}
-
-
-
-

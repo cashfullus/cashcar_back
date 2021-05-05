@@ -122,9 +122,9 @@ def login(**kwargs):
 
 # 어드민 광고 리스트 (query string)
 def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
-                             sort, page, item_count):
+                             sort, page, count):
     db = Database()
-    per_page = (page - 1) * int(item_count)
+    per_page = (page - 1) * int(count)
     status = {"correct_category": True}
     category_value = ""
     if category == "ongoing":
@@ -163,7 +163,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
     where_recruit_date = f"(recruit_start_date >= '{recruit_start} 00:00:00' AND recruit_end_date <= '{recruit_end} 00:00:00')"
 
-    sql = "SELECT ad_id, owner_name, title, thumbnail_image, activity_period, " \
+    sql = "SELECT ad_id, owner_name, title, thumbnail_image, activity_period, ad_status, " \
           "max_recruiting_count, recruiting_count, total_point, " \
           "day_point, area, description, gender, min_distance, min_age_group, " \
           "max_age_group, side_image, back_image, side_length, side_width, " \
@@ -174,9 +174,9 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           f"WHERE {category_value} AND {where_point} " \
           f"AND {where_area} AND {where_gender} " \
           f"AND {where_distance} AND {where_age} AND {where_recruit_date} ORDER BY {order_by} {sort} LIMIT %s OFFSET %s"
-    result = db.executeAll(query=sql, args=[int(item_count), per_page])
-    page_count = db.executeOne(
-        query="SELECT count(ad_id) as page_count FROM ad_information "
+    result = db.executeAll(query=sql, args=[int(count), per_page])
+    item_count = db.executeOne(
+        query="SELECT count(ad_id) as item_count FROM ad_information "
               f"WHERE {category_value} AND {where_point} "
               f"AND {where_area} AND {where_gender} "
               f"AND {where_distance} AND {where_age} AND {where_recruit_date}"
@@ -200,7 +200,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
                       'FROM ad_mission_card WHERE ad_id = %s AND mission_type = 1',
                 args=result[i]['ad_id']
             )
-    return result, page_count['page_count']
+    return result, item_count['item_count']
 
 
 # # 어드민이 미션 성공여부 체크
@@ -362,6 +362,9 @@ def get_all_user_list(page, count):
               "FROM user u LIMIT %s OFFSET %s",
         args=[int(count), per_page]
     )
+    item_count = db.executeOne(
+        query="SELECT count(user_id) as item_count FROM user"
+    )
     if user_list:
         for i in range(len(user_list)):
             vehicle = db.executeAll(
@@ -379,7 +382,7 @@ def get_all_user_list(page, count):
             user_list[i]['vehicle_information'] = vehicle
             user_list[i]['activity_history'] = activity_history
 
-    return user_list
+    return user_list, item_count['item_count']
 
 
 # 어드민 회원 정보 수정

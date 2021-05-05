@@ -21,7 +21,7 @@ from flasgger import Swagger, swag_from
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
+cred = credentials.Certificate('appConfig/cashCarServiceAccount.json')
 firebase_admin.initialize_app(cred)
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
@@ -737,7 +737,7 @@ def admin_ad_list():
     recruit_end_date = request.args.get('recruit_end', '9999-12-30')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'ASC')
-    item_count = request.args.get('count', 10)
+    count = request.args.get('count', 10)
     if area == '':
         area_list = area
     else:
@@ -747,13 +747,13 @@ def admin_ad_list():
             area_list = area.split(',')
     avg_point = point.split('~')
     avg_age = age.split('~')
-    result, page_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area_list,
+    result, item_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area_list,
                                                         gender=gender, avg_age=avg_age, distance=distance,
                                                         recruit_start=recruit_start_date, recruit_end=recruit_end_date,
                                                         order_by=order_by, sort=sort,
-                                                        page=int(page), item_count=item_count
+                                                        page=int(page), count=int(count)
                                                         )
-    return jsonify({"data": result, "page_count": page_count})
+    return jsonify({"data": result, "item_count": item_count})
 
 
 # 광고 신청한 사용자 리스트 모집번호 추가
@@ -766,9 +766,10 @@ def admin_ad_list_user_list():
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
     page = request.args.get('page', 1)
+    count = request.args.get('count', 10)
     ad_id = request.args.get('ad_id', 0)
-    result = User.user_apply_id_by_ad_id(page=int(page), ad_id=ad_id)
-    return jsonify({"data": result})
+    result, item_count = User.user_apply_id_by_ad_id(page=int(page), count=int(count), ad_id=ad_id)
+    return jsonify({"data": result, "item_count": item_count})
 
 
 # 광고신청 리스트
@@ -782,9 +783,11 @@ def admin_user_apply_list():
     if status is not True:
         return jsonify(status), code
 
-    result = AD.ad_apply_list()
+    page = request.args.get('page', 1)
+    count = request.args.get('count', 10)
+    result, item_count = AD.ad_apply_list(page=page, count=count)
     if result:
-        return jsonify({"status": True, "data": result}), 200
+        return jsonify({"status": True, "data": result, "item_count": item_count}), 200
     else:
         return jsonify({"status": True, "data": []}), 201
 
@@ -847,10 +850,9 @@ def admin_mission_list():
     if status is not True:
         return jsonify(status), code
     page = request.args.get('page', 1)
-    if int(page) == 0:
-        page = 1
-    result = Mission.admin_review_mission_list(page=int(page))
-    return jsonify({"data": result})
+    count = request.args.get('count', 10)
+    result, item_count = Mission.admin_review_mission_list(page=int(page), count=int(count))
+    return jsonify({"data": result, "item_count": item_count})
 
 
 # 사용자 미션 인증 요청 리스트에서 해당 사용자의 모든 미션 리스트를 볼수있는 데이터
@@ -893,8 +895,8 @@ def admin_get_all_user_list():
     # register_time = request.args.get('register_time', '0000-00-00 00:00:00 ~ 9999-12-30 00:00:00')
     # avg_register_time = register_time.split('~')
     # avg_age = age.split('~')
-    result = Admin.get_all_user_list(page=page, count=count)
-    return jsonify({"data": result})
+    result, item_count = Admin.get_all_user_list(page=page, count=count)
+    return jsonify({"data": result, "item_count": item_count})
 
 
 # 회원 정보에서 보유 포인트 이력
@@ -904,8 +906,9 @@ def admin_get_all_user_list():
 def get_point_all_by_user_id():
     user_id = request.args.get('user_id')
     page = request.args.get('page', 1)
-    result = User.get_point_all_by_user(user_id=user_id, page=page)
-    return jsonify({"data": result})
+    count = request.args.get('count', 10)
+    result, item_count = User.get_point_all_by_user(user_id=user_id, page=page, count=count)
+    return jsonify({"data": result, "item_count": item_count})
 
 
 # 어드민 출금 신청 리스트  ## status 의 값들 swagger 추가

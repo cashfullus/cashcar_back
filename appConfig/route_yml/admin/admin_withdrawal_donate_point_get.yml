@@ -49,5 +49,6 @@ responses:
                 type: string
               status:
                 type: string
+                description: stand_by(대기), confirm(진행중), done(완료), cancel(취소)
               user_id:
                 type: integer

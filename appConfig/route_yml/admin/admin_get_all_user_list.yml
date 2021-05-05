@@ -30,6 +30,9 @@ responses:
     schema:
       type: object
       properties:
+        item_count:
+          type: integer
+          description: 총 회원 숫자
         data:
           type: array
           items:

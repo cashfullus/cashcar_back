@@ -7,10 +7,9 @@ MISSION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/missio
 
 
 # 페이지 적용
-def pagenation(page):
-    per_page = (int(page) - 1) * 20
-    start_at = per_page + 20
-    return per_page, start_at
+def page_nation(page, count):
+    per_page = (int(page) - 1) * int(count)
+    return per_page
 
 
 # 미션 데이터 정보
@@ -81,9 +80,9 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
 # register_time, end_date, title, mission_name, name, call_number, mission_status,
 # image
 # 사용자의 미션 인증 신청 리스트
-def admin_review_mission_list(page):
+def admin_review_mission_list(page, count):
     db = Database()
-    per_page, start_at = pagenation(int(page))
+    per_page = page_nation(int(page), int(count))
     result = db.executeAll(
         query="SELECT "
               "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
@@ -99,9 +98,18 @@ def admin_review_mission_list(page):
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "WHERE amcu.status = 'review' OR amcu.status = 're_review' LIMIT %s OFFSET %s",
-        args=[start_at, per_page]
+        args=[int(count), per_page]
     )
-    return result
+    item_count = db.executeOne(
+        query="SELECT count(aua.ad_user_apply_id) as item_count FROM ad_mission_card_user as amcu "
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+              "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
+              "WHERE amcu.status = 'review' OR amcu.status = 're_review'"
+    )
+    return result, item_count['item_count']
 
 
 # 사용자 미션 인증 신청에서 디테일 미션 리스트

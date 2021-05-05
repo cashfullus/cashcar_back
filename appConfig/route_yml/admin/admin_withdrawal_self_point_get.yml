@@ -58,7 +58,7 @@ responses:
                 default: "2021-04-30 14:24:23"
               status:
                 type: string
-                description: 진행 스테이터스
+                description: 진행 스테이터스 stand_by(대기), confirm(진행중), done(완료), cancel(취소)
                 default: "waiting"
               amount:
                 type: integer

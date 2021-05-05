@@ -125,18 +125,18 @@ class Database:
         return row
 
     # 광고 신청한 건에 대하여
-    def getAllAdUserApply(self):
+    def getAllAdUserApply(self, count, per_page):
         sql = "SELECT " \
               "title, owner_name, name, main_address, detail_address, " \
               "aua.recruit_number, max_recruiting_count, aua.status, " \
               "u.user_id, aua.ad_user_apply_id, call_number," \
-              "DATE_FORMAT(aua.register_time, '%Y-%m-%d %H:%i:%s') as register_time, " \
-              "DATE_FORMAT(accept_status_time, '%Y-%m-%d %H:%i:%s') as accept_status_time " \
+              "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time " \
               "FROM ad_user_apply aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "JOIN user u on aua.user_id = u.user_id " \
-              "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject')"
-        self.cursor.execute(query=sql)
+              "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail') LIMIT %s OFFSET %s"
+        self.cursor.execute(query=sql, args=[count, per_page])
         rows = self.cursor.fetchall()
         return rows
 
