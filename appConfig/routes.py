@@ -5,7 +5,6 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-
 from .models import (
     user_model as User,
     vehicle_model as Vehicle,
@@ -21,9 +20,9 @@ from flasgger import Swagger, swag_from
 # Firebase push Notification Config
 import firebase_admin
 from firebase_admin import credentials
+
 cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
 firebase_admin.initialize_app(cred)
-
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
@@ -553,12 +552,21 @@ def user_my_page():
         return jsonify({"data": "Data Not Null"}), 400
 
 
+# 공지사항 리트스
+@app.route('/notice/list')
+@jwt_required()
+@swag_from('route_yml/user/notice_list.yml')
+def notice_list():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
 
-
+    result = Admin.user_get_notice_list()
+    return jsonify({"data": result})
 
 
 ########### ADMIN ############
-
 # 어드민 권한 확인
 def admin_allowed_user_check(admin_user_id, identity_):
     if int(admin_user_id) == identity_:
@@ -569,6 +577,58 @@ def admin_allowed_user_check(admin_user_id, identity_):
             return Forbidden, 403
     else:
         return Unauthorized, 401
+
+
+# 공지사항 등록
+@app.route('/admin/notice/register', methods=['POST'])
+@jwt_required()
+@swag_from('route_yml/admin/notice_register.yml')
+def register_notice_by_admin():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    if int(admin_user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    try:
+        data = request.get_json()
+        Admin.admin_register_notice(**data)
+        return jsonify({"status": True})
+    except KeyError:
+        return jsonify({"status": False})
+    except TypeError:
+        return jsonify({"status": False})
+
+
+# 공지사항 수정 및 삭제 및 데이터 가져오기
+@app.route('/admin/notice', methods=['GET', 'POST', 'DELETE'])
+@jwt_required()
+@swag_from('route_yml/admin/notice_list.yml', methods=['GET'])
+@swag_from('route_yml/admin/notice_modify.yml', methods=['POST'])
+@swag_from('route_yml/admin/notice_delete.yml', methods=['DELETE'])
+def modify_notice_by_admin():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    if int(admin_user_id) != identity_:
+        return jsonify(Unauthorized), 401
+    try:
+        if request.method == 'GET':
+            page = request.args.get('page', 1)
+            count = request.args.get('count', 10)
+            result = Admin.admin_get_notice_list(page=int(page), count=int(count))
+            return jsonify({"data": result})
+
+        elif request.method == 'POST':
+            notice_id = request.args.get('notice_id', 0)
+            data = request.get_json()
+            Admin.update_notice(notice_id=notice_id, **data)
+            return jsonify({"status": True})
+
+        elif request.method == 'DELETE':
+            notice_id = request.args.get('notice_id', 0)
+            Admin.delete_notice(notice_id=notice_id)
+            return jsonify({"status": True})
+    except KeyError:
+        return jsonify({"status": False})
 
 
 # 아이디 등록
@@ -651,7 +711,7 @@ def admin_adverting_register():
 
 # 광고 미션 수정 or 삭제
 # @app.route('/admin/ad/mission/update', methods=['POST', 'DELETE'])
-    # ad_mission_card_id = request.args.get('ad_mission_card_Id')
+# ad_mission_card_id = request.args.get('ad_mission_card_Id')
 
 # 어드민 광고 리스트
 @app.route('/admin/ad/list')
@@ -899,8 +959,3 @@ def get_withdrawal_donate_point_all():
             return jsonify({"data": result})
         else:
             return jsonify({"data": False})
-
-
-
-
-

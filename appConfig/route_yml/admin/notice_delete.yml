@@ -1,0 +1,31 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: notice_id
+    in: query string
+    type: integer
+    required: true
+    default: 1
+
+
+responses:
+  200:
+    description: 수정 성공
+    schema:
+      type: object
+      properties:
+        status:
+          type: boolean
+

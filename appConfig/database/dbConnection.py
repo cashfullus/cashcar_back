@@ -270,6 +270,43 @@ class Database:
         self.commit()
         return
 
+    # 공지사항 리스트
+    def getUserAllNotice(self):
+        self.cursor.execute(
+            query="SELECT "
+                  "notice_id, title, description, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM notice_information WHERE is_removed = 0"
+        )
+        rows = self.cursor.fetchall()
+        return rows
+
+    def getAdminAllNotice(self, count, per_page):
+        self.cursor.execute(
+            query="SELECT "
+                  "notice_id, title, description, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM notice_information WHERE is_removed = 0 LIMIT %s OFFSET %s",
+            args=[count, per_page]
+        )
+        rows = self.cursor.fetchall()
+        return rows
+
+    def updateNotice(self, notice_id, title, description):
+        self.cursor.execute(
+            query="UPDATE notice_information "
+                  "SET title = %s, description = %s, updated_time = NOW() WHERE notice_id = %s",
+            args=[title, description, notice_id]
+        )
+        self.commit()
+
+    def deleteNotice(self, notice_id):
+        self.cursor.execute(
+            query="UPDATE notice_information SET is_removed = 1 WHERE notice_id = %s",
+            args=notice_id
+        )
+        self.commit()
+
 
 
 

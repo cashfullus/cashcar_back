@@ -27,6 +27,46 @@ def allowed_in_role_user(user_id):
         return False
 
 
+# 사용자 공지사항 리스트
+def user_get_notice_list():
+    db = Database()
+    result = db.getUserAllNotice()
+    return result
+
+
+# 어드민 공지사항 등록
+def admin_register_notice(**kwargs):
+    db = Database()
+    db.execute(
+        query="INSERT INTO notice_information (title, description) VALUES (%s, %s)",
+        args=[kwargs['title'], kwargs['description']]
+    )
+    db.commit()
+    return
+
+
+# 어드민 공지사항 리스트
+def admin_get_notice_list(page, count):
+    per_page = (int(page) - 1) * int(count)
+    db = Database()
+    result = db.getAdminAllNotice(count=int(count), per_page=per_page)
+    return result
+
+
+# 공지사항 업데이트
+def update_notice(notice_id, **kwargs):
+    db = Database()
+    db.updateNotice(notice_id=notice_id, title=kwargs.get('title'), description=kwargs.get('description'))
+    return True
+
+
+# 공지사항 삭제 (실제 데이터는 삭제되지 않는다.)
+def delete_notice(notice_id):
+    db = Database()
+    db.deleteNotice(notice_id=notice_id)
+    return True
+
+
 def register(**kwargs):
     db = Database()
     result = {"exist_id": True, "data": {}}
