@@ -358,18 +358,18 @@ def get_ongoing_ad(user_id):
 
 
 # 광고 신청 목록
-def ad_apply_list():
+def ad_apply_list(page, count):
+    per_page = (int(page) - 1) * int(count)
     db = Database()
-    result = db.getAllAdUserApply()
-    item_count = db.executeAll(query="SELECT "
+    result = db.getAllAdUserApply(count=int(count), per_page=per_page)
+    item_count = db.executeOne(query="SELECT "
                                      "count(aua.ad_user_apply_id) as item_count "
                                      "FROM ad_user_apply aua "
                                      "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                                      "JOIN user u on aua.user_id = u.user_id "
-                                     "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject')"
+                                     "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail')"
                                )
-    result['item_count'] = item_count
-    return result
+    return result, item_count['item_count']
 
 
 #

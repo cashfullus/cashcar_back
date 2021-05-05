@@ -13,6 +13,16 @@ parameters:
     type: integer
     required: true
 
+  - name: page
+    in: query string
+    type: integer
+    required: true
+
+  - name: count
+    in: query string
+    type: integer
+    required: true
+
 
 responses:
   200:
@@ -20,6 +30,9 @@ responses:
     schema:
       type: object
       properties:
+        item_count:
+          type: integer
+          description: 아이템 총 개수
         data:
           type: array
           items:
@@ -50,7 +63,7 @@ responses:
                 type: string
               status:
                 type: string
-                description: 미션 진행 현황
+                description: 미션 진행 현황(review(1차 인증), re_review(2차 인증) 같은 인증)
               title:
                 type: string
               travelled_distance:

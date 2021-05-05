@@ -12,6 +12,16 @@ parameters:
     type: integer
     required: true
 
+  - name: page(default 1)
+    in: query string
+    type: integer
+    required: true
+
+  - name: count(default 10)
+    in: query string
+    type: integer
+    required: true
+
 
 responses:
   200:
@@ -19,6 +29,9 @@ responses:
     schema:
       type: object
       properties:
+        item_count:
+          type: integer
+          description: 총 아이템 개수
         data:
           type: array
           items:
@@ -47,6 +60,7 @@ responses:
                 type: integer
               status:
                 type: string
+                description: reject(거절), success(성공 or 종료), accept(승인), stand_by(대기), fail(실패)
               call_number:
                 type: string
 

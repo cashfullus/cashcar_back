@@ -79,7 +79,7 @@ responses:
     schema:
       type: object
       properties:
-        page_count:
+        item_count:
           type: integer
         data:
           type: array
@@ -170,3 +170,6 @@ responses:
                           type: integer
                         order:
                           type: integer
+                  ad_status:
+                    type: string
+                    description: scheduled(대기), ongoing(진행), done(종료)
