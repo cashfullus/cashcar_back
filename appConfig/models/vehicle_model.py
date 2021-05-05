@@ -174,7 +174,8 @@ def vehicle_delete_by_id(vehicle_id, user_id):
     if target_vehicle:
         is_delete = db.executeOne(
             query="SELECT vehicle_id FROM ad_user_apply "
-                  "WHERE vehicle_id = %s AND user_id = %s AND status NOT IN ('success', 'fail')"
+                  "WHERE vehicle_id = %s AND user_id = %s AND status NOT IN ('success', 'fail')",
+            args=[vehicle_id, user_id]
         )
         if is_delete:
             return False
