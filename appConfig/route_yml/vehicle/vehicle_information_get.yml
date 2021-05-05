@@ -33,6 +33,7 @@ responses:
       register_time: "YYYY-MM-DD hh:mm:ss"
       remove_time: "YYYY-MM-DD hh:mm:ss"
       removed: 0
+      is_delete: true
       properties:
         vehicle_id:
           type: integer
@@ -67,6 +68,9 @@ responses:
         removed:
           type: integer
           description: 삭제유무
+        is_delete:
+          type: boolean
+          description: 삭제 가능 유무
 
   400:
     description: 데이터 형식 실패

@@ -102,6 +102,11 @@ def login(**kwargs):
     db = Database()
     user = db.getLoginTypeUserByEmail(email=kwargs.get("email"), login_type=kwargs.get("login_type"))
     if user:
+        db.execute(
+            query="UPDATE user SET last_connection_time = NOW() WHERE email = %s",
+            args=kwargs.get('email')
+        )
+        db.commit()
         # 제한된 데이터만 response
         if kwargs.get("login_type") == "kakao":
             login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
