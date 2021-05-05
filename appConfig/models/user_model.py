@@ -336,24 +336,10 @@ def get_fcm_token_by_user_id(user_id):
     return user_fcm_token
 
 
-# 사용자 포인트 창
-def get_user_point_history(user_id):
-    db = Database()
-    point = db.executeOne(
-        query="SELECT deposit FROM user WHERE user_id = %s",
-        args=user_id
-    )
-    point_history = db.executeAll(
-        query="SELECT point, contents, register_time FROM point_history WHERE user_id = %s",
-        args=user_id
-    )
-    scheduled_point = db.executeAll(
+# 사용자 출금신청시 GET    withdrawal
+# def get_user_withdrawal_data(user_id, **kwargs):
+#     db = Database()
 
-    )
-
-
-# 사용자 출금신청시 GET
-# def get_user_withdrawal_data(user_id):
 
 
 # 토스트메시지 읽음 처리
@@ -382,3 +368,52 @@ def get_user_my_page(user_id):
         args=user_id
     )
     return {"user_information": user_information, "badge_list": badge_list}
+
+
+# 사용자 포인트 와 적립예정 포인트 및 포인트 이력
+def get_user_point_and_history(user_id):
+    db = Database()
+    user_scheduled_point = 0
+    user_point = db.executeOne(
+        query="SELECT deposit FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    scheduled_point = db.executeOne(
+        query="SELECT "
+              "SUM(amc.additional_point) as scheduled_point, aua.ad_user_apply_id "
+              "FROM ad_mission_card_user amcu "
+              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+              "WHERE aua.user_id = %s "
+              "AND aua.status ='accept' "
+              "AND amcu.status = 'success' "
+              "AND amc.mission_type = 1 "
+              "GROUP BY aua.ad_user_apply_id",
+        args=user_id
+    )
+    ad_point = db.executeOne(
+        query="SELECT total_point FROM ad_information ai "
+              "JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
+              "WHERE aua.user_id = %s AND aua.status IN ('stand_by', 'accept')"
+    )
+    if scheduled_point:
+        user_scheduled_point += scheduled_point['additional_point']
+
+    if ad_point:
+        user_scheduled_point += ad_point['total_point']
+
+    user_point_history = db.executeAll(
+        query="SELECT "
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+              "contents, status "
+              "FROM point_history WHERE user_id = %s",
+        args=user_id
+    )
+    result = {"user_point": user_point['deposit'], scheduled_point: user_scheduled_point}
+
+
+
+
+
+

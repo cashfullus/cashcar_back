@@ -427,56 +427,8 @@ def get_all_withdrawal_point(page, count):
 
 # 어드민 포인트 출금 상태 변경  (waiting(대기중), confirm(확인), done(승인), reject(반려))
 def update_withdrawal_point(**kwargs):
-    db = Database()
-    status_list = []
-    user_list = kwargs['withdrawal_list']
-    if user_list:
-        if kwargs['status'] == "done":
-            for i in range(len(user_list)):
-                user_information = db.executeOne(
-                    query="SELECT u.user_id, deposit, amount FROM withdrawal_self "
-                          "JOIN user u on withdrawal_self.user_id = u.user_id WHERE withdrawal_self_id = %s",
-                    args=user_list[i]
-                )
-                if int(user_information['deposit']) - int(user_information["amount"]) >= 0:
-                    db.execute(
-                        query="UPDATE withdrawal_self "
-                              "SET status = 'done', change_done = NOW() "
-                              "WHERE withdrawal_self_id = %s",
-                        args=user_list[i]
-                    )
-                    db.execute(
-                        query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
-                        args=[int(user_information['amount']), user_information['user_id']]
-                    )
-                else:
-                    status_list.append({i: False})
-            db.commit()
-            return True
-        elif kwargs['status'] == "reject":
-            for i in range(len(user_list)):
-                db.execute(
-                    query="UPDATE withdrawal_self "
-                          "SET status = 'reject', change_reject = NOW() "
-                          "WHERE withdrawal_self_id = %s",
-                    args=user_list[i]
-                )
-            db.commit()
-            return True
-        elif kwargs['status'] == "confirm":
-            for i in range(len(user_list)):
-                db.execute(
-                    query="UPDATE withdrawal_self "
-                          "SET status = %s, change_confirm = NOW() "
-                          "WHERE withdrawal_self_id = %s",
-                    args=[kwargs['status'], user_list[i]]
-                )
-            db.commit()
-            return True
-        else:
-            return False
-    else:
-        return False
+    result = withdrawal_total_result(withdrawal_type="point", **kwargs)
+    return result
 
 
 # 어드민 기부 신청 리스트
@@ -502,19 +454,116 @@ def get_all_withdrawal_donate(page, count):
 
 
 # 어드민 기부 출금 상태 변경 (waiting(대기중), checking(확인중), done(승인), reject(반려))
-def update_withdrawal_donate(withdrawal_donate_id, **kwargs):
-    db = Database()
-    change_time = f"change_{kwargs['status']}"
-    sql = f"UPDATE withdrawal_donate SET status = %s, {change_time} = NOW() WHERE withdrawal_donate_id = %s"
-    value_list = [kwargs['status'], withdrawal_donate_id]
-    if kwargs['status'] == "reject":
-        sql = "UPDATE withdrawal_donate " \
-              f"SET status = %s, {change_time} = NOW(), comment = %s WHERE withdrawal_donate_id = %s"
-        value_list = [kwargs['status'], kwargs['comment'], withdrawal_donate_id]
+def update_withdrawal_donate(**kwargs):
+    result = withdrawal_total_result(withdrawal_type="donate", **kwargs)
+    return result
 
-    db.execute(
-        query=sql,
-        args=value_list
-    )
-    db.commit()
-    return True
+
+def withdrawal_total_result(withdrawal_type, **kwargs):
+    db = Database()
+    status_list = []
+    if withdrawal_type == "point":
+        user_list = kwargs['withdrawal_list']
+        if user_list:
+            if kwargs['status'] == "done":
+                for i in range(len(user_list)):
+                    user_information = db.executeOne(
+                        query="SELECT u.user_id, deposit, amount FROM withdrawal_self "
+                              "JOIN user u on withdrawal_self.user_id = u.user_id WHERE withdrawal_self_id = %s",
+                        args=user_list[i]
+                    )
+                    if int(user_information['deposit']) - int(user_information["amount"]) >= 0:
+                        db.execute(
+                            query="UPDATE withdrawal_self "
+                                  "SET status = 'done', change_done = NOW() "
+                                  "WHERE withdrawal_self_id = %s",
+                            args=user_list[i]
+                        )
+                        db.execute(
+                            query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                            args=[int(user_information['amount']), user_information['user_id']]
+                        )
+                    else:
+                        status_list.append({i: False})
+                db.commit()
+                return True
+            elif kwargs['status'] == "reject":
+                for i in range(len(user_list)):
+                    db.execute(
+                        query="UPDATE withdrawal_self "
+                              "SET status = 'reject', change_reject = NOW() "
+                              "WHERE withdrawal_self_id = %s",
+                        args=user_list[i]
+                    )
+                db.commit()
+                return True
+            elif kwargs['status'] == "confirm":
+                for i in range(len(user_list)):
+                    db.execute(
+                        query="UPDATE withdrawal_self "
+                              "SET status = %s, change_confirm = NOW() "
+                              "WHERE withdrawal_self_id = %s",
+                        args=[kwargs['status'], user_list[i]]
+                    )
+                db.commit()
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    elif withdrawal_type == "donate":
+        user_list = kwargs['withdrawal_donate_list']
+        if user_list:
+            # 기부 완료
+            if kwargs['status'] == "done":
+                for i in range(len(user_list)):
+                    user_information = db.executeOne(
+                        query="SELECT u.user_id, deposit, amount FROM withdrawal_donate "
+                              "JOIN user u on withdrawal_donate.user_id = u.user_id WHERE withdrawal_donate_id = %s",
+                        args=user_list[i]
+                    )
+                    if int(user_information['deposit']) - int(user_information["amount"]) >= 0:
+                        db.execute(
+                            query="UPDATE withdrawal_donate SET status = 'done', change_done = NOW() "
+                                  "WHERE withdrawal_donate_id = %s",
+                            args=user_list[i]
+                        )
+                        db.execute(
+                            query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                            args=[int(user_information['amount']), user_information['user_id']]
+                        )
+                    else:
+                        status_list.append({i: False})
+                db.commit()
+                return True
+            # 기부 reject
+            elif kwargs['status'] == "reject":
+                for i in range(len(user_list)):
+                    db.execute(
+                        query="UPDATE withdrawal_donate "
+                              "SET status = 'reject', change_reject = NOW() "
+                              "WHERE withdrawal_donate_id = %s",
+                        args=user_list[i]
+                    )
+                db.commit()
+                return True
+            # 기부 진행중
+            elif kwargs['status'] == "confirm":
+                for i in range(len(user_list)):
+                    db.execute(
+                        query="UPDATE withdrawal_donate "
+                              "SET status = %s, change_confirm = NOW() "
+                              "WHERE withdrawal_donate_id = %s",
+                        args=[kwargs['status'], user_list[i]]
+                    )
+                db.commit()
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+
+

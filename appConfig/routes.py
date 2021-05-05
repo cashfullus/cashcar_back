@@ -566,6 +566,17 @@ def notice_list():
     return jsonify({"data": result})
 
 
+# 사용자 포인트
+@app.route('/user/point')
+@jwt_required()
+def user_point():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    # result =
+
 ########### ADMIN ############
 # 어드민 권한 확인
 def admin_allowed_user_check(admin_user_id, identity_):
