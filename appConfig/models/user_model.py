@@ -42,12 +42,15 @@ def non_user_register():
 # 회원가입
 def register(**kwargs):
     db = Database()
-    result = {"status": True, "email_regex": True, "register_type": True, "data": ""}
+    result = {"status": True, "email_regex": True, "register_type": True, "data": "", "default": True}
+    if 'email' not in kwargs.keys() or 'name' not in kwargs.keys():
+        result['default'] = False
+        return result
+
     # Email 정규식 검사
     check_email = check_email_regex(kwargs.get("email"))
     # Email 중복확인
     user = db.getUserByEmail(kwargs.get("email"))
-    print(user)
     # 확인사항 검사
     if check_email is False:
         result["email_regex"] = False
@@ -336,10 +339,56 @@ def get_fcm_token_by_user_id(user_id):
     return user_fcm_token
 
 
-# 사용자 출금신청시 GET    withdrawal
-# def get_user_withdrawal_data(user_id, **kwargs):
-#     db = Database()
+# 사용자 출금신청 데이터 GET
+def get_user_withdrawal_data(user_id):
+    db = Database()
+    user_information = db.executeOne(
+        query="SELECT user_id, deposit, account_bank, account_name, account_number FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    return user_information
 
+
+# 사용자 출금신청    withdrawal_point(음수), bank_name, bank_owner, bank_number, is_main
+def update_user_withdrawal_data(user_id, **kwargs):
+    db = Database()
+    user_deposit = db.getUserById(user_id=user_id)
+    if user_deposit['deposit'] < kwargs['withdrawal_point']:
+        return False
+    db.execute(
+        query="INSERT INTO withdrawal_self (user_id, amount, account_bank, account_name, account_number) "
+              "VALUES (%s, %s, %s, %s, %s)",
+        args=[user_id, int(kwargs['withdrawal_point']), kwargs['account_back'],
+              kwargs['account_name'], kwargs['account_number']]
+    )
+    withdrawal_point_id = db.executeOne(
+        query="SELECT withdrawal_self_id FROM withdrawal_self ORDER BY register_time DESC LIMIT 1"
+    )
+    # commit 은 데이터 완전 저장 이기떄문에 안전하게 셀렉후 바로 저장
+    db.commit()
+    db.execute(
+        query="INSERT INTO point_history (user_id, point, contents, point_type, withdrawal_id) "
+              "VALUES (%s, %s, %s, %s, %s)",
+        args=[user_id, int(kwargs['withdrawal_point']), "통장으로 출금",
+              "withdrawal_self", withdrawal_point_id['withdrawal_self_id']]
+    )
+    if int(kwargs['is_main']) == 1:
+        db.execute(
+            query="UPDATE user "
+                  "SET account_bank = %s, account_name = %s, account_number = %s, deposit = deposit - %s "
+                  "WHERE user_id = %s",
+            args=[kwargs['account_bank'], kwargs['account_name'],
+                  kwargs['account_number'], int(kwargs['withdrawal_point']), user_id]
+        )
+    else:
+        db.execute(
+            query="UPDATE user "
+                  "SET deposit = deposit - %s "
+                  "WHERE user_id = %s",
+            args=[int(kwargs['withdrawal_point']), user_id]
+        )
+    db.commit()
+    return True
 
 
 # 토스트메시지 읽음 처리

@@ -7,6 +7,11 @@ parameters:
     type: String
     required: true
 
+  - name: name
+    in: application/json
+    type: string
+    required: true
+
   - name: password
     in: application/json
     type: String
@@ -48,6 +53,11 @@ responses:
     description: 허용되지않은 회원가입 타입의 회원가입 시도
     examples:
       application/json: {"status": false, "data": Not Allowed Type}
+
+  406:
+    description: 필수값(이메일, 이름)이 존재하지 않을떄
+    examples:
+      application/json: {status: false, data: Default Data}
 
   409:
     description: 중복된 회원가입 시도(이메일 중복확인)

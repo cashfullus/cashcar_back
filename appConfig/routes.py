@@ -151,6 +151,8 @@ def user_register():
             return jsonify({"status": False, "data": "Conflict User"}), 409
         elif result["register_type"] is False:
             return jsonify({"status": False, "data": "Not Allowed Type"}), 405
+        elif result['default'] is False:
+            return jsonify({"status": False, "data": "Default Data"}), 406
         else:
             return jsonify({"status": True, "data": result["data"]}), 201
     except TypeError:
@@ -576,6 +578,25 @@ def user_point():
         return jsonify(Unauthorized), 401
 
     # result =
+
+
+# 사용자 출금 신청
+@app.route('/user/point/withdrawal/point', methods=['GET', 'POST'])
+@jwt_required()
+def user_point_withdrawal():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    if request.method == 'GET':
+        result = User.get_user_withdrawal_data(user_id=user_id)
+        return jsonify({"data": result})
+
+    elif request.method == 'POST':
+        data = request.get_json()
+        result = User.update_user_withdrawal_data(user_id=user_id, **data)
+
 
 ########### ADMIN ############
 # 어드민 권한 확인
