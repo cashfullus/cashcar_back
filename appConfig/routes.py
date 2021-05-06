@@ -66,6 +66,34 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 Forbidden = {"status": False, "data": "Forbidden"}
 
 
+# 개인정보취급방
+@app.route('/agree/privacy_policy')
+@swag_from('route_yml/agree/privacy_policy.yml')
+def privacy():
+    return render_template('privacy_policy.html')
+
+
+# 위치기서비스 이용약관
+@app.route('/agree/location-based-service')
+@swag_from('route_yml/agree/location_based_service.yml')
+def location_based_service():
+    return render_template('location_based_service.html')
+
+
+# 이용약관
+@app.route('/agree/clause-service')
+@swag_from('route_yml/agree/clause_service.yml')
+def clause_service():
+    return render_template('clause_service.html')
+
+
+# 마케팅 수신동의
+@app.route('/agree/marketing-information')
+@swag_from('route_yml/agree/marketing_information.yml')
+def marketing_information():
+    return render_template('marketing_information.html')
+
+
 @app.route('/image/<location>/<idx>/<image_file>')
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
