@@ -18,7 +18,7 @@ def register_vehicle(**kwargs):
         return result
 
     # 본인이 등록한 차량 수 조회
-    counter_register_vehicle = db.executeAll(
+    counter_register_vehicle = db.executeOne(
         query="SELECT COUNT(*) as cnt FROM vehicle WHERE user_id = %s AND removed = 0",
         args=kwargs.get("user_id")
     )
@@ -29,7 +29,7 @@ def register_vehicle(**kwargs):
         args=kwargs.get("car_number")
     )
     # 최대 허용 등록 개수 3개
-    if counter_register_vehicle[0]["cnt"] >= 3:
+    if counter_register_vehicle["cnt"] >= 3:
         result["register"] = False
         return result
 
