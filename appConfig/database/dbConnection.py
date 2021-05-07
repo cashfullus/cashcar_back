@@ -307,6 +307,32 @@ class Database:
         )
         self.commit()
 
+    def getOneFcmToken(self, user_id):
+        self.cursor.execute(
+            query="SELECT fcm_token, uf.user_id, alarm, marketing FROM user_fcm uf "
+                  "JOIN user u on uf.user_id = u.user_id "
+                  "WHERE uf.user_id = %s",
+            args=user_id
+        )
+        row = self.cursor.fetchone()
+        return row
+
+    def getAllFcmToken(self, user_id_list):
+        fcm_tokens = []
+        if user_id_list:
+            for i in range(len(user_id_list)):
+                self.cursor.execute(
+                    query="SELECT fcm_token, uf.user_id, alarm, marketing FROM user_fcm uf "
+                          "JOIN user u on uf.user_id = u.user_id "
+                          "WHERE uf.user_id = %s",
+                    args=user_id_list[i]
+                )
+                row = self.cursor.fetchone()
+                if row['alarm'] == 1:
+                    fcm_tokens.append(row['fcm_token'])
+
+        return fcm_tokens
+
 
 
 

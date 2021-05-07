@@ -10,6 +10,13 @@ def one_cloud_messaging(token, body, title=None):
     return result
 
 
-def multiple_cloud_messaging(tokens, body, title):
-    result = push_service.notify_multiple_devices(registration_ids=tokens, message_title=title, message_body=body)
+def multiple_cloud_messaging(tokens, body, title=None):
+    if title is None:
+        result = push_service.notify_multiple_devices(registration_ids=tokens, message_body=body)
+    else:
+        result = push_service.notify_multiple_devices(registration_ids=tokens, message_title=title, message_body=body)
     return result
+
+get_token = "eGtoHyHXR-COeQdw-enpzp:APA91bH7k3ZCbQyS6QSv0_qK4v-pStbubYFj716Ct2AKOxCnbxOLPwN25r2nBt2jWAjN7WfEiZX6GMSfIYpRHAYESZJKSyC86AFR3gW2H18I0TSSt-vVfTQd-ELKffUVP8nMe61k9czU"
+
+print(one_cloud_messaging(token=get_token, body="치킨 공짜쿠폰", title="배달의 민족"))

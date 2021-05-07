@@ -184,15 +184,16 @@ def user_register():
         elif result['default'] is False:
             return jsonify({"status": False, "data": "Default Data"}), 406
         else:
-            push_result = one_cloud_messaging(token=data['fcm_token'],
-                                                                     body="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 "
-                                                                          "리워드가 쌓이는 즐거움을 느껴보세요 :D "
-                                                                     )
-            if push_result['success'] >= 1:
-                User.saveAlarmHistory(user_id=result['data']['user_id'],
-                                      alarm_type="register", required=0,
-                                      description="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 리워드가 쌓이는 즐거움을 느껴보세요 :D"
-                                      )
+            if data['alarm'] == 1:
+                push_result = one_cloud_messaging(token=data['fcm_token'],
+                                                  body="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 "
+                                                       "리워드가 쌓이는 즐거움을 느껴보세요 :D "
+                                                  )
+                if push_result['success'] >= 1:
+                    User.saveAlarmHistory(user_id=result['data']['user_id'],
+                                          alarm_type="register", required=0,
+                                          description="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 리워드가 쌓이는 즐거움을 느껴보세요 :D"
+                                          )
             return jsonify({"status": True, "data": result["data"]}), 201
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
@@ -267,7 +268,7 @@ def register_car():
     try:
         data = request.get_json()
         identity_ = get_jwt_identity()
-        result = Vehicle.register_vehicle(**data)
+        result, fcm_token = Vehicle.register_vehicle(**data)
         if data["user_id"] == identity_:
             if result["user"] is False:
                 return jsonify({"status": False, "data": "Not Correct User"}), 404
@@ -276,6 +277,15 @@ def register_car():
             elif result["double_check_number"] is False:
                 return jsonify({"status": False, "data": "Double Check False"}), 409
             else:
+                if fcm_token['alarm'] == 1:
+                    push_result = one_cloud_messaging(token=fcm_token['fcm_token'],
+                                                      body="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
+                                                      )
+                    if push_result['success'] >= 1:
+                        User.saveAlarmHistory(user_id=result['data']['user_id'],
+                                              alarm_type="vehicle_register", required=0,
+                                              description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
+                                              )
                 return jsonify({"status": True, "data": result}), 201
         else:
             return jsonify(Unauthorized), 401
@@ -877,7 +887,17 @@ def admin_ad_apply():
     try:
         if request.method == "POST":
             data = request.get_json()
-            result = AD.update_ad_apply_status(**data)
+            result, user_fcm_list = AD.update_ad_apply_status(**data)
+            if user_fcm_list:
+                if data['status'] == "accept":
+                    push_result = multiple_cloud_messaging(tokens=user_fcm_list,
+                                                           body="서포터즈 신청이 승인되었습니다. 스티커를 받은 후 1차 미션을 인증해주세요!"
+                                                           )
+
+                elif data["status"] == "reject":
+                    push_result = multiple_cloud_messaging(tokens=user_fcm_list,
+                                                           body="서포터즈 신청 조건에 만족하지 못하여 신청이 거절되었습니다, 다음 기회에 다시 도전해주세요ㅠㅜ"
+                                                           )
             return jsonify({"data": result})
         else:
             return jsonify({"status": False, "data": "Not Allowed Method"}), 405

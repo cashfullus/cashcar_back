@@ -4,8 +4,9 @@ from appConfig.database.dbConnection import Database
 def update_mission_list():
     db = Database()
     mission_list = db.executeAll(
-        query="SELECT ad_mission_card_user_id FROM ad_mission_card_user "
-              "WHERE status = 'stand_by' AND mission_type IN (1) "
+        query="SELECT ad_mission_card_user_id, mission_name, amcu.mission_type FROM ad_mission_card_user amcu "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+              "WHERE status = 'stand_by' AND amcu.mission_type IN (1) "
               "AND mission_start_date != '0000-00-00 00:00:00' AND mission_start_date <= NOW()"
     )
 

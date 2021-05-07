@@ -5,6 +5,8 @@ from datetime import date, timedelta, datetime
 
 import os
 
+from .user_model import saveAlarmHistory
+
 BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/CashCar/appConfig/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
@@ -496,6 +498,7 @@ def update_ad_apply_status(**kwargs):
     db = Database()
     apply_user_list = kwargs['apply_user_list']
     apply_information = {"rejected": True, "accept": True, "apply_data": True}
+    user_fcm_list = []
     for i in range(len(apply_user_list)):
         # 현재 apply 의 데이터 가져오기
         apply_status = db.getOneApplyStatus(ad_user_apply_id=apply_user_list[i])
@@ -550,6 +553,12 @@ def update_ad_apply_status(**kwargs):
                           "WHERE ad_user_apply_id NOT IN (%s) AND ad_id = %s AND recruit_number > %s",
                     args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
                 )
+                user_info = db.getOneFcmToken(user_id=apply_status['user_id'])
+                if user_info['alarm'] == 1:
+                    user_fcm_list.append(user_info['fcm_token'])
+                    saveAlarmHistory(user_id=apply_status['user_id'], alarm_type="apply",
+                                     required=1, description="서포터즈 신청 조건에 만족하지 못하여 신청이 거절되었습니다, 다음 기회에 다시 도전해주세요ㅠㅜ"
+                                     )
 
             elif kwargs["status"] == "accept":
                 mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=apply_user_list[i])
@@ -600,6 +609,12 @@ def update_ad_apply_status(**kwargs):
                         query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                         args=[apply_status['user_id'], history_name]
                     )
+                    user_info = db.getOneFcmToken(user_id=apply_status['user_id'])
+                    if user_info['alarm'] == 1:
+                        user_fcm_list.append(user_info['fcm_token'])
+                        saveAlarmHistory(user_id=apply_status['user_id'], alarm_type="apply",
+                                         required=1, description="서포터즈 신청이 승인되었습니다. 스티커를 받은 후 1차 미션을 인증해주세요!"
+                                         )
                     db.commit()
             else:
                 apply_information["apply_data"] = False
@@ -620,4 +635,4 @@ def update_ad_apply_status(**kwargs):
                     args=ad_mission_card_user_info[j]["ad_mission_card_user_id"]
                 )
             db.commit()
-    return apply_information
+    return apply_information, user_fcm_list

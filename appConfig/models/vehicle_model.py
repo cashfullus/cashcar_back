@@ -53,7 +53,9 @@ def register_vehicle(**kwargs):
                     query="UPDATE vehicle SET supporters = 0 WHERE vehicle_id = %s",
                     args=all_vehicle[i]['vehicle_id']
                 )
-    # INSERT
+    # fcm_token get
+    fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
+    # INSERTv
     sql = "INSERT INTO vehicle " \
           "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \
           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
@@ -65,7 +67,7 @@ def register_vehicle(**kwargs):
     db.execute(query=sql, args=value_list)
     db.commit()
     result["vehicle_information"] = kwargs
-    return result
+    return result, fcm_token
 
 
 # 사용자 ID로 등록한 차량 GET ALL    차량삭제 유무 확인
