@@ -83,6 +83,7 @@ def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type
 def admin_review_mission_list(page, count):
     db = Database()
     per_page = page_nation(int(page), int(count))
+
     result = db.executeAll(
         query="SELECT "
               "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
@@ -91,25 +92,29 @@ def admin_review_mission_list(page, count):
               "ai.title, amc.mission_name, u.name, u.call_number, "
               "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
               "amc.mission_type "
-              "FROM ad_mission_card_user as amcu "
+              "FROM ad_mission_card_user amcu "
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN user u on aua.user_id = u.user_id " 
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
-              "WHERE amcu.status = 'review' OR amcu.status = 're_review' LIMIT %s OFFSET %s",
+              "WHERE aua.status IN ('accept', 'stand_by') AND amcu.status IN ('review', 're_review') "
+              "GROUP BY aua.ad_user_apply_id "
+              "LIMIT %s OFFSET %s",
         args=[int(count), per_page]
     )
-    item_count = db.executeOne(
-        query="SELECT count(aua.ad_user_apply_id) as item_count FROM ad_mission_card_user as amcu "
+    item_count = db.executeAll(
+        query="SELECT aua.ad_user_apply_id "
+              "FROM ad_mission_card_user amcu "
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN user u on aua.user_id = u.user_id " 
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
-              "WHERE amcu.status = 'review' OR amcu.status = 're_review'"
+              "WHERE aua.status IN ('accept', 'stand_by') AND amcu.status IN ('review', 're_review') "
+              "GROUP BY aua.ad_user_apply_id"
     )
-    return result, item_count['item_count']
+    return result, len(item_count)
 
 
 # 사용자 미션 인증 신청에서 디테일 미션 리스트
