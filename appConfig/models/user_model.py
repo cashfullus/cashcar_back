@@ -43,7 +43,7 @@ def non_user_register():
 def register(**kwargs):
     db = Database()
     result = {"status": True, "email_regex": True, "register_type": True, "data": "", "default": True}
-    if 'email' not in kwargs.keys() or 'name' not in kwargs.keys():
+    if 'email' not in kwargs.keys():
         result['default'] = False
         return result
 

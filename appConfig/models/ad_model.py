@@ -495,8 +495,7 @@ def cancel_apply_user(ad_user_apply_id):
 def update_ad_apply_status(**kwargs):
     db = Database()
     apply_user_list = kwargs['apply_user_list']
-    apply_information = {"rejected": True, "accept": True, "mission_data": True, "name": ""}
-    result = []
+    apply_information = {"rejected": True, "accept": True, "apply_data": True}
     for i in range(len(apply_user_list)):
         # 현재 apply 의 데이터 가져오기
         apply_status = db.getOneApplyStatus(ad_user_apply_id=apply_user_list[i])
@@ -507,9 +506,7 @@ def update_ad_apply_status(**kwargs):
         if apply_status["status"] == "accept" and kwargs["status"] == "accept":
             apply_information["accept"] = False
 
-        if False in apply_information:
-            apply_information['name'] = apply_status['name']
-            result.append(apply_information)
+        if apply_information['rejected'] is False or apply_information["accept"] is False:
             continue
         else:
             if kwargs["status"] == "reject":
@@ -605,7 +602,7 @@ def update_ad_apply_status(**kwargs):
                     )
                     db.commit()
             else:
-                apply_information["mission_data"] = False
+                apply_information["apply_data"] = False
                 return apply_information
 
             ad_mission_card_user_info = db.executeAll(
@@ -623,4 +620,4 @@ def update_ad_apply_status(**kwargs):
                     args=ad_mission_card_user_info[j]["ad_mission_card_user_id"]
                 )
             db.commit()
-    return result
+    return apply_information

@@ -29,12 +29,18 @@ responses:
     schema:
       type: object
       properties:
-        accept:
-          type: boolean
-        rejected:
-          type: boolean
-        mission_data:
-          type: boolean
+        data:
+          type: object
+          properties:
+            accept:
+              type: boolean
+              description: 이미 성공처리했는지 여부
+            apply_data:
+              type: boolean
+              description: status가 다른 값이 들어온 경우
+            rejected:
+              type: boolean
+              description: 이미 reject한 데이터 다시 시도한경우
 
   401:
     description: 토큰 Missing
