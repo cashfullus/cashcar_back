@@ -18,14 +18,14 @@ import logging
 from flasgger import Swagger, swag_from
 
 # Firebase push Notification Config
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import messaging
-from pyfcm import FCMNotification
-# cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
-# firebase_admin.initialize_app(cred)
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import messaging
+# from pyfcm import FCMNotification
+cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
+firebase_admin.initialize_app(cred)
 
-push_service = FCMNotification("AAAAEpe9i74:APA91bHIfe2m1x0XoIHhUDlymAEs2xiHeYokLbL6L3j_0ows-6VcRSOBr0qmuyOc5TznqujQ3SPOOkz00DRMLSOxALyWRQL3Q54On9I7cyMuM0diR60VFZlSwj2d0u441-5AXxaqRyW0")
+# push_service = FCMNotification("AAAAEpe9i74:APA91bHIfe2m1x0XoIHhUDlymAEs2xiHeYokLbL6L3j_0ows-6VcRSOBr0qmuyOc5TznqujQ3SPOOkz00DRMLSOxALyWRQL3Q54On9I7cyMuM0diR60VFZlSwj2d0u441-5AXxaqRyW0")
 
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
