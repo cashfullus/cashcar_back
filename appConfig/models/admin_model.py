@@ -410,7 +410,7 @@ def get_all_withdrawal_point(page, count):
     per_page = (int(page) - 1) * int(count)
     result = db.executeAll(
         query="SELECT "
-              "withdrawal_self_id, account_bank, name, account_number, user.user_id, amount, `status`, "
+              "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
               "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
               "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
               "WHEN w.change_done IS NOT NULL "
