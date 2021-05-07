@@ -219,12 +219,13 @@ class Database:
               "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
               "amc.mission_name, amc.mission_type, amc.additional_point, amc.from_default_order, " \
               "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
-              "mission_fail_count, title, u.user_id as user_id " \
+              "mission_fail_count, title, u.user_id as user_id, fcm_token " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
               "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
               "JOIN user u on aua.user_id = u.user_id " \
+              "JOIN user_fcm uf on aua.user_id = uf.user_id " \
               "WHERE amcu.ad_user_apply_id = %s AND amcu.ad_mission_card_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
         row = self.cursor.fetchone()

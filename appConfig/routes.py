@@ -376,6 +376,21 @@ def ongoing_ad_information():
         return jsonify({"status": False, "data": "Not Allowed Category"}), 405
 
 
+@app.route('/user/alarm/history')
+@jwt_required()
+@swag_from('route_yml/notification/user_notification_list.yml')
+def user_alarm_history():
+    user_id = request.args.get('user_id', 0)
+    page = request.args.get('page', 1)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    result = User.get_user_alarm_history(user_id=user_id, page=int(page))
+    return jsonify({"data": result})
+
+
+
 # 메인화면 신청 진행중인 카드 (신청취소는 한시간 전까지만)
 
 

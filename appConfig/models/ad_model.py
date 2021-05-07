@@ -75,7 +75,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
 
                 if default_mission_items[0]:
                     for item in default_mission_items[0]:
-                        mission_name = f"{item['order']}차 필수미션"
+                        mission_name = f"{item['order']}차 미션"
                         db.execute(
                             query="INSERT INTO ad_mission_card "
                                   "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
