@@ -16,6 +16,7 @@ import os
 import logging
 
 from flasgger import Swagger, swag_from
+from appConfig.notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
 # Firebase push Notification Config
 # import firebase_admin
@@ -183,6 +184,15 @@ def user_register():
         elif result['default'] is False:
             return jsonify({"status": False, "data": "Default Data"}), 406
         else:
+            push_result = one_cloud_messaging(token=data['fcm_token'],
+                                                                     body="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 "
+                                                                          "리워드가 쌓이는 즐거움을 느껴보세요 :D "
+                                                                     )
+            if push_result['success'] >= 1:
+                User.saveAlarmHistory(user_id=result['data']['user_id'],
+                                      alarm_type="register", required=0,
+                                      description="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 리워드가 쌓이는 즐거움을 느껴보세요 :D"
+                                      )
             return jsonify({"status": True, "data": result["data"]}), 201
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400

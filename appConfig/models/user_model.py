@@ -95,6 +95,11 @@ def register(**kwargs):
         query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
         args=[target_user['user_id'], "회원가입"]
     )
+    db.execute(
+        query="INSERT INTO user_fcm (user_id, fcm_token) "
+              "VALUES (%s, %s)",
+        args=[target_user['user_id'], kwargs['fcm_token']]
+    )
     db.commit()
 
     result["data"] = {"user_id": target_user["user_id"], "jwt_token": jwt_token}
@@ -455,11 +460,21 @@ def get_user_point_and_history(user_id):
     user_point_history = db.executeAll(
         query="SELECT "
               "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-              "contents, status "
+              "contents "
               "FROM point_history WHERE user_id = %s",
         args=user_id
     )
     result = {"user_point": user_point['deposit'], scheduled_point: user_scheduled_point}
+
+
+# 사용자 알람 히스토리
+def saveAlarmHistory(user_id, alarm_type, required, description):
+    db = Database()
+    db.execute(
+        query="INSERT INTO alarm_history (user_id, alarm_type, required, description) VALUE (%s, %s, %s, %s)",
+        args=[user_id, alarm_type, required, description]
+    )
+    db.commit()
 
 
 
