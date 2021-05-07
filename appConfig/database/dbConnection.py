@@ -275,7 +275,7 @@ class Database:
         self.cursor.execute(
             query="SELECT "
                   "notice_id, title, description, "
-                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as register_time "
                   "FROM notice_information WHERE is_removed = 0"
         )
         rows = self.cursor.fetchall()
