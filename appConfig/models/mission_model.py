@@ -99,7 +99,7 @@ def admin_review_mission_list(page, count):
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "WHERE aua.status IN ('accept', 'stand_by') AND amcu.status IN ('review', 're_review') "
-              "GROUP BY aua.ad_user_apply_id "
+              "GROUP BY amcu.ad_mission_card_user_id "
               "LIMIT %s OFFSET %s",
         args=[int(count), per_page]
     )
@@ -112,7 +112,7 @@ def admin_review_mission_list(page, count):
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "WHERE aua.status IN ('accept', 'stand_by') AND amcu.status IN ('review', 're_review') "
-              "GROUP BY aua.ad_user_apply_id"
+              "GROUP BY amcu.ad_mission_card_user_id"
     )
     return result, len(item_count)
 

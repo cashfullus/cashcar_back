@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token
 # 시간
 from datetime import datetime, date, timedelta
 import os
+from appConfig.notification.user_push_nofitication import one_cloud_messaging
 
 
 def calculate_age(born):
@@ -277,11 +278,17 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     args=[start_date, end_date, ad_apply_id]
                 )
             history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 승인"
+            body_name = f"[{mission_information['mission_name']}]에 성공하였습니다. 축하드립니다 :)"
             db.execute(
                 query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                 args=[mission_information['user_id'], history_name]
             )
-
+            one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+            db.execute(
+                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                      "VALUES (%s, %s, %s, %s)",
+                args=[mission_information['user_id'], "mission", 1, body_name]
+            )
             db.commit()
             return result
 
@@ -305,6 +312,13 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     db.saveStatusMessage(
                         ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="apply_fail"
                     )
+                    body_name = f"[{mission_information['mission_name']}] 인증에 실패하였습니다. 다음 기회에 다시 도전해주세요 :("
+                    db.execute(
+                        query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                              "VALUES (%s, %s, %s, %s)",
+                        args=[mission_information['user_id'], "mission", 1, body_name]
+                    )
+                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                     db.commit()
                     return result
                 # 추가 미션의 경우 실패해도 상관없음(point 미지급)
@@ -325,19 +339,27 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[mission_information['user_id'], history_name]
                 )
+                body_name = f"[{mission_information['mission_name']}] 인증에 실패하였습니다. 다음 기회에 다시 도전해주세요ㅠㅜ"
+                db.execute(
+                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                          "VALUES (%s, %s, %s, %s)",
+                    args=[mission_information['user_id'], "mission", 1, body_name]
+                )
+                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
                 return result
 
             else:
+                body_name = f"[{mission_information['mission_name']}]의 재인증에 도전해주세요!"
                 title = "미션 인증에 실패하였습니다:("
                 reason = f"""{kwargs['reason']} 재인증에도 실패할 경우, 리워드가 지급되지 않으니 기한 내 재인증 부탁드립니다!"""
+                history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
                 db.execute(
                     query="UPDATE ad_mission_card_user "
                           "SET status = 'reject', mission_fail_count = mission_fail_count + 1 "
                           "WHERE ad_mission_card_id = %s",
                     args=mission_card_id
                 )
-                history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                     args=[mission_information['user_id'], history_name]
@@ -345,6 +367,12 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 db.saveStatusMessage(
                     ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
                 )
+                db.execute(
+                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                          "VALUES (%s, %s, %s, %s)",
+                    args=[mission_information['user_id'], "mission", 1, body_name]
+                )
+                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
                 return result
 

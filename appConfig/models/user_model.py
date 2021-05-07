@@ -477,6 +477,17 @@ def saveAlarmHistory(user_id, alarm_type, required, description):
     db.commit()
 
 
+def get_user_alarm_history(user_id, page):
+    db = Database()
+    per_page = (int(page)-1) * 10
+    start_at = per_page + 10
+    result = db.executeAll(
+        query="SELECT user_id, alarm_type, required, description, is_read_alarm "
+              "FROM alarm_history WHERE user_id = %s LIMIT %s OFFSET %s",
+        args=[user_id, start_at, per_page]
+    )
+    return result
+
 
 
 
