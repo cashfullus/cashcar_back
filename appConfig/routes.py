@@ -18,12 +18,15 @@ import logging
 from flasgger import Swagger, swag_from
 
 # Firebase push Notification Config
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import messaging
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import messaging
+from pyfcm import FCMNotification
+# cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
+# firebase_admin.initialize_app(cred)
 
-cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
-firebase_admin.initialize_app(cred)
+push_service = FCMNotification("AAAAEpe9i74:APA91bHIfe2m1x0XoIHhUDlymAEs2xiHeYokLbL6L3j_0ows-6VcRSOBr0qmuyOc5TznqujQ3SPOOkz00DRMLSOxALyWRQL3Q54On9I7cyMuM0diR60VFZlSwj2d0u441-5AXxaqRyW0")
+
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
@@ -67,21 +70,13 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 Forbidden = {"status": False, "data": "Forbidden"}
 
 
+def send_to_one_firebase_cloud_messaging(body, title):
+    data_message = {
+        "body": body,
+        "title": title
+    }
 
-@app.route('/notification/push')
-def send_to_one_firebase_cloud_messaging():
-    register_token = "erdfA5HsRvK3xVoaIFlP2l:APA91bEPvDx_HQ7Qq1KOecABEGepVwbh2v9vnJ97cOUdFKJyi1rjkDHM8sXgtTloYiF-WjMXcHBSkwjJNpUj74R3DzH8C1unRalxJ0Eu6EMRihoxD76cM30lgqTTy8QEAzg3_daOwxpu"
 
-    message = messaging.Message(
-        notification=messaging.Notification(
-            title="title",
-            body="body",
-        ),
-        token=register_token,
-    )
-
-    response = messaging.send(message)
-    return jsonify({"data": response})
 
 
 # 개인정보취급방
