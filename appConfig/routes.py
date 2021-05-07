@@ -18,13 +18,6 @@ import logging
 from flasgger import Swagger, swag_from
 from appConfig.notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
-# Firebase push Notification Config
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import messaging
-# cred = credentials.Certificate('CashCar/appConfig/cashCarServiceAccount.json')
-# firebase_admin.initialize_app(cred)
-
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
@@ -390,10 +383,14 @@ def user_alarm_history():
     return jsonify({"data": result})
 
 
+@app.route('/faq/list')
+@swag_from('route_yml/user/faq_list.yml')
+def user_faq_list():
+    result = User.getAllFaQ()
+    return jsonify({"data": result})
+
 
 # 메인화면 신청 진행중인 카드 (신청취소는 한시간 전까지만)
-
-
 # 광고 세부정보
 @app.route("/ad")
 @jwt_required()

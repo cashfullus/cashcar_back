@@ -489,6 +489,14 @@ def get_user_alarm_history(user_id, page):
     return result
 
 
+def getAllFaQ():
+    db = Database()
+    result = db.executeAll(
+        query="SELECT title, description FROM faq"
+    )
+    return result
+
+
 
 
 
