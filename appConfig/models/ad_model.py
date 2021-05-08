@@ -399,12 +399,23 @@ def get_ongoing_user_by_id(user_id):
     }
     if vehicle_information:
         result["vehicle_information"] = vehicle_information
+    is_not_read_alarm = db.executeOne(
+        query="SELECT user_id FROM alarm_history WHERE is_read_alarm = 0 AND user_id = %s",
+        args=user_id
+    )
+    if is_not_read_alarm:
+        result["is_read_alarm"] = True
 
     message = db.getOneReason(user_id=user_id)
     if message:
         result["message"] = message
 
     if not ad_information:
+        if is_not_read_alarm:
+            result["is_read_alarm"] = True
+        else:
+            result["is_read_alarm"] = False
+
         return result
 
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
@@ -431,6 +442,10 @@ def get_ongoing_user_by_id(user_id):
         ad_information['activity_end_date'] = ''
         ad_information['ongoing_day_percent'] = 0
         result['ad_information'] = ad_information
+        if is_not_read_alarm:
+            result["is_read_alarm"] = True
+        else:
+            result["is_read_alarm"] = False
         return result
 
     if ad_information["mission_status"]:
@@ -452,6 +467,10 @@ def get_ongoing_user_by_id(user_id):
         #     result["is_delete"] = False
         #     return result
     result['ad_information'] = ad_information
+    if is_not_read_alarm:
+        result["is_read_alarm"] = True
+    else:
+        result["is_read_alarm"] = False
     return result
 
 
