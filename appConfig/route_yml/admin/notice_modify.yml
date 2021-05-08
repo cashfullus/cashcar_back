@@ -38,6 +38,13 @@ responses:
     schema:
       type: object
       properties:
-        status:
-          type: boolean
+        data:
+          type: object
+          properties:
+            notice_id:
+              type: integer
+            title:
+              type: string
+            description:
+              type: string
 
