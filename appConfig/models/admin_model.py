@@ -43,7 +43,9 @@ def admin_register_notice(**kwargs):
         args=[kwargs['title'], kwargs['description']]
     )
     result = db.executeOne(
-        query="SELECT notice_id, title, description FROM notice_information ORDER BY register_time DESC LIMIT 1"
+        query="SELECT notice_id, title, description, "
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM notice_information ORDER BY register_time DESC LIMIT 1"
     )
     db.commit()
     return result
