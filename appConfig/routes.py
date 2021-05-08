@@ -93,7 +93,12 @@ def marketing_information():
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
     try:
+<<<<<<< HEAD
         image_file = f"appConfig/static/image/{location}/{idx}/{image_file}"
+=======
+        print(os.getcwd())
+        image_file = f"static/image/{location}/{idx}/{image_file}"
+>>>>>>> bb4e30fbe108e8754b98bac153402e3aa44e2851
         return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
     except FileNotFoundError:
         return jsonify({"status": False, "data": "Not Found Image"}), 404
@@ -261,7 +266,7 @@ def register_car():
     try:
         data = request.get_json()
         identity_ = get_jwt_identity()
-        result, fcm_token = Vehicle.register_vehicle(**data)
+        result, fcm_token_result = Vehicle.register_vehicle(**data)
         if data["user_id"] == identity_:
             if result["user"] is False:
                 return jsonify({"status": False, "data": "Not Correct User"}), 404
@@ -270,15 +275,16 @@ def register_car():
             elif result["double_check_number"] is False:
                 return jsonify({"status": False, "data": "Double Check False"}), 409
             else:
-                if fcm_token['alarm'] == 1:
-                    push_result = one_cloud_messaging(token=fcm_token['fcm_token'],
-                                                      body="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
-                                                      )
-                    if push_result['success'] >= 1:
-                        User.saveAlarmHistory(user_id=result['data']['user_id'],
-                                              alarm_type="vehicle_register", required=0,
-                                              description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
-                                              )
+                if fcm_token_result:
+                    if fcm_token_result['alarm'] == 1:
+                        push_result = one_cloud_messaging(token=fcm_token_result['fcm_token'],
+                                                          body="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
+                                                          )
+                        if push_result['success'] >= 1:
+                            User.saveAlarmHistory(user_id=result['data']['user_id'],
+                                                  alarm_type="vehicle_register", required=0,
+                                                  description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
+                                                  )
                 return jsonify({"status": True, "data": result}), 201
         else:
             return jsonify(Unauthorized), 401
