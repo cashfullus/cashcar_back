@@ -684,8 +684,8 @@ def register_notice_by_admin():
 
     try:
         data = request.get_json()
-        Admin.admin_register_notice(**data)
-        return jsonify({"status": True})
+        result = Admin.admin_register_notice(**data)
+        return jsonify({"data": result})
     except KeyError:
         return jsonify({"status": False})
     except TypeError:
@@ -707,14 +707,14 @@ def modify_notice_by_admin():
         if request.method == 'GET':
             page = request.args.get('page', 1)
             count = request.args.get('count', 10)
-            result = Admin.admin_get_notice_list(page=int(page), count=int(count))
-            return jsonify({"data": result})
+            result, item_count = Admin.admin_get_notice_list(page=int(page), count=int(count))
+            return jsonify({"data": result, "item_count": item_count})
 
         elif request.method == 'POST':
             notice_id = request.args.get('notice_id', 0)
             data = request.get_json()
-            Admin.update_notice(notice_id=notice_id, **data)
-            return jsonify({"status": True})
+            result = Admin.update_notice(notice_id=notice_id, **data)
+            return jsonify({"data": result})
 
         elif request.method == 'DELETE':
             notice_id = request.args.get('notice_id', 0)

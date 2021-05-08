@@ -42,8 +42,11 @@ def admin_register_notice(**kwargs):
         query="INSERT INTO notice_information (title, description) VALUES (%s, %s)",
         args=[kwargs['title'], kwargs['description']]
     )
+    result = db.executeOne(
+        query="SELECT notice_id, title, description FROM notice_information ORDER BY register_time DESC LIMIT 1"
+    )
     db.commit()
-    return
+    return result
 
 
 # 어드민 공지사항 리스트
@@ -51,14 +54,19 @@ def admin_get_notice_list(page, count):
     per_page = (int(page) - 1) * int(count)
     db = Database()
     result = db.getAdminAllNotice(count=int(count), per_page=per_page)
-    return result
+    item_count = db.executeOne(
+        query="SELECT count(notice_id) as item_count "
+              "FROM notice_information WHERE is_removed = 0",
+    )
+    return result, item_count['item_count']
 
 
 # 공지사항 업데이트
 def update_notice(notice_id, **kwargs):
     db = Database()
     db.updateNotice(notice_id=notice_id, title=kwargs.get('title'), description=kwargs.get('description'))
-    return True
+    kwargs['notice_id'] = int(notice_id)
+    return kwargs
 
 
 # 공지사항 삭제 (실제 데이터는 삭제되지 않는다.)

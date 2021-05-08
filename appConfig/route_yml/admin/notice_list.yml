@@ -36,3 +36,5 @@ responses:
               register_time:
                 type: string
                 description: 등록일시
+        item_count:
+          type: integer
