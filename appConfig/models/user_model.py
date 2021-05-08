@@ -2,7 +2,7 @@ import bcrypt
 from werkzeug.utils import secure_filename
 
 # Mysql 데이터베이스
-from ..database.dbConnection import Database
+from database.dbConnection import Database
 # JwtToken
 from flask_jwt_extended import create_access_token, create_refresh_token
 

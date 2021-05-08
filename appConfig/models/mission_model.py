@@ -1,4 +1,4 @@
-from ..database.dbConnection import Database
+from database.dbConnection import Database
 from werkzeug.utils import secure_filename
 import os
 

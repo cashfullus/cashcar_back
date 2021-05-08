@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "run.py", line 1, in <module>
-    from appConfig.routes import app
-  File "/home/cashcaruser21/CashCar/appConfig/routes.py", line 21
-SyntaxError: Non-ASCII character '\xec' in file /home/cashcaruser21/CashCar/appConfig/routes.py on line 21, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details

@@ -1,14 +1,14 @@
 import bcrypt
 
 # Mysql 데이터베이스
-from ..database.dbConnection import Database
+from database.dbConnection import Database
 # JwtToken
 from flask_jwt_extended import create_access_token
 
 # 시간
 from datetime import datetime, date, timedelta
 import os
-from appConfig.notification.user_push_nofitication import one_cloud_messaging
+from notification.user_push_nofitication import one_cloud_messaging
 
 
 def calculate_age(born):

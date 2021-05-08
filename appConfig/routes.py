@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-from .models import (
+from models import (
     user_model as User,
     vehicle_model as Vehicle,
     ad_model as AD,
@@ -16,7 +16,7 @@ import os
 import logging
 
 from flasgger import Swagger, swag_from
-from appConfig.notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
+from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
