@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/appConfig/wsgi.py", line 1, in <module>
+    from routes import app
+  File "/home/cashcaruser21/CashCar/appConfig/routes.py", line 96
+    <<<<<<< HEAD
+    ^
+IndentationError: expected an indented block
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/appConfig/wsgi.py", line 1, in <module>
+    from routes import app
+  File "/home/cashcaruser21/CashCar/appConfig/routes.py", line 96
+    <<<<<<< HEAD
+    ^
+IndentationError: expected an indented block

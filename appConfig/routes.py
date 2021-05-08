@@ -93,12 +93,9 @@ def marketing_information():
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
     try:
-<<<<<<< HEAD
         image_file = f"appConfig/static/image/{location}/{idx}/{image_file}"
-=======
         print(os.getcwd())
         image_file = f"static/image/{location}/{idx}/{image_file}"
->>>>>>> bb4e30fbe108e8754b98bac153402e3aa44e2851
         return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
     except FileNotFoundError:
         return jsonify({"status": False, "data": "Not Found Image"}), 404
