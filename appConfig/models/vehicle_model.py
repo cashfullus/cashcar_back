@@ -59,7 +59,6 @@ def register_vehicle(**kwargs):
                 )
     # fcm_token get
     fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
-    print(fcm_token)
     # INSERTv
     sql = "INSERT INTO vehicle " \
           "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \

@@ -163,11 +163,10 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
     user = db.getUserById(user_id=int(user_id))
     if user:
         if profile_image:
-            directory = f"{BASE_IMAGE_LOCATION}/{user_id}"
+            directory = f"{BASE_IMAGE_LOCATION}/{user_id}" 
             os.makedirs(directory, exist_ok=True)
-            profile_image.save(directory + "/" + secure_filename(profile_image.filename))
+            #profile_image.save(directory + "/" + secure_filename(profile_image.filename))
             save_image = f"{PROFILE_IMAGE_HOST}/{user_id}/{secure_filename(profile_image.filename)}"
-            print(save_image)
             sql = "UPDATE user SET " \
                   "nickname = %s, email = %s, name = %s, " \
                   "call_number = %s, " \
@@ -179,7 +178,6 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
                           kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
                           kwargs['alarm'], kwargs['marketing'], save_image, user_id
                           ]
-            print(value_list)
             db.execute(query=sql, args=value_list)
             db.commit()
             return save_image

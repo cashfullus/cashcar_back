@@ -20,7 +20,7 @@ from notification.user_push_nofitication import one_cloud_messaging, multiple_cl
 
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-app = Flask(__name__)
+app = Flask(__name__, static_folder='/static/')
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -93,9 +93,7 @@ def marketing_information():
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
     try:
-        image_file = f"appConfig/static/image/{location}/{idx}/{image_file}"
-        print(os.getcwd())
-        image_file = f"static/image/{location}/{idx}/{image_file}"
+        image_file = f"/home/cashcaruser21/CashCar/appConfig/static/image/{location}/{idx}/{image_file}"
         return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
     except FileNotFoundError:
         return jsonify({"status": False, "data": "Not Found Image"}), 404
@@ -278,7 +276,7 @@ def register_car():
                                                           body="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
                                                           )
                         if push_result['success'] >= 1:
-                            User.saveAlarmHistory(user_id=result['data']['user_id'],
+                            User.saveAlarmHistory(user_id=result['vehicle_information']['user_id'],
                                                   alarm_type="vehicle_register", required=0,
                                                   description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
                                                   )
