@@ -7,8 +7,8 @@ import os
 
 from .user_model import saveAlarmHistory
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
-BASE_IMAGE_LOCATION_BACK = "/CashCar/appConfig/static/image/adverting"
+BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/adverting"
+BASE_IMAGE_LOCATION_BACK = "/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
