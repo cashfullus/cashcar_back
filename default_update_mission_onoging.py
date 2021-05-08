@@ -60,6 +60,8 @@ def default_mission_list():
             db.commit()
             sleep(0.08)
 
+    return True
+
 
 default_mission_list()
 
