@@ -17,6 +17,11 @@ parameters:
     type: String
     required: true
 
+  - name: fcm_token
+    in: application/json
+    type: string
+    required: false
+
 
 
 
