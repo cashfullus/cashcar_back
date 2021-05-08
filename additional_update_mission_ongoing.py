@@ -30,5 +30,7 @@ def update_mission_list():
             db.commit()
             sleep(0.08)
 
+    return True
+
 
 update_mission_list()
