@@ -128,7 +128,9 @@ def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-              "WHERE amc.ad_mission_card_id NOT IN (%s) AND aua.ad_user_apply_id = %s",
+              "WHERE amc.ad_mission_card_id NOT IN (%s) AND aua.ad_user_apply_id = %s "
+              "AND aua.status IN ('stand_by', 'accept') "
+              "GROUP BY amcu.ad_mission_card_user_id",
         args=[ad_mission_card_id, ad_user_apply_id]
     )
     return result

@@ -115,6 +115,11 @@ def login(**kwargs):
             query="UPDATE user SET last_connection_time = NOW() WHERE email = %s",
             args=kwargs.get('email')
         )
+        if 'fcm_token' in kwargs.keys():
+            db.execute(
+                query="UPDATE user_fcm SET fcm_token = %s WHERE user_id = %s",
+                args=[kwargs['fcm_token'], user['user_id']]
+            )
         db.commit()
         # 제한된 데이터만 response
         if kwargs.get("login_type") == "kakao":
