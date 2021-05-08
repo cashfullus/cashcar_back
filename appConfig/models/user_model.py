@@ -11,7 +11,7 @@ import datetime
 import re
 import os
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/user"
+BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/user"
 PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
 
 
@@ -165,7 +165,7 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
         if profile_image:
             directory = f"{BASE_IMAGE_LOCATION}/{user_id}" 
             os.makedirs(directory, exist_ok=True)
-            #profile_image.save(directory + "/" + secure_filename(profile_image.filename))
+            profile_image.save(directory + "/" + secure_filename(profile_image.filename))
             save_image = f"{PROFILE_IMAGE_HOST}/{user_id}/{secure_filename(profile_image.filename)}"
             sql = "UPDATE user SET " \
                   "nickname = %s, email = %s, name = %s, " \
