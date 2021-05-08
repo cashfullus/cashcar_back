@@ -20,7 +20,7 @@ from notification.user_push_nofitication import one_cloud_messaging, multiple_cl
 
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-app = Flask(__name__, static_folder='/static/')
+app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
