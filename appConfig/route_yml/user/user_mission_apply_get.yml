@@ -21,6 +21,8 @@ responses:
       properties:
         data:
           properties:
+            day_diffs:
+              type: integer
             ad_user_information:
               type: object
               properties:
@@ -107,6 +109,9 @@ responses:
                     description: 현재 미션의 진행상황
                     default: "review"
                   order:
+                    type: string
+
+
 
 
   401:

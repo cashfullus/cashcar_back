@@ -7,7 +7,7 @@ from database.dbConnection import Database
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 # 시간
-import datetime
+from datetime import datetime, date, timedelta
 import re
 import os
 
@@ -168,7 +168,7 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
     user = db.getUserById(user_id=int(user_id))
     if user:
         if profile_image:
-            directory = f"{BASE_IMAGE_LOCATION}/{user_id}" 
+            directory = f"{BASE_IMAGE_LOCATION}/{user_id}"
             os.makedirs(directory, exist_ok=True)
             profile_image.save(directory + "/" + secure_filename(profile_image.filename))
             save_image = f"{PROFILE_IMAGE_HOST}/{user_id}/{secure_filename(profile_image.filename)}"
@@ -274,7 +274,7 @@ def user_mission_list(user_id):
             args=user_id
         )
         ad_user_information = db.executeOne(
-            query="SELECT total_point, title, thumbnail_image, "
+            query="SELECT total_point, title, thumbnail_image, activity_period,"
                   "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, "
                   "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date, "
                   "TIMESTAMPDIFF(DAY, activity_start_date, NOW()) as day_diff "
@@ -283,10 +283,13 @@ def user_mission_list(user_id):
                   "WHERE user_id = %s",
             args=user_id
         )
-
+        day_diff = 0
+        if ad_user_information['activity_start_date'] != '0000-00-00 00:00:00':
+            day_diff = ((ad_user_information['day_diff'] + 1) / ad_user_information['activity_period'] * 100)
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information
         result["images"] = images
+        result['day_diffs'] = int(day_diff)
 
     return result
 
@@ -482,7 +485,7 @@ def saveAlarmHistory(user_id, alarm_type, required, description):
 
 def get_user_alarm_history(user_id, page):
     db = Database()
-    per_page = (int(page)-1) * 10
+    per_page = (int(page) - 1) * 10
     start_at = per_page + 10
     result = db.executeAll(
         query="SELECT user_id, alarm_type, required, description, is_read_alarm "
@@ -498,8 +501,3 @@ def getAllFaQ():
         query="SELECT title, description FROM faq"
     )
     return result
-
-
-
-
-
