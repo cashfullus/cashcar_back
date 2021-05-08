@@ -492,6 +492,11 @@ def get_user_alarm_history(user_id, page):
               "FROM alarm_history WHERE user_id = %s LIMIT %s OFFSET %s",
         args=[user_id, start_at, per_page]
     )
+    db.execute(
+        query="UPDATE alarm_history SET is_read_alarm = 1 WHERE user_id = %s AND is_read_alarm = 0",
+        args=user_id
+    )
+    db.commit()
     return result
 
 
