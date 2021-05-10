@@ -7,7 +7,7 @@ import os
 
 from .user_model import saveAlarmHistory
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/adverting"
+BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
@@ -44,7 +44,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 os.makedirs(directory, exist_ok=True)
 
                 for key, val in other_images.items():
-                    val.save(directory + "/" + secure_filename(val.filename))
+                    val.save('/CashCar/appConfig/' + secure_filename(val.filename))
+                    #val.save(directory + "/" + secure_filename(val.filename))
                     save_to_db_dict.setdefault(key,
                                                f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(
                                                    val.filename))
