@@ -4,10 +4,10 @@ from werkzeug.utils import secure_filename
 from datetime import date, timedelta, datetime
 
 import os
-
+from routes import app
 from .user_model import saveAlarmHistory
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/adverting"
+BASE_IMAGE_LOCATION = app.root_path + "/static/image/adverting"
 BASE_IMAGE_LOCATION_BACK = "/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
