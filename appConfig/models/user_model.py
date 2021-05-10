@@ -11,7 +11,7 @@ from datetime import datetime, date, timedelta
 import re
 import os
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/user"
+BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/user"
 PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
 
 

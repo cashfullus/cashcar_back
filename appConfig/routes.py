@@ -913,7 +913,7 @@ def admin_ad_apply():
                                                            )
             return jsonify({"data": result})
         else:
-            return jsonify({"status": False, "data": "Not Allowed Method"}), 405
+           return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 
@@ -930,8 +930,8 @@ def admin_mission_apply():
     if status is not True:
         return jsonify(status), code
     try:
-        mission_card_id = request.args.get('mission_id')
-        ad_apply_id = request.args.get('ad_apply_id')
+        mission_card_id = request.args.get('mission_card_id')
+        ad_apply_id = request.args.get('ad_user_apply_id')
         data = request.get_json()
         result = Admin.admin_accept_mission(ad_apply_id=ad_apply_id, mission_card_id=mission_card_id, **data)
         if result['accept'] is True:
