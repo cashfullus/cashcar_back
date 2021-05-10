@@ -2,7 +2,7 @@ from database.dbConnection import Database
 from werkzeug.utils import secure_filename
 import os
 
-BASE_IMAGE_LOCATION = os.getcwd() + "/CashCar/appConfig/static/image/mission"
+BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/mission"
 MISSION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/mission"
 
 
