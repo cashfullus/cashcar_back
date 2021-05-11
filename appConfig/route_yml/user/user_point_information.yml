@@ -1,0 +1,51 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+
+
+responses:
+  200:
+    description: 사용자 포인트 정보 조회
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            is_ongoing_donate:
+              type: boolean
+              description: 현재 진행중인 기부가 있을때 True
+            is_ongoing_point:
+              type: boolean
+              description: 현재 진행중인 출금이 있을때 True
+            scheduled_point:
+              type: integer
+              description: 적립 예정 금액
+            user_point:
+              type: integer
+              description: 현재 총 포인트(출금 및 기부 진행중인 포인트도 이미 차감되어있음)
+            point_history:
+              type: array
+              items:
+                properties:
+                  contents:
+                    type: string
+                    description: 진행한 내역
+                  point:
+                    type: integer
+                    description: 추가 및 출금 포인트
+                  register_time:
+                    type: string
+                    description: 포인트 내역 (마지막 내역이 맨 위)
