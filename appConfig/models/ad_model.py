@@ -217,7 +217,8 @@ def get_ad_information_by_id(ad_id):
     db = Database()
     result = db.getOneAdByAdId(ad_id)
     ad_image = db.getAllAdImageById(ad_id=ad_id)
-    result["images"] = ad_image
+    if result:
+        result["images"] = ad_image
     return result
 
 

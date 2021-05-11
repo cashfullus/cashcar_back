@@ -395,7 +395,7 @@ def user_faq_list():
 # 광고 세부정보
 @app.route("/ad")
 @jwt_required()
-@swag_from('route_yml/advertisement/advertisement_information_get.yml', methods=['GET'])
+#@swag_from('route_yml/advertisement/advertisement_information_get.yml', methods=['GET'])
 def ad_information_detail():
     ad_id = request.args.get('ad_id')
     result = AD.get_ad_information_by_id(ad_id=ad_id)
