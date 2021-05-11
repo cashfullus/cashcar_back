@@ -506,3 +506,38 @@ def getAllFaQ():
         query="SELECT title, description FROM faq"
     )
     return result
+
+
+# 사용자 password 변경
+def login_user_change_password(user_id, **kwargs):
+    db = Database()
+    status = {"new_password_check": True, "old_password_check": True}
+    new_password_first = kwargs['new_password_1']
+    new_password_second = kwargs['new_password_2']
+
+    if new_password_first != new_password_second:
+        status["new_password_check"] = False
+        return status
+
+    user = db.getUserById(user_id=user_id)
+
+    if kwargs['login_type'] == "normal":
+        encode_password = kwargs.get('old_password').encode('utf8')
+        if bcrypt.checkpw(encode_password, user["hashed_password"].encode('utf8')):
+            encrypted_password = bcrypt.hashpw(
+                kwargs.get("new_password_1").encode("utf-8"),
+                bcrypt.gensalt()).decode("utf-8")
+            db.execute(
+                query="UPDATE user SET hashed_password = %s WHERE user_id = %s",
+                args=[encrypted_password, user_id]
+            )
+            db.commit()
+            return status
+        else:
+            status['old_password_check'] = False
+            return status
+
+    else:
+        status["new_password_check"] = False
+        status["old_password_check"] = False
+        return status

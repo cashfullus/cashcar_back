@@ -41,7 +41,8 @@ def setup_logging():
     """
     Setup logging
     """
-    handler = WatchedFileHandler("/var/log/flask_app.log")
+    directory = os.getcwd()
+    handler = WatchedFileHandler(directory + "/flask_app.log")
     app.logger.addHandler(handler)
     app.logger.setLevel(logging.INFO)
 
@@ -204,6 +205,21 @@ def user_register():
             return jsonify({"status": True, "data": result["data"]}), 201
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
+
+
+# 사용자 로그인 후 비밀번호 변경
+@app.route('/user/new-password', methods=['POST'])
+@jwt_required()
+@swag_from('route_yml/user/change_password_after_login.yml')
+def user_new_password():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    data = request.get_json()
+    result = User.login_user_change_password(user_id=user_id, **data)
+    return jsonify(result)
 
 
 # 로그인
@@ -409,7 +425,7 @@ def user_faq_list():
 # 광고 세부정보
 @app.route("/ad")
 @jwt_required()
-#@swag_from('route_yml/advertisement/advertisement_information_get.yml', methods=['GET'])
+@swag_from('route_yml/advertisement/advertisement_information_get.yml', methods=['GET'])
 def ad_information_detail():
     ad_id = request.args.get('ad_id')
     result = AD.get_ad_information_by_id(ad_id=ad_id)
