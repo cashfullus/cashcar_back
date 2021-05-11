@@ -503,7 +503,7 @@ def get_user_alarm_history(user_id, page):
     start_at = per_page + 10
     result = db.executeAll(
         query="SELECT user_id, alarm_type, required, description, is_read_alarm "
-              "FROM alarm_history WHERE user_id = %s LIMIT %s OFFSET %s",
+              "FROM alarm_history WHERE user_id = %s ORDER BY register_time DESC LIMIT %s OFFSET %s",
         args=[user_id, start_at, per_page]
     )
     db.execute(
@@ -559,18 +559,45 @@ def login_user_change_password(user_id, **kwargs):
 
 def user_email_check_for_password(**kwargs):
     db = Database()
-    user = db.executeOne(
-        query="SELECT user_id, email FROM user WHERE email = %s",
-        args=kwargs.get('email')
-    )
+    user = db.getAuthEmailByEmail(email=kwargs.get('email'))
     if user:
         auth_number = email_auth_num()
-        db.execute(
-            query="INSERT INTO user_find_password (user_id, authentication_number) "
-                  "VALUES (%s, %s)",
-            args=[user['user_id'], auth_number]
+        authenticated = db.executeOne(
+            query="SELECT * FROM user_find_password WHERE user_id = %s",
+            args=user['user_id']
         )
+        if authenticated:
+            db.execute(
+                query="UPDATE user_find_password SET authentication_number = %s, last_change_time = NOW() "
+                      "WHERE user_id = %s",
+                args=[auth_number, user['user_id']]
+            )
+        else:
+            db.execute(
+                query="INSERT INTO user_find_password (user_id, authentication_number) "
+                      "VALUES (%s, %s)",
+                args=[user['user_id'], auth_number]
+            )
         db.commit()
         return True, auth_number
     else:
         return False, ""
+
+
+def user_email_auth_number_check(**kwargs):
+    db = Database()
+    status = {"authentication": True, "user_information": True}
+    user = db.getAuthEmailByEmail(email=kwargs.get('email'))
+    if user:
+        check_auth = db.executeOne(
+            query="SELECT * FROM user_find_password WHERE user_id = %s",
+            args=user['user_id']
+        )
+        if check_auth['authentication_number'] == kwargs.get('authentication_number'):
+            return status
+        else:
+            status["authentication"] = False
+            return status
+    else:
+        status["user_information"] = False
+        return status

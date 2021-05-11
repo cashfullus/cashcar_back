@@ -37,7 +37,8 @@ app.config['MAIL_USE_SSL'] = True
 app.json_encoder = LazyJSONEncoder
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
-mail = Mail(app)
+mail = Mail()
+mail.init_app(app)
 template = dict(swaggerUiPrefix=LazyString(lambda: request.environ.get('HTTP_X_SCRIPT_NAME', '')))
 swagger = Swagger(app, template=template)
 # 이미지 파일 형식
@@ -231,8 +232,9 @@ def user_new_password():
     return jsonify(result)
 
 
-# 사용자 비밀번호 재설정
+# 사용자 비밀번호 재설정(이메일 인증)
 @app.route('/send/email/password', methods=['POST'])
+@swag_from('route_yml/user/user_auth_email_for_password.yml')
 def send_to_client_for_password():
     data = request.get_json()
     result, auth_number = User.user_email_check_for_password(**data)
@@ -244,6 +246,14 @@ def send_to_client_for_password():
     else:
         return jsonify({"status": False})
 
+
+# 사용자 이메일 전송된 인증번호 인증
+@app.route('/sent/email/auth', methods=['POST'])
+@swag_from('route_yml/user/user_email_auth_number_check.yml')
+def email_auth_number_check():
+    data = request.get_json()
+    result = User.user_email_auth_number_check(**data)
+    return jsonify(result)
 
 
 # 로그인
