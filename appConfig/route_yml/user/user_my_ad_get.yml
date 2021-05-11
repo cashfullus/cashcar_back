@@ -26,6 +26,9 @@ responses:
               type:
             is_delete:
               type: boolean
+            is_read_alarm:
+              type: boolean
+              description: True 일때 안읽은 알람 있음
             ad_information:
               type: object
               properties:
