@@ -25,7 +25,6 @@ from flask_mail import Mail, Message
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
-mail = Mail(app)
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -38,6 +37,7 @@ app.config['MAIL_USE_SSL'] = True
 app.json_encoder = LazyJSONEncoder
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
+mail = Mail(app)
 template = dict(swaggerUiPrefix=LazyString(lambda: request.environ.get('HTTP_X_SCRIPT_NAME', '')))
 swagger = Swagger(app, template=template)
 # 이미지 파일 형식
@@ -235,6 +235,15 @@ def user_new_password():
 @app.route('/send/email/password', methods=['POST'])
 def send_to_client_for_password():
     data = request.get_json()
+    result, auth_number = User.user_email_check_for_password(**data)
+    if result:
+        msg = Message("캐시카 플러스 비밀번호 재설정", sender="cashfullus@gmail.com", recipients=[data['email']])
+        msg.body = auth_number
+        mail.send(msg)
+        return jsonify({"status": True})
+    else:
+        return jsonify({"status": False})
+
 
 
 # 로그인

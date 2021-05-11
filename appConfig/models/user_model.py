@@ -1,3 +1,5 @@
+import string
+
 import bcrypt
 from werkzeug.utils import secure_filename
 
@@ -10,6 +12,8 @@ from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import datetime, date, timedelta
 import re
 import os
+# 난수발생 비밀번호 찾기
+import random
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/user"
 PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
@@ -22,6 +26,16 @@ def check_email_regex(email):
         return True
     else:
         return False
+
+
+# 이메일 인증용 난수 발생기
+def email_auth_num():
+    LENGTH = 10
+    string_pool = string.ascii_letters + string.digits
+    auth_num = ""
+    for i in range(LENGTH):
+        auth_num += random.choice(string_pool)
+    return auth_num
 
 
 # Datetime to String
@@ -541,3 +555,22 @@ def login_user_change_password(user_id, **kwargs):
         status["new_password_check"] = False
         status["old_password_check"] = False
         return status
+
+
+def user_email_check_for_password(**kwargs):
+    db = Database()
+    user = db.executeOne(
+        query="SELECT user_id, email FROM user WHERE email = %s",
+        args=kwargs.get('email')
+    )
+    if user:
+        auth_number = email_auth_num()
+        db.execute(
+            query="INSERT INTO user_find_password (user_id, authentication_number) "
+                  "VALUES (%s, %s)",
+            args=[user['user_id'], auth_number]
+        )
+        db.commit()
+        return True, auth_number
+    else:
+        return False, ""
