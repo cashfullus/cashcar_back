@@ -1,0 +1,159 @@
+Exception on /send/email/password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./routes.py", line 242, in send_to_client_for_password
+    mail.send(msg)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 491, in send
+    with self.connect() as connection:
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 144, in __enter__
+    self.host = self.configure_host()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 165, in configure_host
+    host.login(self.mail.username, self.mail.password)
+  File "/usr/lib64/python3.6/smtplib.py", line 730, in login
+    raise last_exception
+  File "/usr/lib64/python3.6/smtplib.py", line 721, in login
+    initial_response_ok=initial_response_ok)
+  File "/usr/lib64/python3.6/smtplib.py", line 642, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials a129sm13322864pfa.36 - gsmtp')
+Exception on /send/email/password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./routes.py", line 242, in send_to_client_for_password
+    mail.send(msg)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 491, in send
+    with self.connect() as connection:
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 144, in __enter__
+    self.host = self.configure_host()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 165, in configure_host
+    host.login(self.mail.username, self.mail.password)
+  File "/usr/lib64/python3.6/smtplib.py", line 730, in login
+    raise last_exception
+  File "/usr/lib64/python3.6/smtplib.py", line 721, in login
+    initial_response_ok=initial_response_ok)
+  File "/usr/lib64/python3.6/smtplib.py", line 642, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials k15sm13174956pfi.0 - gsmtp')
+Exception on /send/email/password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./routes.py", line 242, in send_to_client_for_password
+    mail.send(msg)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 491, in send
+    with self.connect() as connection:
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 144, in __enter__
+    self.host = self.configure_host()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 165, in configure_host
+    host.login(self.mail.username, self.mail.password)
+  File "/usr/lib64/python3.6/smtplib.py", line 730, in login
+    raise last_exception
+  File "/usr/lib64/python3.6/smtplib.py", line 721, in login
+    initial_response_ok=initial_response_ok)
+  File "/usr/lib64/python3.6/smtplib.py", line 642, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials t14sm12045596pfg.168 - gsmtp')
+Exception on /send/email/password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 244, in send_to_client_for_password
+    mail.send(msg)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 491, in send
+    with self.connect() as connection:
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 144, in __enter__
+    self.host = self.configure_host()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 165, in configure_host
+    host.login(self.mail.username, self.mail.password)
+  File "/usr/lib64/python3.6/smtplib.py", line 730, in login
+    raise last_exception
+  File "/usr/lib64/python3.6/smtplib.py", line 721, in login
+    initial_response_ok=initial_response_ok)
+  File "/usr/lib64/python3.6/smtplib.py", line 642, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (534, b'5.7.14 <https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbu\n5.7.14 aL_IYctVb0KvrjWGmqpzdXiVFaFtot8e3Wgo9ff2J4dhqRDh7KxivJPlkiavQzXYWSGbX\n5.7.14 TGx0IOMZI2_qmt2wYq4Jh2Bc9NHQAj8dtBuHsWLT1LiswyXOGDRESVTzLaTZOdC1>\n5.7.14 Please log in via your web browser and then try again.\n5.7.14  Learn more at\n5.7.14  https://support.google.com/mail/answer/78754 i126sm12542837pfc.20 - gsmtp')
+Exception on /send/email/password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 244, in send_to_client_for_password
+    mail.send(msg)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 491, in send
+    with self.connect() as connection:
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 144, in __enter__
+    self.host = self.configure_host()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_mail.py", line 165, in configure_host
+    host.login(self.mail.username, self.mail.password)
+  File "/usr/lib64/python3.6/smtplib.py", line 730, in login
+    raise last_exception
+  File "/usr/lib64/python3.6/smtplib.py", line 721, in login
+    initial_response_ok=initial_response_ok)
+  File "/usr/lib64/python3.6/smtplib.py", line 642, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (534, b'5.7.14 <https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbv\n5.7.14 jt4bxioaDXXQ33goFfK5pEEMREQGlqJWil2RBOILvWYp0JGylHyfNcreEIoEmLVhNvQ5C\n5.7.14 CMKeJf7HirMhf9S4C9A45-1evl15ZNdAtKJAfmqAjr_pdir0eY0PVxLfhhFpVB_7>\n5.7.14 Please log in via your web browser and then try again.\n5.7.14  Learn more at\n5.7.14  https://support.google.com/mail/answer/78754 c13sm1398732pjv.21 - gsmtp')
