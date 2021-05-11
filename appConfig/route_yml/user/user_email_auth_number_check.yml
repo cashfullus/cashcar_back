@@ -1,0 +1,23 @@
+tags:
+  - User
+
+
+parameters:
+  - name: email
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: 이메일로 전송된 인증번호 인증
+    schema:
+      type: object
+      properties:
+        authentication:
+          type: boolean
+          description: 인증번호 동일 유무
+        user_information:
+          type: boolean
+          description: 사용자 존재 유무
