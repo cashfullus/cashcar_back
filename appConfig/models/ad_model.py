@@ -462,10 +462,10 @@ def get_ongoing_user_by_id(user_id):
                 ad_information['point'] = ad_information['point']
             ad_information['ongoing_day_percent'] = int(datetime.now().hour / 24 * 100)
 
-        # if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
-        #         hours=1) < datetime.now():
-        #     result["is_delete"] = False
-        #     return result
+        if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
+                hours=1) < datetime.now():
+            result["is_delete"] = False
+            return result
     result['ad_information'] = ad_information
     if is_not_read_alarm:
         result["is_read_alarm"] = True
@@ -486,9 +486,9 @@ def cancel_apply_user(ad_user_apply_id):
         status["apply_information"] = False
         return status
 
-    # if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
-    #    status["time_out"] = False
-    #    return status
+    if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
+        status["time_out"] = False
+        return status
     ad_information = db.executeOne(
         query="SELECT title, user_id FROM ad_information as ai JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
               "WHERE ad_user_apply_id = %s",
