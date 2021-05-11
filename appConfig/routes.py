@@ -17,7 +17,7 @@ from models import (
 import os
 import logging
 
-from flasgger import Swagger, swag_from
+from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
 
@@ -26,9 +26,11 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.json_encoder = LazyJSONEncoder
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
-swagger = Swagger(app)
+template = dict(swaggerUiPrefix=LazyString(lambda : request.environ.get('HTTP_X_SCRIPT_NAME', '')))
+swagger = Swagger(app, template=template)
 # 이미지 파일 형식
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
