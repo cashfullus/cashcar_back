@@ -14,6 +14,7 @@ import re
 import os
 # 난수발생 비밀번호 찾기
 import random
+import math
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/user"
 PROFILE_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/user"
@@ -375,27 +376,37 @@ def get_user_withdrawal_data(user_id):
 
 
 # 사용자 출금신청    withdrawal_point(음수), bank_name, bank_owner, bank_number, is_main
+# status stand_by(대기), confirm(진행중), done(완료), cancel(취소)
 def update_user_withdrawal_data(user_id, **kwargs):
     db = Database()
+    status = {"deposit": True, "ongoing": True}
     user_deposit = db.getUserById(user_id=user_id)
-    if user_deposit['deposit'] < kwargs['withdrawal_point']:
-        return False
+
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+        status["deposit"] = False
+        return status
+
+    already_ongoing_withdrawal = db.executeOne(
+        query="SELECT withdrawal_self_id FROM withdrawal_self WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+
+    if already_ongoing_withdrawal:
+        status["ongoing"] = False
+        return status
+
     db.execute(
         query="INSERT INTO withdrawal_self (user_id, amount, account_bank, account_name, account_number) "
               "VALUES (%s, %s, %s, %s, %s)",
-        args=[user_id, int(kwargs['withdrawal_point']), kwargs['account_back'],
+        args=[user_id, -int(kwargs['withdrawal_point']), kwargs['account_bank'],
               kwargs['account_name'], kwargs['account_number']]
-    )
-    withdrawal_point_id = db.executeOne(
-        query="SELECT withdrawal_self_id FROM withdrawal_self ORDER BY register_time DESC LIMIT 1"
     )
     # commit 은 데이터 완전 저장 이기떄문에 안전하게 셀렉후 바로 저장
     db.commit()
     db.execute(
-        query="INSERT INTO point_history (user_id, point, contents, point_type, withdrawal_id) "
-              "VALUES (%s, %s, %s, %s, %s)",
-        args=[user_id, int(kwargs['withdrawal_point']), "통장으로 출금",
-              "withdrawal_self", withdrawal_point_id['withdrawal_self_id']]
+        query="INSERT INTO point_history (user_id, point, contents) "
+              "VALUES (%s, %s, %s)",
+        args=[user_id, -int(kwargs['withdrawal_point']), "통장으로 출금"]
     )
     if int(kwargs['is_main']) == 1:
         db.execute(
@@ -413,7 +424,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
             args=[int(kwargs['withdrawal_point']), user_id]
         )
     db.commit()
-    return True
+    return status
 
 
 # 토스트메시지 읽음 처리
@@ -469,22 +480,48 @@ def get_user_point_and_history(user_id):
     ad_point = db.executeOne(
         query="SELECT total_point FROM ad_information ai "
               "JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
-              "WHERE aua.user_id = %s AND aua.status IN ('stand_by', 'accept')"
+              "WHERE aua.user_id = %s AND aua.status IN ('stand_by', 'accept')",
+        args=user_id
     )
+    withdrawal_point = db.executeOne(
+        query="SELECT withdrawal_self_id FROM withdrawal_self "
+              "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+    withdrawal_donate = db.executeOne(
+        query="SELECT withdrawal_donate_id FROM withdrawal_donate "
+              "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+    user_point_history = db.executeAll(
+        query="SELECT "
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+              "contents "
+              "FROM point_history WHERE user_id = %s ORDER BY register_time DESC",
+        args=user_id
+    )
+
     if scheduled_point:
         user_scheduled_point += scheduled_point['additional_point']
 
     if ad_point:
         user_scheduled_point += ad_point['total_point']
 
-    user_point_history = db.executeAll(
-        query="SELECT "
-              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-              "contents "
-              "FROM point_history WHERE user_id = %s",
-        args=user_id
-    )
-    result = {"user_point": user_point['deposit'], scheduled_point: user_scheduled_point}
+    # False 진행중X True 일시 이미 진행중인 데이터 존재
+    ongoing_point = False
+    ongoing_donate = False
+    if withdrawal_point:
+        ongoing_point = True
+
+    if withdrawal_donate:
+        ongoing_donate = True
+
+    result = {"user_point": user_point['deposit'],
+              "scheduled_point": user_scheduled_point,
+              "point_history": user_point_history,
+              "is_ongoing_point": ongoing_point,
+              "is_ongoing_donate": ongoing_donate}
+    return result
 
 
 # 사용자 알람 히스토리

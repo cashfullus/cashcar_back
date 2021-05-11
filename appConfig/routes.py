@@ -644,15 +644,6 @@ def user_point_history():
         return jsonify(Unauthorized), 401
 
 
-# 사용자 포인트 출금
-@app.route('/user/withdrawal/point', methods=['GET'])
-def user_withdrawal():
-    user_id = request.args.get('user_id')
-    identity_ = get_jwt_identity()
-    if int(user_id) != identity_:
-        return jsonify(Unauthorized), 401
-
-
 # 메세지 읽음표시
 @app.route('/user/is-read', methods=['POST'])
 @swag_from('route_yml/user/user_message_is_read.yml')
@@ -694,34 +685,37 @@ def notice_list():
     return jsonify({"data": result})
 
 
-# 사용자 포인트
-@app.route('/user/point')
+# 사용자 포인트 페이지
+@app.route('/user/information/point')
 @jwt_required()
-def user_point():
+@swag_from('route_yml/user/user_point_information.yml')
+def user_point_information():
     user_id = request.args.get('user_id', 0)
     identity_ = get_jwt_identity()
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
-    # result =
+    result = User.get_user_point_and_history(user_id=user_id)
+    return jsonify({"data": result})
 
 
-# 사용자 출금 신청
-@app.route('/user/point/withdrawal/point', methods=['GET', 'POST'])
+# 사용자 포인트 출금
+@app.route('/user/withdrawal/point', methods=['GET', 'POST'])
 @jwt_required()
-def user_point_withdrawal():
-    user_id = request.args.get('user_id', 0)
+def user_withdrawal():
+    user_id = request.args.get('user_id')
     identity_ = get_jwt_identity()
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
     if request.method == 'GET':
         result = User.get_user_withdrawal_data(user_id=user_id)
-        return jsonify({"data": result})
+        return jsonify(result)
 
     elif request.method == 'POST':
         data = request.get_json()
         result = User.update_user_withdrawal_data(user_id=user_id, **data)
+        return jsonify(result)
 
 
 ########### ADMIN ############
