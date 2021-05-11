@@ -20,12 +20,21 @@ import logging
 from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
+# 메일 발송
+from flask_mail import Mail, Message
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 app = Flask(__name__)
+mail = Mail(app)
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAIL_SERVER'] = "smtp.gmail.com"
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'cashfullus@gmail.com'
+app.config['MAIL_PASSWORD'] = 'zotlvnfdjtm12'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 app.json_encoder = LazyJSONEncoder
 CORS(app, resources={r"*": {"origins": "*"}})
 jwt_manager = JWTManager(app)
@@ -220,6 +229,12 @@ def user_new_password():
     data = request.get_json()
     result = User.login_user_change_password(user_id=user_id, **data)
     return jsonify(result)
+
+
+# 사용자 비밀번호 재설정
+@app.route('/send/email/password', methods=['POST'])
+def send_to_client_for_password():
+    data = request.get_json()
 
 
 # 로그인
