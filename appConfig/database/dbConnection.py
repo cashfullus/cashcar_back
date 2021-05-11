@@ -334,6 +334,14 @@ class Database:
 
         return fcm_tokens
 
+    def getAuthEmailByEmail(self, email):
+        self.cursor.execute(
+            query="SELECT user_id, email FROM user WHERE email = %s",
+            args=email
+        )
+        row = self.cursor.fetchone()
+        return row
+
 
 
 
