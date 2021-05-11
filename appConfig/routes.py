@@ -5,6 +5,8 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
+from logging.handlers import WatchedFileHandler
+
 from models import (
     user_model as User,
     vehicle_model as Vehicle,
@@ -30,6 +32,16 @@ swagger = Swagger(app)
 # 이미지 파일 형식
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
+
+
+@app.before_first_request
+def setup_logging():
+    """
+    Setup logging
+    """
+    handler = WatchedFileHandler("/var/log/flask_app.log")
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.INFO)
 
 
 # 이미지 파일 형식검사
