@@ -1,0 +1,32 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Header
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: array
+      items:
+        properties:
+          status:
+            type: string
+            description: 성공(success) or 실패(fail)
+          title:
+            type: string
+            description: 진행한 광고 제목
+
+
