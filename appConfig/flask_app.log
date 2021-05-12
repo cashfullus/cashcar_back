@@ -260,3 +260,24 @@ Traceback (most recent call last):
   File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/encoder.py", line 179, in default
     raise TypeError(f'Object of type {o.__class__.__name__} '
 TypeError: Object of type Decimal is not JSON serializable
+Exception on /app/version [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 172, in app_version_check
+    result = System.get_app_version_check(device=device)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/system_model.py", line 17, in get_app_version_check
+    result["version"] = int(app_version['version'])
+TypeError: 'NoneType' object is not subscriptable
