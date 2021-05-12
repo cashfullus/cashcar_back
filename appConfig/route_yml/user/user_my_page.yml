@@ -16,7 +16,7 @@ parameters:
 
 responses:
   200:
-    description: 사용자의 정보와 뱃지 리스트
+    description: 사용자의 정보
     schema:
       type: object
       properties:
@@ -38,13 +38,3 @@ responses:
                   type: image url
                 user_id:
                   type: integer
-            badge_list:
-              type: array
-              items:
-                properties:
-                  status:
-                    type: string
-                    description: 실패(fail, reject), 진행중(accept), 성공(success)
-                  title:
-                    type: string
-                    description: 광고 타이틀

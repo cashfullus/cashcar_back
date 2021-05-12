@@ -445,14 +445,19 @@ def get_user_my_page(user_id):
         query="SELECT user_id, profile_image, name, email, deposit FROM user WHERE user_id = %s",
         args=user_id
     )
-    badge_list = db.executeAll(
+    return {"user_information": user_information}
+
+
+# 사용자 벳지 리스트
+def get_all_my_badge_list(user_id):
+    db = Database()
+    badge_information = db.executeAll(
         query="SELECT status, title FROM ad_user_apply aua "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "JOIN user u on aua.user_id = u.user_id "
-              "WHERe u.user_id = %s",
+              "WHERE user_id = %s AND status IN ('success', 'fail') ORDER BY ad_user_apply_id",
         args=user_id
     )
-    return {"user_information": user_information, "badge_list": badge_list}
+    return badge_information
 
 
 # 사용자 포인트 와 적립예정 포인트 및 포인트 이력

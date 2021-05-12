@@ -681,6 +681,19 @@ def user_my_page():
         return jsonify({"data": "Data Not Null"}), 400
 
 
+@app.route('/user/badge-list')
+@jwt_required()
+@swag_from('route_yml/user/user_badge_list.yml')
+def user_badge_list():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    result = User.get_all_my_badge_list(user_id=user_id)
+    return jsonify(result)
+
+
 # 공지사항 리트스
 @app.route('/notice/list')
 @jwt_required()
