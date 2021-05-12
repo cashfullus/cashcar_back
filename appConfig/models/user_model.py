@@ -502,7 +502,7 @@ def get_user_point_and_history(user_id):
     )
 
     if scheduled_point:
-        user_scheduled_point += scheduled_point['additional_point']
+        user_scheduled_point += int(scheduled_point['scheduled_point'])
 
     if ad_point:
         user_scheduled_point += ad_point['total_point']
