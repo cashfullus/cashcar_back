@@ -1,0 +1,48 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: account_name
+    in: body
+    type: string
+    required: true
+
+  - name: account_bank
+    in: body
+    type: string
+    required: true
+
+  - name: account_number
+    in: body
+    type: string
+    required: true
+
+  - name: is_main(1일때 메인으로 사용)
+    in: body
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 포인트 출금 신청완료
+    schema:
+      type: object
+      properties:
+        deposit:
+          type: boolean
+          description: 소지한 금액보다 출금신청한 금액이 큰 경우 false
+        ongoing:
+          type: boolean
+          description: 이미 진행중인 신청이 존재할 경우 false
