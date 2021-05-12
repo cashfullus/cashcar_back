@@ -48,6 +48,7 @@ swagger = Swagger(app, template=template)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 kakao_client_id = '15c625b843651faa96695d0b5001f858'
+SERVER_HOST_NAME = "https://app.api.service.cashcarplus.com:50193"
 
 @app.before_first_request
 def setup_logging():
@@ -201,7 +202,7 @@ def home():
 @app.route('/oauth/kakao')
 def kakao_login():
     client_id = kakao_client_id
-    redirect_uri = "http://localhost:50123/oauth/kakao/callback"
+    redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
     kakao_oauthurl = f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     return redirect(kakao_oauthurl)
 
@@ -213,7 +214,7 @@ def kakao_callback():
         code = request.args.get('code')
         client_id = kakao_client_id
         # 다시 재요청 들어올 redirect_uri callback 지정
-        redirect_uri = "http://localhost:50123/oauth/kakao/callback"
+        redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
         token_request = requests.get(
             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
         )
