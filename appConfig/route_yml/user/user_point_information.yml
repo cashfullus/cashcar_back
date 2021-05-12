@@ -25,11 +25,11 @@ responses:
           type: object
           properties:
             is_ongoing_donate:
-              type: boolean
-              description: 현재 진행중인 기부가 있을때 True
+              type: string
+              description: stand_by(기부신청), confirm(기부중)
             is_ongoing_point:
-              type: boolean
-              description: 현재 진행중인 출금이 있을때 True
+              type: string
+              description: stand_by(출금신청), confirm(출금중)
             scheduled_point:
               type: integer
               description: 적립 예정 금액

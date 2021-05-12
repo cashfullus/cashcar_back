@@ -484,12 +484,12 @@ def get_user_point_and_history(user_id):
         args=user_id
     )
     withdrawal_point = db.executeOne(
-        query="SELECT withdrawal_self_id FROM withdrawal_self "
+        query="SELECT status FROM withdrawal_self "
               "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
         args=user_id
     )
     withdrawal_donate = db.executeOne(
-        query="SELECT withdrawal_donate_id FROM withdrawal_donate "
+        query="SELECT status FROM withdrawal_donate "
               "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
         args=user_id
     )
@@ -508,13 +508,14 @@ def get_user_point_and_history(user_id):
         user_scheduled_point += ad_point['total_point']
 
     # False 진행중X True 일시 이미 진행중인 데이터 존재
-    ongoing_point = False
-    ongoing_donate = False
+    ongoing_point = ""
+    ongoing_donate = ""
+
     if withdrawal_point:
-        ongoing_point = True
+        ongoing_point = withdrawal_point['status']
 
     if withdrawal_donate:
-        ongoing_donate = True
+        ongoing_donate = withdrawal_donate['status']
 
     result = {"user_point": user_point['deposit'],
               "scheduled_point": user_scheduled_point,
