@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 
-from flask import Flask, jsonify, request, render_template, send_file
+from flask import Flask, jsonify, request, render_template, send_file, redirect
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -17,6 +18,7 @@ from models import (
 )
 import os
 import logging
+import requests
 
 from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
@@ -25,7 +27,7 @@ from notification.user_push_nofitication import one_cloud_messaging, multiple_cl
 from flask_mail import Mail, Message
 
 logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -45,7 +47,7 @@ swagger = Swagger(app, template=template)
 # 이미지 파일 형식
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
-
+kakao_client_id = '15c625b843651faa96695d0b5001f858'
 
 @app.before_first_request
 def setup_logging():
@@ -194,6 +196,45 @@ def fmc_token():
 def home():
     result = User.non_user_register()
     return jsonify({"status": True, "data": result}), 200
+
+
+@app.route('/oauth/kakao')
+def kakao_login():
+    client_id = kakao_client_id
+    redirect_uri = "http://localhost:50123/oauth/kakao/callback"
+    kakao_oauthurl = f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
+    return redirect(kakao_oauthurl)
+
+
+@app.route('/oauth/kakao/callback')
+def kakao_callback():
+    try:
+        # 위 oauth/kakao에서 redirect로 요청을 보낸후 callback으로 돌아온 uri 에서 code쿼리스트링 받기
+        code = request.args.get('code')
+        print(code)
+        client_id = kakao_client_id
+        # 다시 재요청 들어올 redirect_uri callback 지정
+        redirect_uri = "http://localhost:50123/oauth/kakao/callback"
+        token_request = requests.get(
+            f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
+        )
+        token_response = token_request.json()
+        print(token_response)
+        error = token_response.get('error', None)
+        if error is not None:
+            return jsonify({"message": "INVALID_CODE"}), 400
+
+        access_token = token_response.get('access_token')
+        # access_token 받아오기
+        # access_token으로 유저 정보 받아오기
+        profile_request = requests.get(
+            "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"},
+        )
+        data = profile_request.json()
+    except KeyError:
+        return jsonify({"message": "INVALID_TOKEN"}), 400
+
+    return jsonify({"data": data})
 
 
 # 회원가입

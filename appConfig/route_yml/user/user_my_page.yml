@@ -38,3 +38,6 @@ responses:
                   type: image url
                 user_id:
                   type: integer
+                login_type:
+                  type: string
+                  description: normal or kakao
