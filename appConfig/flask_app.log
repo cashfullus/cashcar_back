@@ -281,3 +281,103 @@ Traceback (most recent call last):
   File "/Users/park/SolutionProjects/basicFlask/appConfig/models/system_model.py", line 17, in get_app_version_check
     result["version"] = int(app_version['version'])
 TypeError: 'NoneType' object is not subscriptable
+Exception on /user/new-password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 241, in user_new_password
+    result = User.login_user_change_password(user_id=user_id, **data)
+  File "./models/user_model.py", line 580, in login_user_change_password
+    if kwargs['login_type'] == "normal":
+KeyError: 'login_type'
+Exception on /user/new-password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 241, in user_new_password
+    result = User.login_user_change_password(user_id=user_id, **data)
+  File "./models/user_model.py", line 580, in login_user_change_password
+    if kwargs['login_type'] == "normal":
+KeyError: 'login_type'
+Exception on /user/new-password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 241, in user_new_password
+    result = User.login_user_change_password(user_id=user_id, **data)
+  File "./models/user_model.py", line 580, in login_user_change_password
+    if kwargs['login_type'] == "normal":
+KeyError: 'login_type'
+Exception on /user/new-password [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 241, in user_new_password
+    result = User.login_user_change_password(user_id=user_id, **data)
+  File "./models/user_model.py", line 580, in login_user_change_password
+    if kwargs['login_type'] == "normal":
+KeyError: 'login_type'
