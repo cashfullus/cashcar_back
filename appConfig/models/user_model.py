@@ -510,7 +510,6 @@ def get_user_point_and_history(user_id):
     # False 진행중X True 일시 이미 진행중인 데이터 존재
     ongoing_point = ""
     ongoing_donate = ""
-
     if withdrawal_point:
         ongoing_point = withdrawal_point['status']
 

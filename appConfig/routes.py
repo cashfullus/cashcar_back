@@ -702,6 +702,8 @@ def user_point_information():
 # 사용자 포인트 출금
 @app.route('/user/withdrawal/point', methods=['GET', 'POST'])
 @jwt_required()
+@swag_from('route_yml/user/user_withdrawal_point_get.yml', methods=['GET'])
+@swag_from('route_yml/user/user_withdrawal_point_post.yml', methods=['POST'])
 def user_withdrawal():
     user_id = request.args.get('user_id')
     identity_ = get_jwt_identity()
