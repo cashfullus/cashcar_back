@@ -12,7 +12,8 @@ from models import (
     vehicle_model as Vehicle,
     ad_model as AD,
     mission_model as Mission,
-    admin_model as Admin
+    admin_model as Admin,
+    system_model as System
 )
 import os
 import logging
@@ -162,6 +163,15 @@ def upload_image(location):
             return jsonify({"status": False, "data": "Bad Request"}), 400
     else:
         return jsonify({"status": False, "data": "Not Allowed File"}), 404
+
+
+# 앱 버전 체크 확인
+@app.route('/app/version')
+@swag_from('route_yml/system/app_version_check.yml')
+def app_version_check():
+    device = request.args.get('device', "")
+    result = System.get_app_version_check(device=device)
+    return jsonify(result)
 
 
 # FCM 토큰
@@ -704,8 +714,8 @@ def user_point_information():
 @jwt_required()
 @swag_from('route_yml/user/user_withdrawal_point_get.yml', methods=['GET'])
 @swag_from('route_yml/user/user_withdrawal_point_post.yml', methods=['POST'])
-def user_withdrawal():
-    user_id = request.args.get('user_id')
+def user_withdrawal_point():
+    user_id = request.args.get('user_id', 0)
     identity_ = get_jwt_identity()
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
@@ -718,6 +728,18 @@ def user_withdrawal():
         data = request.get_json()
         result = User.update_user_withdrawal_data(user_id=user_id, **data)
         return jsonify(result)
+
+
+@app.route('/user/withdrawal/donate', methods=['GET', 'POST'])
+@jwt_required()
+def user_withdrawal_donate():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    # if request.method == 'GET':
+    #     result =
 
 
 ########### ADMIN ############
@@ -973,7 +995,7 @@ def admin_ad_apply():
                                                            )
             return jsonify({"data": result})
         else:
-           return jsonify({"status": False, "data": "Not Allowed Method"}), 405
+            return jsonify({"status": False, "data": "Not Allowed Method"}), 405
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
 

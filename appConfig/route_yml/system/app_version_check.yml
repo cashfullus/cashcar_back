@@ -1,0 +1,18 @@
+tags:
+  - System
+
+
+parameters:
+  - name: device(ios, android)
+    in: query
+    type: string
+    required: true
+
+
+responses:
+  200:
+    schema:
+      type: object
+      properties:
+        version:
+          type: integer
