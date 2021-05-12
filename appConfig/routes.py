@@ -211,25 +211,26 @@ def kakao_callback():
     try:
         # 위 oauth/kakao에서 redirect로 요청을 보낸후 callback으로 돌아온 uri 에서 code쿼리스트링 받기
         code = request.args.get('code')
-        print(code)
         client_id = kakao_client_id
         # 다시 재요청 들어올 redirect_uri callback 지정
         redirect_uri = "http://localhost:50123/oauth/kakao/callback"
         token_request = requests.get(
             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
         )
+        # 최종적으로 사용자 정보를 받기위한 토큰 발급
         token_response = token_request.json()
-        print(token_response)
+        # 내용에 error 가 존재한다면.
         error = token_response.get('error', None)
         if error is not None:
             return jsonify({"message": "INVALID_CODE"}), 400
 
-        access_token = token_response.get('access_token')
         # access_token 받아오기
+        access_token = token_response.get('access_token')
         # access_token으로 유저 정보 받아오기
         profile_request = requests.get(
             "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"},
         )
+        # 최종적으로 받은 data
         data = profile_request.json()
     except KeyError:
         return jsonify({"message": "INVALID_TOKEN"}), 400
