@@ -604,4 +604,3 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
     else:
         return False
 
-

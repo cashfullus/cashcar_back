@@ -1,0 +1,48 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: tip_id(cash_car_tip_id)
+    in: query
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 캐시카팁 디테일 리스트에서 cash_car_tip_id를 tip_id 쿼리스트링으로
+    schema:
+      type: object
+      properties:
+        cash_car_tip_id:
+          type: integer
+        main_description:
+          type: string
+        register_time:
+          type: string
+        thumbnail_image:
+          type: string
+        title:
+          type: string
+        image_information:
+          type: array
+          items:
+            properties:
+              descipriotn:
+                type: string
+                description: 해당 이미지의 설명
+              image:
+                type: string
+                description: 해당 설명의 이미지
+

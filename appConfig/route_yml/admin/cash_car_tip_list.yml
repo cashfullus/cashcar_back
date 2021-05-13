@@ -1,0 +1,58 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: page(default 1)
+    in: query
+    type: integer
+    required: true
+
+  - name: count(default 10)
+    in: query
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: 캐시카팁 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              cash_car_tip_id:
+                type: integer
+              main_description:
+                type: string
+                description: 리스트에서 처음 보여줄 메인 설명
+              register_time:
+                type: string
+                description: 등록 일시
+              thumbnail_image:
+                type: string
+              title:
+                type: string
+              image_information:
+                type: array
+                items:
+                  properties:
+                    description:
+                      type: string
+                      description: 이미지에 해당하는 설명
+                    image:
+                      type: string
+                      description: 설명에 해당하는 이미지
