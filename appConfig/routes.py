@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 
 from flask import Flask, jsonify, request, render_template, send_file, redirect
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
@@ -49,6 +48,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BASE_IMAGE_LOCATION = os.getcwd() + "/appConfig/static/image/"
 kakao_client_id = '15c625b843651faa96695d0b5001f858'
 SERVER_HOST_NAME = "https://app.api.service.cashcarplus.com:50193"
+LOCAL_HOST_NAME = "http://localhost:50123"
+
 
 @app.before_first_request
 def setup_logging():
@@ -202,7 +203,8 @@ def home():
 @app.route('/oauth/kakao')
 def kakao_login():
     client_id = kakao_client_id
-    redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
+    # redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
+    redirect_uri = LOCAL_HOST_NAME + "/oauth/kakao/callback"
     kakao_oauthurl = f"https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code"
     return redirect(kakao_oauthurl)
 
@@ -214,7 +216,8 @@ def kakao_callback():
         code = request.args.get('code')
         client_id = kakao_client_id
         # 다시 재요청 들어올 redirect_uri callback 지정
-        redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
+        # redirect_uri = SERVER_HOST_NAME + "/oauth/kakao/callback"
+        redirect_uri = LOCAL_HOST_NAME + "/oauth/kakao/callback"
         token_request = requests.get(
             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={client_id}&redirect_uri={redirect_uri}&code={code}"
         )
@@ -237,6 +240,18 @@ def kakao_callback():
         return jsonify({"message": "INVALID_TOKEN"}), 400
 
     return jsonify({"data": data})
+
+
+# 애플 로그인
+@app.route('/oauth/apple')
+def apple_auth():
+    return redirect("https://appleid.apple.com/auth/authorize")
+
+
+
+# 애플 로그인 callback
+# @app.route('/oauth/apple/callback')
+# def apple_auth_callback():
 
 
 # 회원가입
