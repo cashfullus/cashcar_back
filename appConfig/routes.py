@@ -1297,3 +1297,20 @@ def cash_car_tip_information():
     result, item_count = Tip.get_cash_car_tip_all(page=page, request_user='admin', count=count)
 
     return jsonify({"data": result, "item_count": item_count})
+
+
+@app.route('/admin/cash-car-tip/thumbnail_image', methods=['POST'])
+@jwt_required()
+def cash_car_tip_thumbnail_image_save():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    tip_id = request.args.get('tip_id', type=int)
+    image = request.files.get('thumbnail_image')
+    result = Tip.upload_thumbnail_image(image=image, tip_id=tip_id)
+    return jsonify({"status": result})
+

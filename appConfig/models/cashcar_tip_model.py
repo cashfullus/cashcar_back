@@ -9,7 +9,6 @@ CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/c
 
 def register(**kwargs):
     db = Database()
-
     db.execute(
         query="INSERT INTO cash_car_tip (title, main_description) "
               "VALUES (%s, %s)",
@@ -44,6 +43,19 @@ def register(**kwargs):
     )
     response_data['image_information'] = images
     return response_data
+
+
+def upload_thumbnail_image(image, tip_id):
+    db = Database()
+    db_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{tip_id}/{secure_filename(image.filename)}"
+    db.execute(
+        query="UPDATE cash_car_tip SET thumbnail_image = %s WHERE cash_car_tip_id = %s",
+        args=[db_url, tip_id]
+    )
+    directory = f"{BASE_IMAGE_LOCATION}/{tip_id}"
+    image.save(directory + "/" + secure_filename(image.filename))
+    db.commit()
+    return True
 
 
 def get_cash_car_tip_all(page, request_user, count=10):
