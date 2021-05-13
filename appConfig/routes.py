@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from flask import Flask, jsonify, request, render_template, send_file, redirect
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
@@ -13,7 +14,8 @@ from models import (
     ad_model as AD,
     mission_model as Mission,
     admin_model as Admin,
-    system_model as System
+    system_model as System,
+    cashcar_tip_model as Tip
 )
 import os
 import logging
@@ -813,6 +815,35 @@ def user_withdrawal_donate():
     #     result =
 
 
+# 사용자 캐시카팁 리스트
+@app.route('/user/cash-car-tip/list')
+@jwt_required()
+@swag_from('route_yml/user/cash_car_tip_list.yml')
+def user_cash_car_tip_list():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    page = request.args.get('page', 1, type=int)
+    result = Tip.get_cash_car_tip_all(page=page, request_user="user")
+    return jsonify(result)
+
+
+@app.route('/user/cash-car-tip')
+@jwt_required()
+@swag_from('route_yml/user/cash_car_tip.yml')
+def user_cash_car_tip():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    tip_id = request.args.get('tip_id')
+    result = Tip.get_cash_car_tip_by_id(cash_car_tip_id=tip_id)
+    return jsonify(result)
+
+
 ########### ADMIN ############
 # 어드민 권한 확인
 def admin_allowed_user_check(admin_user_id, identity_):
@@ -1219,3 +1250,50 @@ def get_withdrawal_donate_point_all():
             return jsonify({"data": result})
         else:
             return jsonify({"data": False})
+
+
+@app.route('/admin/cash-car-tip/register', methods=['POST'])
+@jwt_required()
+@swag_from('route_yml/admin/cash_car_tip_register.yml')
+def cash_car_tip_register():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    tip_images = request.files.getlist("tip_images")
+    allowed_result = allowed_files(tip_images)
+    if False in allowed_result:
+        return jsonify({"status": "Not Allowed Image"}), 405
+
+    image_description = json.loads(request.form.get('image_description'))
+    data = {
+        "title": request.form.get('title'),
+        "main_description": request.form.get('main_description'),
+        "image_description": image_description,
+        "tip_images": tip_images
+    }
+
+    result = Tip.register(**data)
+
+    return jsonify({"data": result})
+
+
+@app.route('/admin/cash-car-tip', methods=['GET', 'POST'])
+@jwt_required()
+@swag_from('route_yml/admin/cash_car_tip_list.yml', methods=['GET'])
+def cash_car_tip_information():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 10, type=int)
+    result, item_count = Tip.get_cash_car_tip_all(page=page, request_user='admin', count=count)
+
+    return jsonify({"data": result, "item_count": item_count})

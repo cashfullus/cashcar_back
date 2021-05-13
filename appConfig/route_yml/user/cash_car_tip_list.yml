@@ -1,0 +1,43 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: page(default 1)
+    in: query
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: 캐시카팁 리스트 아이템 10개 단위
+    schema:
+      type: array
+      items:
+        properties:
+          cash_car_tip_id:
+            type: integer
+            description: 디테일에선 tip_id 로 request
+          main_description:
+            type: string
+            description: 메인 설명
+          register_time:
+            type: string
+            description: 등록 일시
+          thumbnail_image:
+            type: string
+            description: 썸네일 이미지 주소
+          title:
+            type: string
+            description: 제목
