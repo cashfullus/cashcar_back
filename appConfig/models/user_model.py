@@ -121,6 +121,14 @@ def register(**kwargs):
     return result
 
 
+# def kakao_login(**kwargs):
+#     db = Database()
+#     user = db.getLoginTypeUserByEmail(email=kwargs.get('email'), login_type='kakao')
+#     if user:
+
+
+
+
 # 로그인
 def login(**kwargs):
     db = Database()
