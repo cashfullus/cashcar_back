@@ -245,7 +245,7 @@ def kakao_callback():
 # 애플 로그인
 @app.route('/oauth/apple')
 def apple_auth():
-    return redirect("https://appleid.apple.com/auth/authorize")
+    return render_template("apple_login.html")
 
 
 
