@@ -942,6 +942,9 @@ def admin_adverting_register():
     side_image = request.files.get('side_image')
     back_image = request.files.get('back_image')
     thumbnail_image = request.files.get('thumbnail_image')
+    # 썸네일 미지정인 경우 썸네일을 side_image로
+    if not thumbnail_image:
+        thumbnail_image = side_image
     # 기타 사진들
     images = request.files.getlist('ad_images')
     # 썸네일, 좌측, 후면 사진
@@ -950,10 +953,14 @@ def admin_adverting_register():
         "back_image": back_image,
         "thumbnail_image": thumbnail_image
     }
+    if images[0].filename == "":
+        allowed_ad_images = []
+        images = []
+    else:
+        allowed_ad_images = allowed_files(images)
 
-    allowed_ad_images = allowed_files(images)
     allowed_other_images = allowed_image_for_dict(image_dict)
-    if False not in allowed_ad_images and allowed_other_images is not False:
+    if False not in allowed_ad_images and False not in allowed_other_images:
         # eval 의 사용이유는 getlist 로 데이터를 가져올 경우 ['{}'] 인 스트링 형태로 데이터가 들어오기 때문에 강제로 여러개의 프로퍼티 값으로 변환
         # 클라이언트와 데이터의 형식을 맞춰 사용할 경우 위험성은 없어보임.
         data = {

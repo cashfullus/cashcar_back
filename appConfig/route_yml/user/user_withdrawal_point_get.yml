@@ -23,7 +23,7 @@ responses:
         account_bank:
           type: string
           description: 은행이름
-        account_name:
+        name:
           type: string
           description: 계좌의 소유주 이름
         account_number:

@@ -377,7 +377,7 @@ def get_fcm_token_by_user_id(user_id):
 def get_user_withdrawal_data(user_id):
     db = Database()
     user_information = db.executeOne(
-        query="SELECT user_id, deposit, account_bank, account_name, account_number FROM user WHERE user_id = %s",
+        query="SELECT user_id, name, deposit, account_bank, account_number FROM user WHERE user_id = %s",
         args=user_id
     )
     return user_information
