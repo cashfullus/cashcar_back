@@ -40,18 +40,23 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 save_to_db_list = []
                 directory = f"{BASE_IMAGE_LOCATION}/{register_id['ad_id']}"
                 os.makedirs(directory, exist_ok=True)
-
                 for key, val in other_images.items():
                     val.save(directory + "/" + secure_filename(val.filename))
                     save_to_db_dict.setdefault(key,
                                                f"{AD_IMAGE_HOST}/{register_id['ad_id']}/" + secure_filename(
                                                    val.filename))
+                if ad_images:
+                    for image in ad_images:
+                        print(image)
+                        image.save(directory + "/" + secure_filename(image.filename))
+                        value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
+                        save_to_db_list.append(value)
 
-                for image in ad_images:
-                    image.save(directory + "/" + secure_filename(image.filename))
-                    value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
-                    save_to_db_list.append(value)
-
+                    for i in range(len(save_to_db_list)):
+                        db.execute(
+                            query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
+                            args=[register_id['ad_id'], save_to_db_list[i]]
+                        )
                 db.execute(
                     query="UPDATE ad_information "
                           "SET thumbnail_image = %s, side_image = %s, back_image = %s "
@@ -62,15 +67,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           register_id['ad_id']
                           ]
                 )
-                for i in range(len(save_to_db_list)):
-                    db.execute(
-                        query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
-                        args=[register_id['ad_id'], save_to_db_list[i]]
-                    )
-
                 default_mission_items = kwargs['default_mission_items']
                 additional_mission_items = kwargs['additional_mission_items']
-
                 if default_mission_items[0]:
                     for item in default_mission_items[0]:
                         mission_name = f"{item['order']}차 미션"
@@ -135,10 +133,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 val.save(directory + "/" + secure_filename(val.filename))
                 save_to_db_dict.setdefault(key,
                                            f"{AD_IMAGE_HOST}/{kwargs.get('ad_id')}/" + secure_filename(val.filename))
-            for image in ad_images:
-                image.save(directory + "/" + secure_filename(image.filename))
-                value = f"{AD_IMAGE_HOST}/{kwargs.get('ad_id')}/{secure_filename(image.filename)}"
-                save_to_db_list.append(value)
+
             db.execute(
                 query="DELETE FROM ad_images WHERE ad_id = %s",
                 args=kwargs.get('ad_id')
@@ -153,11 +148,16 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                       kwargs.get('ad_id')
                       ]
             )
-            for i in range(len(save_to_db_list)):
-                db.execute(
-                    query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
-                    args=[kwargs.get('ad_id'), save_to_db_list[i]]
-                )
+            if ad_images:
+                for image in ad_images:
+                    image.save(directory + "/" + secure_filename(image.filename))
+                    value = f"{AD_IMAGE_HOST}/{kwargs.get('ad_id')}/{secure_filename(image.filename)}"
+                    save_to_db_list.append(value)
+                for i in range(len(save_to_db_list)):
+                    db.execute(
+                        query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
+                        args=[kwargs.get('ad_id'), save_to_db_list[i]]
+                    )
 
             db.commit()
             kwargs['ad_images'] = db.executeAll(
