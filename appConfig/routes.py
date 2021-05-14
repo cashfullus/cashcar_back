@@ -954,8 +954,8 @@ def admin_adverting_register():
         "thumbnail_image": thumbnail_image
     }
     if images[0].filename == "":
-        allowed_ad_images = []
-        images = []
+        images = [side_image, back_image]
+        allowed_ad_images = allowed_files(images)
     else:
         allowed_ad_images = allowed_files(images)
 
