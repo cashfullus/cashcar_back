@@ -54,4 +54,6 @@ responses:
           default: false
         reason:
           type: string
+        status:
+          type: string
 
