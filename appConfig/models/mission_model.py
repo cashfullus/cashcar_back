@@ -84,24 +84,23 @@ def admin_review_mission_list(page, count):
     db = Database()
     per_page = page_nation(int(page), int(count))
     result = db.executeAll(
-        query="SELECT DISTINCT "
+        query="SELECT "
               "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
               "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
               "aua.ad_user_apply_id, amcu.ad_mission_card_user_id as mission_card_id, "
               "ai.title, amc.mission_name, u.name, u.call_number, "
               "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
               "amc.mission_type "
-              "FROM "
-              "(SELECT ad_mission_card_user_id, ad_user_apply_id, register_time, mission_end_date, status "
-              "FROM ad_mission_card_user WHERE status IN ('review', 're_review', 'success', 'fail', 'reject')) as amcu "
-              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-              "JOIN user u on aua.user_id = u.user_id "
+              "FROM ad_user_apply aua "
+              "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "WHERE aua.status IN ('accept', 'stand_by') "
-              "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'reject') "
-              "LIMIT %s OFFSET %s",
+              "AND amcu.status IN ('review', 're_review', 'reject', 'success', 'fail') "
+              "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail') "
+              "LIMIT  %s OFFSET %s",
         args=[int(count), per_page]
     )
     if result:
