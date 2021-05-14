@@ -87,7 +87,7 @@ def admin_review_mission_list(page, count):
         query="SELECT DISTINCT "
               "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
               "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
-              "aua.ad_user_apply_id, amcu.ad_mission_card_user_id, "
+              "aua.ad_user_apply_id, amcu.ad_mission_card_user_id as mission_card_id, "
               "ai.title, amc.mission_name, u.name, u.call_number, "
               "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
               "amc.mission_type "
