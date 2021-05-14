@@ -1861,3 +1861,73 @@ Traceback (most recent call last):
   File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 664, in connect
     raise exc
 pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on '101.101.217.231' (timed out)")
+Exception on /main/my-ad [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 669, in home_my_ad
+    result = AD.get_ongoing_user_by_id(user_id=user_id)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/ad_model.py", line 408, in get_ongoing_user_by_id
+    message = db.getOneReason(user_id=user_id)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 253, in getOneReason
+    self.cursor.execute(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 147, in execute
+    result = self._query(query)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 309, in _query
+    conn.query(q)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 548, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 775, in _read_query_result
+    result.read()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 1156, in read
+    first_packet = self.connection._read_packet()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 725, in _read_packet
+    packet.raise_for_error()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/protocol.py", line 221, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/err.py", line 143, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column 'title' in 'field list'")
+Exception on /admin/mission/apply [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1127, in admin_mission_apply
+    result = Admin.admin_accept_mission(ad_apply_id=ad_apply_id, mission_card_id=mission_card_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/admin_model.py", line 303, in admin_accept_mission
+    db.saveStatusMessage(
+TypeError: saveStatusMessage() missing 1 required positional argument: 'title'

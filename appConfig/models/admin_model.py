@@ -299,6 +299,10 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                       "VALUES (%s, %s, %s, %s)",
                 args=[mission_information['user_id'], "mission", 1, body_name]
             )
+            save_message_name = f"{mission_information['mission_name']} 성공"
+            db.saveStatusMessage(
+                ad_user_apply_id=ad_apply_id, reason=save_message_name, message_type="mission_success"
+            )
             db.commit()
             return result
 
