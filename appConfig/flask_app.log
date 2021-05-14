@@ -281,7 +281,6 @@ Traceback (most recent call last):
   File "/Users/park/SolutionProjects/basicFlask/appConfig/models/system_model.py", line 17, in get_app_version_check
     result["version"] = int(app_version['version'])
 TypeError: 'NoneType' object is not subscriptable
-<<<<<<< HEAD
 Exception on /user/new-password [POST]
 Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
