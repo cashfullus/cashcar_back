@@ -105,6 +105,11 @@ def admin_review_mission_list(page, count):
               "LIMIT %s OFFSET %s",
         args=[int(count), per_page]
     )
+    if result:
+        for i in range(len(result)):
+            mission_history = db.getAdminMissionHistory(ad_user_apply_id=result[i]["ad_user_apply_id"])
+            result[i]['mission_history'] = mission_history
+
     item_count = db.executeAll(
         query="SELECT aua.ad_user_apply_id "
               "FROM "
