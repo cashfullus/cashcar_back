@@ -445,6 +445,7 @@ def get_ongoing_user_by_id(user_id):
             result["is_read_alarm"] = True
         else:
             result["is_read_alarm"] = False
+        result['ad_information'] = ad_information
         return result
 
     if ad_information["mission_status"]:
@@ -464,6 +465,7 @@ def get_ongoing_user_by_id(user_id):
         if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
                 hours=1) < datetime.now():
             result["is_delete"] = False
+            result['ad_information'] = ad_information
             return result
     result['ad_information'] = ad_information
     if is_not_read_alarm:
