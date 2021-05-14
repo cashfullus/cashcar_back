@@ -218,7 +218,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
 def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
     db = Database()
     status = kwargs['status']
-    result = {"accept": True, "reason": "Update Success"}
+    result = {"accept": True, "reason": "Update Success", "status": ""}
     mission_information = db.getOneMissionUserInfoByIdx(ad_user_apply_id=ad_apply_id,
                                                         ad_mission_card_id=mission_card_id)
     if mission_information:
@@ -304,6 +304,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 ad_user_apply_id=ad_apply_id, reason=save_message_name, message_type="mission_success"
             )
             db.commit()
+            result['status'] = "success"
             return result
 
         elif status == 'reject':
@@ -334,6 +335,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     )
                     one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                     db.commit()
+                    result['status'] = "fail"
                     return result
                 # 추가 미션의 경우 실패해도 상관없음(point 미지급)
                 else:
@@ -361,6 +363,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 )
                 one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
+                result['status'] = "fail"
                 return result
 
             else:
@@ -388,6 +391,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 )
                 one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
+                result['status'] = "reject"
                 return result
 
 
