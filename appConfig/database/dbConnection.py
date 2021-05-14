@@ -262,7 +262,7 @@ class Database:
         return row
 
     # 사용자의 광고 상태 및 미션 처리 메세지 INSERT
-    def saveStatusMessage(self, ad_user_apply_id, title, reason, message_type):
+    def saveStatusMessage(self, ad_user_apply_id, reason, message_type, title=""):
         self.cursor.execute(
             query="INSERT INTO ad_mission_reason (ad_user_apply_id, title, reason, message_type) "
                   "VALUE (%s, %s, %s, %s)",
@@ -341,6 +341,16 @@ class Database:
         )
         row = self.cursor.fetchone()
         return row
+
+    def getAdminMissionHistory(self, ad_user_apply_id):
+        self.cursor.execute(
+            query="SELECT reason, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM ad_mission_reason "
+                  "WHERE ad_user_apply_id = %s ORDER BY register_time DESC",
+            args=ad_user_apply_id
+        )
+        rows = self.cursor.fetchall()
+        return rows
 
 
 

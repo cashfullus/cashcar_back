@@ -69,3 +69,11 @@ responses:
               travelled_distance:
                 type: integer
                 description: 주행거리
+              mission_history:
+                type: array
+                items:
+                  properties:
+                    reason:
+                      type: string
+                    register_time:
+                      type: string
