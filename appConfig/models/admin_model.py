@@ -414,7 +414,7 @@ def get_all_user_list(page, count):
             activity_history = db.executeAll(
                 query="SELECT history_name, "
                       "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                      "FROM user_activity_history WHERE user_id = %s",
+                      "FROM user_activity_history WHERE user_id = %s ORDER BY register_time DESC",
                 args=user_list[i]['user_id']
             )
             user_list[i]['vehicle_information'] = vehicle
@@ -424,22 +424,15 @@ def get_all_user_list(page, count):
 
 
 # 어드민 회원 정보 수정
-# def admin_user_profile_modify(user_id, req_method, **kwargs):
-#     db = Database()
-#     target_user = db.getUserById(user_id=user_id)
-#     if target_user:
-#         if req_method == 'DELETE':
-#             db.execute(
-#                 query="UPDATE user SET withdrawn = 1, withdraw_time = NOW() WHERE user_id = %s",
-#                 args=user_id
-#             )
-#             db.commit()
-#             return True
-#
-#         elif req_method == 'POST':
-#             db.execute(
-#                 query="UPDATE "
-#             )
+def admin_user_profile_modify(**kwargs):
+    db = Database()
+    db.execute(
+        query="UPDATE user SET nickname = %s, email = %s, main_address = %s, detail_address = %s WHERE user_id = %s",
+        args=[kwargs.get('nickname'), kwargs.get('email'), kwargs.get('main_address'),
+              kwargs.get('detail_address'), kwargs.get('user_id')]
+    )
+    db.commit()
+    return kwargs
 
 
 # 어드민 포인트 출금 신청 리스트

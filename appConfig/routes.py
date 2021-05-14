@@ -1299,6 +1299,7 @@ def cash_car_tip_information():
     return jsonify({"data": result, "item_count": item_count})
 
 
+# 캐시카팁 썸네일 이미지 업로드
 @app.route('/admin/cash-car-tip/thumbnail_image', methods=['POST'])
 @jwt_required()
 def cash_car_tip_thumbnail_image_save():
@@ -1313,4 +1314,20 @@ def cash_car_tip_thumbnail_image_save():
     image = request.files.get('thumbnail_image')
     result = Tip.upload_thumbnail_image(image=image, tip_id=tip_id)
     return jsonify({"status": result})
+
+
+# 유저 프로필 어드민 수정
+@app.route('/admin/user/profile', methods=['POST'])
+@jwt_required()
+def admin_user_profile_update():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    data = request.get_json()
+    result = Admin.admin_user_profile_modify(**data)
+    return jsonify(result)
 
