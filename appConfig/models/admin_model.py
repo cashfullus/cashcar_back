@@ -293,7 +293,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
                 args=[mission_information['user_id'], history_name]
             )
-            one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+            if mission_information['alarm'] == 1:
+                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
             db.execute(
                 query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
                       "VALUES (%s, %s, %s, %s)",
