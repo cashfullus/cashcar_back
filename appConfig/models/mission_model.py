@@ -109,20 +109,18 @@ def admin_review_mission_list(page, count):
             result[i]['mission_history'] = mission_history
 
     item_count = db.executeAll(
-        query="SELECT aua.ad_user_apply_id "
-              "FROM "
-              "(SELECT * FROM ad_mission_card_user "
-              "ORDER BY FIELD(status, 'review', 're_review', 'reject', 'success', 'fail')) as amcu "
-              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-              "JOIN user u on aua.user_id = u.user_id "
+        query="SELECT COUNT(aua.ad_user_apply_id) as item_count "
+              "FROM ad_user_apply aua "
+              "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id "
+              "JOIN user u on aua.user_id = u.user_id "
+              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
               "WHERE aua.status IN ('accept', 'stand_by') "
-              "AND amcu.status IN ('review', 're_review', 'success', 'fail', 'reject') "
-              "GROUP BY amcu.ad_mission_card_user_id "
+              "AND amcu.status IN ('review', 're_review', 'reject', 'success', 'fail') "
+              "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail') "
     )
-    return result, len(item_count)
+    return result, item_count['item_count']
 
 
 # 사용자 미션 인증 신청에서 디테일 미션 리스트

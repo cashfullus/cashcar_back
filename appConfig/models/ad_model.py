@@ -402,21 +402,22 @@ def get_ongoing_user_by_id(user_id):
         query="SELECT user_id FROM alarm_history WHERE is_read_alarm = 0 AND user_id = %s",
         args=user_id
     )
+
+    # 현재 읽지안흔 알람이 존재할겨웅 True, False
     if is_not_read_alarm:
         result["is_read_alarm"] = True
+    else:
+        result['is_read_alarm'] = False
 
     message = db.getOneReason(user_id=user_id)
     if message:
         result["message"] = message
 
+    # 현재 진행중인 광고가 존재하지 않을경우
     if not ad_information:
-        if is_not_read_alarm:
-            result["is_read_alarm"] = True
-        else:
-            result["is_read_alarm"] = False
-
         return result
 
+    # 현재 진행중인 일수
     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
         ad_information['ongoing_days'] = 0
     else:
@@ -440,11 +441,6 @@ def get_ongoing_user_by_id(user_id):
         ad_information['activity_start_date'] = ''
         ad_information['activity_end_date'] = ''
         ad_information['ongoing_day_percent'] = 0
-        result['ad_information'] = ad_information
-        if is_not_read_alarm:
-            result["is_read_alarm"] = True
-        else:
-            result["is_read_alarm"] = False
         result['ad_information'] = ad_information
         return result
 
