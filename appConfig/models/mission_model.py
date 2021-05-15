@@ -85,7 +85,7 @@ def admin_review_mission_list(page, count):
     per_page = page_nation(int(page), int(count))
     result = db.executeAll(
         query="SELECT "
-              "DATE_FORMAT(amcu.register_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
+              "DATE_FORMAT(mi.updated_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
               "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
               "aua.ad_user_apply_id, amcu.ad_mission_card_id as mission_card_id, "
               "ai.title, amc.mission_name, u.name, u.call_number, "
