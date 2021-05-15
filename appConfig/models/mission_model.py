@@ -108,7 +108,7 @@ def admin_review_mission_list(page, count):
             mission_history = db.getAdminMissionHistory(ad_user_apply_id=result[i]["ad_user_apply_id"])
             result[i]['mission_history'] = mission_history
 
-    item_count = db.executeAll(
+    item_count = db.executeOne(
         query="SELECT COUNT(aua.ad_user_apply_id) as item_count "
               "FROM ad_user_apply aua "
               "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
