@@ -805,14 +805,22 @@ def user_withdrawal_point():
 
 @app.route('/user/withdrawal/donate', methods=['GET', 'POST'])
 @jwt_required()
+@swag_from('route_yml/user/user_withdrawal_donate_get.yml', methods=['GET'])
+@swag_from('route_yml/user/user_withdrawal_donate_post.yml', methods=['POST'])
 def user_withdrawal_donate():
     user_id = request.args.get('user_id', 0)
     identity_ = get_jwt_identity()
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
-    # if request.method == 'GET':
-    #     result =
+    if request.method == 'GET':
+        result = User.get_user_withdrawal_donate_data(user_id=user_id)
+        return jsonify(result)
+
+    elif request.method == 'POST':
+        data = request.get_json()
+        result = User.update_user_withdrawal_donate(user_id=user_id, **data)
+        return jsonify(result)
 
 
 # 사용자 캐시카팁 리스트

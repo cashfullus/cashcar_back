@@ -1,0 +1,48 @@
+tags:
+  - User
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: withdrawal_point
+    in: body
+    type: integer
+    required: true
+
+  - name: is_receipt
+    in: body
+    type: integer
+    required: true
+
+  - name: organization
+    in: body
+    type: string
+    required: true
+
+  - name: name_of_donor
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        deposit:
+          type: boolean
+          description: 소지한 금액보다 출금신청한 금액이 큰 경우 false
+        ongoing:
+          type: boolean
+          description: 이미 진행중인 신청이 존재할 경우 false

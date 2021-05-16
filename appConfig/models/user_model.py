@@ -383,6 +383,16 @@ def get_user_withdrawal_data(user_id):
     return user_information
 
 
+# 사용자 기부 데이터 GET
+def get_user_withdrawal_donate_data(user_id):
+    db = Database()
+    user_information = db.executeOne(
+        query="SELECT user_id, name, deposit FROM user WHERE user_id = %s",
+        args=user_id
+    )
+    return user_information
+
+
 # 사용자 출금신청    withdrawal_point(음수), bank_name, bank_owner, bank_number, is_main
 # status stand_by(대기), confirm(진행중), done(완료), cancel(취소)
 def update_user_withdrawal_data(user_id, **kwargs):
@@ -410,7 +420,6 @@ def update_user_withdrawal_data(user_id, **kwargs):
               kwargs['account_name'], kwargs['account_number']]
     )
     # commit 은 데이터 완전 저장 이기떄문에 안전하게 셀렉후 바로 저장
-    db.commit()
     db.execute(
         query="INSERT INTO point_history (user_id, point, contents) "
               "VALUES (%s, %s, %s)",
@@ -431,6 +440,46 @@ def update_user_withdrawal_data(user_id, **kwargs):
                   "WHERE user_id = %s",
             args=[int(kwargs['withdrawal_point']), user_id]
         )
+    db.commit()
+    return status
+
+
+# 사용자 기부 신청
+def update_user_withdrawal_donate(user_id, **kwargs):
+    db = Database()
+    status = {"deposit": True, "ongoing": True}
+    user_deposit = db.getUserById(user_id=user_id)
+
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+        status["deposit"] = False
+        return status
+
+    already_ongoing_withdrawal = db.executeOne(
+        query="SELECT withdrawal_donate_id FROM withdrawal_donate "
+              "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+
+    if already_ongoing_withdrawal:
+        status["ongoing"] = False
+        return status
+
+    db.execute(
+        query="INSERT INTO withdrawal_donate (user_id, amount, receipt, donation_organization, name_of_donor) VALUE "
+              "(%s, %s, %s, %s, %s)",
+        args=[user_id, -int(kwargs['withdrawal_point']), kwargs['is_receipt'], kwargs['organization'],
+              kwargs['name_of_donor']]
+    )
+    history_content_name = f"{kwargs['organization']} 기부"
+    db.execute(
+        query="INSERT INTO point_history (user_id, point, contents) "
+              "VALUES (%s, %s, %s)",
+        args=[user_id, -int(kwargs['withdrawal_point']), history_content_name]
+    )
+    db.execute(
+        query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+        args=[int(kwargs['withdrawal_point']), user_id]
+    )
     db.commit()
     return status
 
