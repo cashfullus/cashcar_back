@@ -62,7 +62,7 @@ def admin_get_notice_list(page, count):
     result = db.getAdminAllNotice(count=int(count), per_page=per_page)
     item_count = db.executeOne(
         query="SELECT count(notice_id) as item_count "
-              "FROM notice_information WHERE is_removed = 0",
+              "FROM notice_information WHERE is_removed = 0 ORDER BY register_time DESC",
     )
     return result, item_count['item_count']
 
