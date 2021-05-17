@@ -406,7 +406,7 @@ def get_all_user_list(page, count):
               "resident_registration_number_front as date_of_birth, "
               "marketing, main_address, detail_address, deposit, "
               "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM user u LIMIT %s OFFSET %s",
+              "FROM user u  ORDER BY register_time DESC LIMIT %s OFFSET %s",
         args=[int(count), per_page]
     )
     item_count = db.executeOne(
