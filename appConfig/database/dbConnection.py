@@ -287,7 +287,7 @@ class Database:
             query="SELECT "
                   "notice_id, title, description, "
                   "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                  "FROM notice_information WHERE is_removed = 0 ORDER BY register_time LIMIT %s OFFSET %s",
+                  "FROM notice_information WHERE is_removed = 0 ORDER BY register_time DESC LIMIT %s OFFSET %s",
             args=[count, per_page]
         )
         rows = self.cursor.fetchall()
