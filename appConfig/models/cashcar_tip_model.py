@@ -18,6 +18,7 @@ def register(**kwargs):
         query="SELECT cash_car_tip_id FROM cash_car_tip ORDER BY register_time DESC LIMIT 1"
     )['cash_car_tip_id']
     db.commit()
+    thumbnail_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{last_insert_id}/{secure_filename(kwargs['thumbnail_image'].filename)}"
     directory = f"{BASE_IMAGE_LOCATION}/{last_insert_id}"
     for i in range(len(kwargs.get('image_description'))):
         image = kwargs['tip_images'][i]
@@ -25,10 +26,14 @@ def register(**kwargs):
         os.makedirs(directory, exist_ok=True)
         image.save(directory + "/" + secure_filename(image.filename))
         db.execute(
-            query="INSERT INTO cash_car_tip_images (cash_car_tip_id, image, description) VALUE "
-                  "(%s, %s, %s)",
-            args=[last_insert_id, db_url, kwargs['image_description'][i]]
+            query="INSERT INTO cash_car_tip_images (cash_car_tip_id, image) VALUE "
+                  "(%s, %s)",
+            args=[last_insert_id, db_url]
         )
+    db.execute(
+        query="UPDATE cash_car_tip SET thumbnail_image = %s WHERE cash_car_tip_id = %s",
+        args=[thumbnail_url, last_insert_id]
+    )
 
     db.commit()
     response_data = db.executeOne(
@@ -38,26 +43,14 @@ def register(**kwargs):
         args=last_insert_id
     )
     images = db.executeAll(
-        query="SELECT image, description FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+        query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
         args=last_insert_id
     )
     response_data['image_information'] = images
     return response_data
 
 
-def upload_thumbnail_image(image, tip_id):
-    db = Database()
-    db_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{tip_id}/{secure_filename(image.filename)}"
-    db.execute(
-        query="UPDATE cash_car_tip SET thumbnail_image = %s WHERE cash_car_tip_id = %s",
-        args=[db_url, tip_id]
-    )
-    directory = f"{BASE_IMAGE_LOCATION}/{tip_id}"
-    image.save(directory + "/" + secure_filename(image.filename))
-    db.commit()
-    return True
-
-
+# 캐시카팁 리스트
 def get_cash_car_tip_all(page, request_user, count=10):
     db = Database()
     per_page = (page-1) * count
@@ -65,7 +58,7 @@ def get_cash_car_tip_all(page, request_user, count=10):
         cash_car_tip_information = db.executeAll(
             query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
                   "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                  "FROM cash_car_tip LIMIT %s OFFSET %s",
+                  "FROM cash_car_tip ORDER BY register_time DESC LIMIT %s OFFSET %s",
             args=[count, per_page]
         )
         return cash_car_tip_information
@@ -73,13 +66,13 @@ def get_cash_car_tip_all(page, request_user, count=10):
         cash_car_tip_information = db.executeAll(
             query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
                   "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                  "FROM cash_car_tip LIMIT %s OFFSET %s",
+                  "FROM cash_car_tip ORDER BY register_time DESC LIMIT %s OFFSET %s",
             args=[count, per_page]
         )
         if cash_car_tip_information:
             for i in range(len(cash_car_tip_information)):
                 images = db.executeAll(
-                    query="SELECT image, description FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+                    query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
                     args=cash_car_tip_information[i]['cash_car_tip_id']
                 )
                 cash_car_tip_information[i]['image_information'] = images
@@ -102,14 +95,14 @@ def get_cash_car_tip_by_id(cash_car_tip_id):
     result = db.executeOne(
         query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM cash_car_tip WHERE cash_car_tip_id = %s",
+              "FROM cash_car_tip WHERE cash_car_tip_id = %s ORDER BY register_time DESC",
         args=cash_car_tip_id
     )
     if not result:
         return non_result
     else:
         images = db.executeAll(
-            query="SELECT image, description FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+            query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
             args=cash_car_tip_id
         )
         result['image_information'] = images

@@ -39,9 +39,6 @@ responses:
           type: array
           items:
             properties:
-              descipriotn:
-                type: string
-                description: 해당 이미지의 설명
               image:
                 type: string
                 description: 해당 설명의 이미지

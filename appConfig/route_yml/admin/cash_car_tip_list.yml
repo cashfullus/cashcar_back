@@ -30,6 +30,8 @@ responses:
     schema:
       type: object
       properties:
+        item_count:
+          type: integer
         data:
           type: array
           items:
@@ -50,9 +52,6 @@ responses:
                 type: array
                 items:
                   properties:
-                    description:
-                      type: string
-                      description: 이미지에 해당하는 설명
                     image:
                       type: string
                       description: 설명에 해당하는 이미지
