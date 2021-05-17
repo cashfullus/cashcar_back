@@ -145,6 +145,27 @@ def kakao_address_and():
     return render_template('kakao_address_and.html')
 
 
+# 캐시카팁 업로드
+@app.route("/upload/tip/image", methods=["POST"])
+@jwt_required()
+def tip_upload_image():
+    uuid = request.args.get('uuid')
+    image = request.files.get('image')
+    admin_user_id = request.headers['admin_user_id']
+    identity_ = get_jwt_identity()
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    allowed = allowed_image(image)
+    if allowed is False:
+        return jsonify({"status": False, "data": "Not Allowed Image"})
+
+    result = Tip.cash_car_tip_save_image(image=image, uuid=uuid)
+    return jsonify({"status": True, "data": result})
+
+
 # 이미지 업로드
 @app.route("/upload/image/<location>", methods=["POST"])
 @jwt_required()
@@ -411,7 +432,7 @@ def register_car():
                                                           )
                         if push_result['success'] >= 1:
                             User.saveAlarmHistory(user_id=result['vehicle_information']['user_id'],
-                                                  alarm_type="vehicle_register", required=0,
+                                                  alarm_type="vehicle_register", required=1,
                                                   description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
                                                   )
                 return jsonify({"status": True, "data": result}), 201

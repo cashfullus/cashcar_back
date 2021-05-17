@@ -114,3 +114,13 @@ def get_cash_car_tip_by_id(cash_car_tip_id):
         )
         result['image_information'] = images
         return result
+
+
+# 캐시카팁 이미지 저장 return url
+def cash_car_tip_save_image(image, uuid):
+    image_name = secure_filename(image.filename)
+    directory = f"{CASH_CAR_TIP_IMAGE_HOST}/{uuid}"
+    full_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{uuid}/{image_name}"
+    os.makedirs(directory, exist_ok=True)
+    image.save(full_url)
+    return full_url

@@ -121,12 +121,18 @@ def register(**kwargs):
     return result
 
 
+# 카카오 로그인
 # def kakao_login(**kwargs):
 #     db = Database()
 #     user = db.getLoginTypeUserByEmail(email=kwargs.get('email'), login_type='kakao')
 #     if user:
-
-
+#         login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
+#         return login_user
+#     else:
+#         sql = "INSERT INTO user(email, login_type, alarm, marketing) VALUES (%s, %s, %s, %s)"
+#         value_list = [kwargs['email'], kwargs['login_type'], kwargs['alarm'], kwargs['marketing']]
+#         db.execute(query=sql, args=value_list)
+#         jwt_token = create_access_token(identity=target_user["user_id"], expires_delta=False)
 
 
 # 로그인
@@ -326,7 +332,7 @@ def user_apply_id_by_ad_id(page, count, ad_id):
               "u.user_id, nickname, name, call_number, email, "
               "cast('resident_registration_number_back' as unsigned) as gender, "
               "resident_registration_number_front as birth_of_date, "
-              "car_number, vehicle_model_name, recruit_number, max_recruiting_count,"
+              "car_number, vehicle_model_name, brand,recruit_number, max_recruiting_count,"
               "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time "
               "FROM ad_user_apply as aua "
               "JOIN user u on aua.user_id = u.user_id "

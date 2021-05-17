@@ -71,3 +71,5 @@ responses:
               recruit_number:
                 type: integer
                 description: 모집번호
+              brand:
+                type: string

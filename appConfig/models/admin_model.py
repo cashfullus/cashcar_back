@@ -10,6 +10,10 @@ from datetime import datetime, date, timedelta
 import os
 from notification.user_push_nofitication import one_cloud_messaging
 
+from werkzeug.utils import secure_filename
+
+CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/cash_car_tip"
+
 
 def calculate_age(born):
     today = date.today()
