@@ -3565,3 +3565,152 @@ ImportError: No module named 'home'
   File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/imp.py", line 296, in find_module
     raise ImportError(_ERR_MSG.format(name), name=name)
 ImportError: No module named 'Users'
+Exception on /admin/cash-car-tip/register [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1313, in cash_car_tip_register
+    result = Tip.register(**data)
+  File "./models/cashcar_tip_model.py", line 57, in register
+    save_tip_images(cash_car_tip_id=last_insert_id, **kwargs)
+  File "./models/cashcar_tip_model.py", line 13, in save_tip_images
+    kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 3066, in save
+    dst = open(dst, "wb")
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/9/artiom-vallat-fjmD_UZOtBA-unsplash.jpg'
+Exception on /admin/cash-car-tip [DELETE]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1346, in cash_car_tip_information
+    result = Tip.delete_cash_car_tip(cash_car_tip_id=tip_id)
+  File "./models/cashcar_tip_model.py", line 152, in delete_cash_car_tip
+    os.remove(directory)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/9'
+Exception on /admin/cash-car-tip [DELETE]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1346, in cash_car_tip_information
+    result = Tip.delete_cash_car_tip(cash_car_tip_id=tip_id)
+  File "./models/cashcar_tip_model.py", line 152, in delete_cash_car_tip
+    os.remove(directory)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/9'
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+  File "./models/cashcar_tip_model.py", line 140, in modify_cash_car_tip
+    save_tip_images(cash_car_tip_id=cash_car_tip_id, **kwargs)
+  File "./models/cashcar_tip_model.py", line 13, in save_tip_images
+    kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 3066, in save
+    dst = open(dst, "wb")
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/9/artiom-vallat-fjmD_UZOtBA-unsplash.jpg'
+Exception on /admin/cash-car-tip/register [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1313, in cash_car_tip_register
+    result = Tip.register(**data)
+  File "./models/cashcar_tip_model.py", line 58, in register
+    save_tip_images(cash_car_tip_id=last_insert_id, **kwargs)
+  File "./models/cashcar_tip_model.py", line 14, in save_tip_images
+    kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 3066, in save
+    dst = open(dst, "wb")
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/10/artiom-vallat-fjmD_UZOtBA-unsplash.jpg'
