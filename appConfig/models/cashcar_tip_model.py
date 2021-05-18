@@ -12,11 +12,11 @@ def save_tip_images(cash_car_tip_id, **kwargs):
     db = Database()
     directory = f"{BASE_IMAGE_LOCATION}/{cash_car_tip_id}"
     kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
+    os.makedirs(directory, exist_ok=True)
     order_cnt = 1
     for i in range(len(kwargs['tip_images'])):
         image = kwargs['tip_images'][i]
         db_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{cash_car_tip_id}/{secure_filename(image.filename)}"
-        os.makedirs(directory, exist_ok=True)
         image.save(directory + "/" + secure_filename(image.filename))
         db.execute(
             query="INSERT INTO cash_car_tip_images (cash_car_tip_id, image, `order`) VALUE "
