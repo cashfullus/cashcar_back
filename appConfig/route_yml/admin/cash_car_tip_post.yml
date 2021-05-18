@@ -1,0 +1,66 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: tip_id
+    in: query
+    type: integer
+    required: true
+
+  - name: tip_images
+    in: form
+    type: Multi-Form-Data
+    required: true
+
+  - name: thumbnail_image
+    in: form
+    type: Multi-Form-Data
+    required: true
+
+  - name: title
+    in: form
+    type: string
+    required: true
+
+  - name: main_description
+    in: form
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: 업데이트 성공
+    schema:
+      type: object
+      properties:
+        cash_car_tip_id:
+          type: integer
+        main_description:
+          type: string
+          description: 메인 설명(리스트에서 보여줄 설명)
+        register_time:
+          type: string
+        thumbnail_image:
+          type: string
+          description: 썸네일
+        title:
+          type: string
+        image_information:
+          type: array
+          items:
+            properties:
+              image:
+                type: string
+                description: 해당 설명의 이미지
