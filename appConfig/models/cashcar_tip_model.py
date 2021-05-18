@@ -68,7 +68,7 @@ def register(**kwargs):
 # 캐시카팁 리스트
 def get_cash_car_tip_all(page, request_user, count=10):
     db = Database()
-    per_page = (page-1) * count
+    per_page = (page - 1) * count
     if request_user == "user":
         cash_car_tip_information = db.executeAll(
             query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
@@ -124,6 +124,7 @@ def get_cash_car_tip_by_id(cash_car_tip_id):
         return result
 
 
+# 캐시카팁 수정
 def modify_cash_car_tip(cash_car_tip_id, **kwargs):
     db = Database()
     tip_info = db.getOneCashCarTipById(cash_car_tip_id=cash_car_tip_id)
@@ -139,5 +140,26 @@ def modify_cash_car_tip(cash_car_tip_id, **kwargs):
         save_tip_images(cash_car_tip_id=cash_car_tip_id, **kwargs)
         result = tip_info_response_data(cash_car_tip_id=cash_car_tip_id)
         return result
+    else:
+        return False
+
+
+# 캐시카팁 삭제
+def delete_cash_car_tip(cash_car_tip_id):
+    db = Database()
+    tip_info = db.getOneCashCarTipById(cash_car_tip_id=cash_car_tip_id)
+    directory = f"{BASE_IMAGE_LOCATION}/{cash_car_tip_id}"
+    os.remove(directory)
+    if tip_info:
+        db.execute(
+            query="DELETE FROM cash_car_tip WHERE cash_car_tip_id = %s",
+            args=cash_car_tip_id
+        )
+        db.execute(
+            query="DELETE FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+            args=cash_car_tip_id
+        )
+        db.commit()
+        return True
     else:
         return False

@@ -1,0 +1,29 @@
+tags:
+  - Admin
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: integer
+    required: true
+
+  - name: tip_id
+    in: query
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: boolean

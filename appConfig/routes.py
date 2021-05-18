@@ -1316,10 +1316,11 @@ def cash_car_tip_register():
 
 
 # 추가의 경우 이미지 파일
-@app.route('/admin/cash-car-tip', methods=['GET', 'POST'])
+@app.route('/admin/cash-car-tip', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 @swag_from('route_yml/admin/cash_car_tip_list.yml', methods=['GET'])
 @swag_from('route_yml/admin/cash_car_tip_post.yml', methods=['POST'])
+@swag_from('route_yml/admin/cash_car_tip_delete.yml', methods=['DELETE'])
 def cash_car_tip_information():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -1338,6 +1339,11 @@ def cash_car_tip_information():
         tip_id = request.args.get('tip_id', 0)
         data = get_cash_car_tip_request_data(request)
         result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+        return jsonify({"data": result})
+
+    elif request.method == 'DELETE':
+        tip_id = request.args.get('tip_id', 0)
+        result = Tip.delete_cash_car_tip(cash_car_tip_id=tip_id)
         return jsonify({"data": result})
 
 
