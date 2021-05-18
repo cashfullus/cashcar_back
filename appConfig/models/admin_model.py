@@ -349,8 +349,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     db.execute(
                         query="UPDATE ad_mission_card_user "
                               "SET status = 'fail', mission_fail_count =  mission_fail_count + 1 "
-                              "WHERE ad_mission_card_id = %s",
-                        args=mission_card_id
+                              "WHERE ad_mission_card_id = %s AND ad_user_apply_id = %s",
+                        args=[mission_card_id, ad_apply_id]
                     )
                     db.saveStatusMessage(
                         ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
@@ -379,8 +379,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 db.execute(
                     query="UPDATE ad_mission_card_user "
                           "SET status = 'reject', mission_fail_count = mission_fail_count + 1 "
-                          "WHERE ad_mission_card_id = %s",
-                    args=mission_card_id
+                          "WHERE ad_mission_card_id = %s AND ad_user_apply_id = %s",
+                    args=[mission_card_id, ad_apply_id]
                 )
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
