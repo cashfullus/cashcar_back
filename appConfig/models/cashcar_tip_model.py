@@ -21,7 +21,7 @@ def register(**kwargs):
     thumbnail_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{last_insert_id}/{secure_filename(kwargs['thumbnail_image'].filename)}"
     directory = f"{BASE_IMAGE_LOCATION}/{last_insert_id}"
     order_cnt = 1
-    for i in range(len(kwargs.get('image_description'))):
+    for i in range(len(kwargs['tip_images'])):
         image = kwargs['tip_images'][i]
         db_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{last_insert_id}/{secure_filename(image.filename)}"
         os.makedirs(directory, exist_ok=True)
