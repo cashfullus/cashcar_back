@@ -135,6 +135,7 @@ class Database:
               "FROM ad_user_apply aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "JOIN user u on aua.user_id = u.user_id " \
+              "WHERE status IN ('stand_by', 'accept', 'success', 'reject') " \
               "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail'), aua.register_time DESC " \
               "LIMIT %s OFFSET %s"
         self.cursor.execute(query=sql, args=[count, per_page])
