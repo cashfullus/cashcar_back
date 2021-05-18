@@ -11,8 +11,8 @@ CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/c
 def save_tip_images(cash_car_tip_id, **kwargs):
     db = Database()
     directory = f"{BASE_IMAGE_LOCATION}/{cash_car_tip_id}"
-    kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
     os.makedirs(directory, exist_ok=True)
+    kwargs['thumbnail_image'].save(directory + "/" + secure_filename(kwargs['thumbnail_image'].filename))
     order_cnt = 1
     for i in range(len(kwargs['tip_images'])):
         image = kwargs['tip_images'][i]
