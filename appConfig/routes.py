@@ -31,7 +31,7 @@ logging.basicConfig(filename="log.txt", level=logging.DEBUG, format='%(asctime)s
 app = Flask(__name__, template_folder='templates')
 app.config["JWT_SECRET_KEY"] = "databasesuperuserset"
 app.config['JWT_TOKEN_LOCATION'] = 'headers'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024
 app.config['MAIL_SERVER'] = "smtp.gmail.com"
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'cashfullus@gmail.com'
@@ -121,14 +121,29 @@ def marketing_information():
     return render_template('marketing_information.html')
 
 
-@app.route('/image/<location>/<idx>/<image_file>')
+# 이미지 send
+@app.route('/image/<location>/<idx>/<image_file>', methods=['GET', 'DELETE'])
 @swag_from('route_yml/image/get_image.yml')
 def get_image(location, idx, image_file):
-    try:
-        image_file = f"static/image/{location}/{idx}/{image_file}"
-        return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
-    except FileNotFoundError:
-        return jsonify({"status": False, "data": "Not Found Image"}), 404
+    if request.method == 'GET':
+        try:
+            image_file = f"static/image/{location}/{idx}/{image_file}"
+            return send_file(image_file, mimetype='image/' + image_file.split('.')[-1])
+        except FileNotFoundError:
+            return jsonify({"status": False, "data": "Not Found Image"}), 404
+    elif request.method == 'DELETE':
+        try:
+            result = System.delete_image(location=location, idx=idx, image=image_file)
+            if result:
+                file_path = f"static/image/{location}/{idx}/{image_file}"
+                os.remove(file_path)
+                return jsonify({"status": True})
+            else:
+                return jsonify({"status": False})
+        except FileNotFoundError:
+            return jsonify({"status": False, "data": "Not Found Image"}), 404
+
+
 
 
 # 지도 API (Daum postcode)
@@ -1296,6 +1311,7 @@ def cash_car_tip_register():
     return jsonify({"data": result})
 
 
+# 추가의 경우 이미지 파일
 @app.route('/admin/cash-car-tip', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/admin/cash_car_tip_list.yml', methods=['GET'])
@@ -1309,9 +1325,28 @@ def cash_car_tip_information():
 
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 10, type=int)
-    result, item_count = Tip.get_cash_car_tip_all(page=page, request_user='admin', count=count)
-
-    return jsonify({"data": result, "item_count": item_count})
+    if request.method == 'GET':
+        result, item_count = Tip.get_cash_car_tip_all(page=page, request_user='admin', count=count)
+        return jsonify({"data": result, "item_count": item_count})
+    # elif request.method == 'POST':
+    #     tip_id = request.args.get('tip_id', 0)
+    #     thumbnail_image = request.files.get('thumbnail_image')
+    #     tip_images = request.files.getlist('tip_images')
+    #     order_filename_list = json.loads(request.form.get('order_filename_list'))  # 존재하지 않을때 []
+    #     allowed_thumbnail = True
+    #     allowed_tip_images = [True]
+    #     if thumbnail_image is not None:
+    #         allowed_thumbnail = allowed_image(thumbnail_image)
+    #     if tip_images:
+    #         allowed_tip_images = allowed_files(tip_images)
+    #     # if allowed_thumbnail is not False or False not in allowed_tip_images:
+    #     #     result = Tip.modify_cash_car_tip(thumbnail_image=thumbnail_image,
+    #     #                                      tip_images=tip_images,
+    #     #                                      order_filename_list=order_filename_list,
+    #     #                                      tip_id=tip_id
+    #     #                                      )
+    #     #     return jsonify({"data": result})
+    #     return jsonify({"data": "qwd"})
 
 
 # 유저 프로필 어드민 수정

@@ -20,16 +20,20 @@ def register(**kwargs):
     db.commit()
     thumbnail_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{last_insert_id}/{secure_filename(kwargs['thumbnail_image'].filename)}"
     directory = f"{BASE_IMAGE_LOCATION}/{last_insert_id}"
+    order_cnt = 1
     for i in range(len(kwargs.get('image_description'))):
         image = kwargs['tip_images'][i]
         db_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{last_insert_id}/{secure_filename(image.filename)}"
         os.makedirs(directory, exist_ok=True)
         image.save(directory + "/" + secure_filename(image.filename))
         db.execute(
-            query="INSERT INTO cash_car_tip_images (cash_car_tip_id, image) VALUE "
-                  "(%s, %s)",
-            args=[last_insert_id, db_url]
+            query="INSERT INTO cash_car_tip_images (cash_car_tip_id, image, `order`) VALUE "
+                  "(%s, %s, %s)",
+            args=[last_insert_id, db_url, order_cnt]
+
         )
+        order_cnt += 1
+
     db.execute(
         query="UPDATE cash_car_tip SET thumbnail_image = %s WHERE cash_car_tip_id = %s",
         args=[thumbnail_url, last_insert_id]
@@ -72,7 +76,7 @@ def get_cash_car_tip_all(page, request_user, count=10):
         if cash_car_tip_information:
             for i in range(len(cash_car_tip_information)):
                 images = db.executeAll(
-                    query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+                    query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s ORDER BY `order`",
                     args=cash_car_tip_information[i]['cash_car_tip_id']
                 )
                 cash_car_tip_information[i]['image_information'] = images
@@ -102,18 +106,28 @@ def get_cash_car_tip_by_id(cash_car_tip_id):
         return non_result
     else:
         images = db.executeAll(
-            query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+            query="SELECT image FROM cash_car_tip_images WHERE cash_car_tip_id = %s ORDER BY `order`",
             args=cash_car_tip_id
         )
         result['image_information'] = images
         return result
 
 
-# 캐시카팁 이미지 저장 return url
-def cash_car_tip_save_image(image, uuid):
-    image_name = secure_filename(image.filename)
-    directory = f"{CASH_CAR_TIP_IMAGE_HOST}/{uuid}"
-    full_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{uuid}/{image_name}"
-    os.makedirs(directory, exist_ok=True)
-    image.save(full_url)
-    return full_url
+# def modify_cash_car_tip(thumbnail_image, tip_images, order_filename_list, tip_id):
+#     db = Database()
+#     tip_info = db.executeOne(
+#         query="SELECT * FROM cash_car_tip WHERE cash_car_tip_id = %s",
+#         args=tip_id
+#     )
+#     if tip_info:
+#         directory = f"{BASE_IMAGE_LOCATION}/{tip_id}"
+#         os.makedirs(directory, exist_ok=True)
+#         if thumbnail_image:
+#             thumbnail_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{tip_id}/{secure_filename(thumbnail_image.filename)}"
+#             db.execute(
+#                 query="UPDATE cash_car_tip SET thumbnail_image = %s WHERE cash_car_tip_id = %s",
+#                 args=[thumbnail_url, tip_id]
+#             )
+#             thumbnail_image.save(directory + "/" + secure_filename(thumbnail_image.filename))
+#
+#         if tip_images:
