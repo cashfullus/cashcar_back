@@ -2,6 +2,7 @@ from database.dbConnection import Database
 from werkzeug.utils import secure_filename
 
 import os
+import shutil
 
 BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/cash_car_tip"
 CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/cash_car_tip"
@@ -149,7 +150,8 @@ def delete_cash_car_tip(cash_car_tip_id):
     db = Database()
     tip_info = db.getOneCashCarTipById(cash_car_tip_id=cash_car_tip_id)
     directory = f"{BASE_IMAGE_LOCATION}/{cash_car_tip_id}"
-    os.remove(directory)
+    if os.path.isdir(directory):
+        shutil.rmtree(directory)
     if tip_info:
         db.execute(
             query="DELETE FROM cash_car_tip WHERE cash_car_tip_id = %s",
