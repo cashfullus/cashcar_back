@@ -352,6 +352,12 @@ class Database:
         rows = self.cursor.fetchall()
         return rows
 
+    def getOneCashCarTipById(self, cash_car_tip_id):
+        self.cursor.execute(query="SELECT * FROM cash_car_tip WHERE cash_car_tip_id = %s", args=cash_car_tip_id)
+        row = self.cursor.fetchone()
+        return row
+
+
 
 
 

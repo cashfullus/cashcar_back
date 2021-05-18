@@ -1282,17 +1282,7 @@ def get_withdrawal_donate_point_all():
             return jsonify({"data": False})
 
 
-@app.route('/admin/cash-car-tip/register', methods=['POST'])
-@jwt_required()
-@swag_from('route_yml/admin/cash_car_tip_register.yml')
-def cash_car_tip_register():
-    identity_ = get_jwt_identity()
-    admin_user_id = request.headers['admin_user_id']
-    # 어드민 권한 및 사용자 확인
-    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
-    if status is not True:
-        return jsonify(status), code
-
+def get_cash_car_tip_request_data(request):
     tip_images = request.files.getlist("tip_images")
     thumbnail_image = request.files.get('thumbnail_image')
     allowed_tips = allowed_files(tip_images)
@@ -1305,7 +1295,21 @@ def cash_car_tip_register():
         "tip_images": tip_images,
         "thumbnail_image": thumbnail_image
     }
+    return data
 
+
+@app.route('/admin/cash-car-tip/register', methods=['POST'])
+@jwt_required()
+@swag_from('route_yml/admin/cash_car_tip_register.yml')
+def cash_car_tip_register():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    data = get_cash_car_tip_request_data(request)
     result = Tip.register(**data)
 
     return jsonify({"data": result})
@@ -1328,25 +1332,12 @@ def cash_car_tip_information():
     if request.method == 'GET':
         result, item_count = Tip.get_cash_car_tip_all(page=page, request_user='admin', count=count)
         return jsonify({"data": result, "item_count": item_count})
-    # elif request.method == 'POST':
-    #     tip_id = request.args.get('tip_id', 0)
-    #     thumbnail_image = request.files.get('thumbnail_image')
-    #     tip_images = request.files.getlist('tip_images')
-    #     order_filename_list = json.loads(request.form.get('order_filename_list'))  # 존재하지 않을때 []
-    #     allowed_thumbnail = True
-    #     allowed_tip_images = [True]
-    #     if thumbnail_image is not None:
-    #         allowed_thumbnail = allowed_image(thumbnail_image)
-    #     if tip_images:
-    #         allowed_tip_images = allowed_files(tip_images)
-    #     # if allowed_thumbnail is not False or False not in allowed_tip_images:
-    #     #     result = Tip.modify_cash_car_tip(thumbnail_image=thumbnail_image,
-    #     #                                      tip_images=tip_images,
-    #     #                                      order_filename_list=order_filename_list,
-    #     #                                      tip_id=tip_id
-    #     #                                      )
-    #     #     return jsonify({"data": result})
-    #     return jsonify({"data": "qwd"})
+
+    elif request.method == 'POST':
+        tip_id = request.args.get('tip_id', 0)
+        data = get_cash_car_tip_request_data(request)
+        result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+        return jsonify({"data": result})
 
 
 # 유저 프로필 어드민 수정
