@@ -2834,3 +2834,372 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 1463, in __getitem__
     return _unicodify_header_value(self.environ["HTTP_" + key])
 KeyError: 'HTTP_ADMIN_USER_ID'
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 613, in connect
+    sock = socket.create_connection(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/socket.py", line 808, in create_connection
+    raise err
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/socket.py", line 796, in create_connection
+    sock.connect(sa)
+socket.timeout: timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1306, in cash_car_tip_information
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 859, in admin_allowed_user_check
+    allowed_user = Admin.allowed_in_role_user(admin_user_id)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/admin_model.py", line 24, in allowed_in_role_user
+    db = Database()
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 7, in __init__
+    self.db = pymysql.connect(host='101.101.217.231',
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 353, in __init__
+    self.connect()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/connections.py", line 664, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on '101.101.217.231' (timed out)")
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    del_images_url = json.loads(request.form.getlist('delete_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not list
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    del_images_url = json.loads(request.form.getlist('delete_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not list
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1317, in cash_car_tip_information
+    del_images_url = json.loads(request.form.getlist('delete_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not list
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1317, in cash_car_tip_information
+    del_images_url = json.loads(request.form.getlist('delete_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not list
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    loads_images_url = json.loads(request.form.getlist('delete_image_url')[0])
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 1 column 12 (char 11)
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    loads_images_url = json.loads(json.dumps(request.form.getlist('delete_image_url'))[0])
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 2 (char 1)
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    loads_images_url = json.loads(request.form.get('del_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    loads_images_url = json.loads(request.form.get('del_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1316, in cash_car_tip_information
+    loads_images_url = json.load(request.form.get('del_image_url'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+AttributeError: 'NoneType' object has no attribute 'read'
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1319, in cash_car_tip_information
+    print(loads_image_url)
+NameError: name 'loads_image_url' is not defined
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1320, in cash_car_tip_information
+    order_filname_list = json.loads(request.form.getlist('order_filename_list'))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/json/__init__.py", line 341, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+TypeError: the JSON object must be str, bytes or bytearray, not list
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1341, in cash_car_tip_information
+    print(tip_images.get("cat.jpg"))
+AttributeError: 'list' object has no attribute 'get'
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 1341, in cash_car_tip_information
+    print(tip_images.__getitem__('cat.jpg'))
+TypeError: list indices must be integers or slices, not str
