@@ -1336,13 +1336,13 @@ def cash_car_tip_information():
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
-        tip_id = request.args.get('tip_id', 0)
+        tip_id = request.args.get('cash_car_tip_id', 0)
         data = get_cash_car_tip_request_data(request)
         result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
         return jsonify({"data": result})
 
     elif request.method == 'DELETE':
-        tip_id = request.args.get('tip_id', 0)
+        tip_id = request.args.get('cash_car_tip_id', 0)
         result = Tip.delete_cash_car_tip(cash_car_tip_id=tip_id)
         return jsonify({"data": result})
 
