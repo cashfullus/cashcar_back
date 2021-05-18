@@ -1297,7 +1297,7 @@ def cash_car_tip_register():
     thumbnail_image = request.files.get('thumbnail_image')
     allowed_tips = allowed_files(tip_images)
     allowed_thumbnail = allowed_image(thumbnail_image)
-    if False in allowed_tips or False in allowed_thumbnail:
+    if False in allowed_tips or allowed_thumbnail is False:
         return jsonify({"status": "Not Allowed Image"}), 405
     data = {
         "title": request.form.get('title'),
