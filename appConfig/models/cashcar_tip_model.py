@@ -130,6 +130,12 @@ def modify_cash_car_tip(cash_car_tip_id, **kwargs):
     db = Database()
     tip_info = db.getOneCashCarTipById(cash_car_tip_id=cash_car_tip_id)
     if tip_info:
+        db.execute(
+            query="DELETE FROM cash_car_tip_images WHERE cash_car_tip_id = %s",
+            args=cash_car_tip_id
+
+        )
+        db.commit()
         thumbnail_url = f"{CASH_CAR_TIP_IMAGE_HOST}/{cash_car_tip_id}/" \
                         f"{secure_filename(kwargs['thumbnail_image'].filename)}"
         db.execute(
