@@ -1319,7 +1319,7 @@ def cash_car_tip_register():
 @app.route('/admin/cash-car-tip', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/admin/cash_car_tip_list.yml', methods=['GET'])
-@swag_from('route_yml/admin/')
+@swag_from('route_yml/admin/cash_car_tip_post.yml', methods=['POST'])
 def cash_car_tip_information():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']

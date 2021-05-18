@@ -3384,6 +3384,13 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 575, in detect_by_bom
     with open(path, 'rb') as f:
 IsADirectoryError: [Errno 21] Is a directory: '/home/cashcaruser21/CashCar/appConfig/route_yml/admin/'
+Exception on /apispec_1.json [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 546, in load_from_file
+    enc = detect_by_bom(swag_path)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 575, in detect_by_bom
+    with open(path, 'rb') as f:
+IsADirectoryError: [Errno 21] Is a directory: '/Users/park/SolutionProjects/basicFlask/appConfig/route_yml/admin/'
 
 During handling of the above exception, another exception occurred:
 
@@ -3393,6 +3400,11 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 575, in detect_by_bom
     with open(path, 'rb') as f:
 IsADirectoryError: [Errno 21] Is a directory: '/home/cashcaruser21/CashCar/appConfig/route_yml/admin/'
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 555, in load_from_file
+    enc = detect_by_bom(swag_path)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 575, in detect_by_bom
+    with open(path, 'rb') as f:
+IsADirectoryError: [Errno 21] Is a directory: '/Users/park/SolutionProjects/basicFlask/appConfig/route_yml/admin/'
 
 During handling of the above exception, another exception occurred:
 
@@ -3435,6 +3447,44 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 575, in detect_by_bom
     with open(path, 'rb') as f:
 IsADirectoryError: [Errno 21] Is a directory: '/home/cashcaruser21/CashCar/appConfig/route_yml/admin/'
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/views.py", line 89, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/views.py", line 163, in dispatch_request
+    return meth(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/base.py", line 133, in get
+    return jsonify(self.loader())
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/base.py", line 399, in get_apispecs
+    specs = get_specs(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 153, in get_specs
+    doc_summary, doc_description, doc_swag = parse_docstring(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 600, in parse_docstring
+    full_doc = load_from_file(swag_path, swag_type)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 568, in load_from_file
+    site_package = imp.find_module(path[0])[1]
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/imp.py", line 296, in find_module
+    raise ImportError(_ERR_MSG.format(name), name=name)
+ImportError: No module named 'Users'
+Exception on /apispec_1.json [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 546, in load_from_file
+    enc = detect_by_bom(swag_path)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 575, in detect_by_bom
+    with open(path, 'rb') as f:
+IsADirectoryError: [Errno 21] Is a directory: '/Users/park/SolutionProjects/basicFlask/appConfig/route_yml/admin/'
 
 During handling of the above exception, another exception occurred:
 
@@ -3444,6 +3494,11 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 575, in detect_by_bom
     with open(path, 'rb') as f:
 IsADirectoryError: [Errno 21] Is a directory: '/home/cashcaruser21/CashCar/appConfig/route_yml/admin/'
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 555, in load_from_file
+    enc = detect_by_bom(swag_path)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 575, in detect_by_bom
+    with open(path, 'rb') as f:
+IsADirectoryError: [Errno 21] Is a directory: '/Users/park/SolutionProjects/basicFlask/appConfig/route_yml/admin/'
 
 During handling of the above exception, another exception occurred:
 
@@ -3479,3 +3534,34 @@ Traceback (most recent call last):
   File "/usr/lib64/python3.6/imp.py", line 297, in find_module
     raise ImportError(_ERR_MSG.format(name), name=name)
 ImportError: No module named 'home'
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/views.py", line 89, in view
+    return self.dispatch_request(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/views.py", line 163, in dispatch_request
+    return meth(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/base.py", line 133, in get
+    return jsonify(self.loader())
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/base.py", line 399, in get_apispecs
+    specs = get_specs(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 153, in get_specs
+    doc_summary, doc_description, doc_swag = parse_docstring(
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 600, in parse_docstring
+    full_doc = load_from_file(swag_path, swag_type)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 568, in load_from_file
+    site_package = imp.find_module(path[0])[1]
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/imp.py", line 296, in find_module
+    raise ImportError(_ERR_MSG.format(name), name=name)
+ImportError: No module named 'Users'
