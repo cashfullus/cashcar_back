@@ -90,7 +90,7 @@ def admin_review_mission_list(page, count):
               "aua.ad_user_apply_id, amcu.ad_mission_card_id as mission_card_id, "
               "ai.title, amc.mission_name, u.name, u.call_number, "
               "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
-              "amc.mission_type "
+              "amc.mission_type, `order` "
               "FROM ad_user_apply aua "
               "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
