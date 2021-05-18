@@ -13,7 +13,7 @@ parameters:
     type: integer
     required: true
 
-  - name: tip_id
+  - name: cash_car_tip_id
     in: query
     type: integer
     required: true
