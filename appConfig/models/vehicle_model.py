@@ -44,34 +44,44 @@ def register_vehicle(**kwargs):
 
     else:
         pass
-
+    # 현재 진행중인 광고가 있을경우에는 supporters 미선정
+    check_apply = db.executeOne(
+        query="SELECT * FROM ad_user_apply WHERE status IN('stand_by', 'accept') AND user_id = %s",
+        args=kwargs['user_id']
+    )
     all_vehicle = db.executeAll(
         query="SELECT vehicle_id FROM vehicle WHERE user_id = %s",
         args=kwargs['user_id']
     )
-
-    if all_vehicle:
-        if int(kwargs['supporters']) == 1:
-            for i in range(len(all_vehicle)):
-                db.execute(
-                    query="UPDATE vehicle SET supporters = 0 WHERE vehicle_id = %s",
-                    args=all_vehicle[i]['vehicle_id']
-                )
-    # fcm_token get
-    fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
-    # INSERTv
-    sql = "INSERT INTO vehicle " \
-          "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \
-          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    # kwargs 가 아닌 args 인 value만 필요하기때문에 val만 리스트로 만들어서 전달
-    # kwargs 로 보내도 확인 결과 똑같은 과정을 진행하여 value를 가져오는것으로 확인
     value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['is_foreign_car'],
                   kwargs['brand'], kwargs['vehicle_model_name'],
                   kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
+    if not check_apply:
+        if all_vehicle:
+            if int(kwargs['supporters']) == 1:
+                for i in range(len(all_vehicle)):
+                    db.execute(
+                        query="UPDATE vehicle SET supporters = 0 WHERE vehicle_id = %s",
+                        args=all_vehicle[i]['vehicle_id']
+                    )
+    else:
+        value_list = [kwargs['user_id'], 0, kwargs['is_foreign_car'],
+                      kwargs['brand'], kwargs['vehicle_model_name'],
+                      kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
+
+    # fcm_token get
+    fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
+    # INSERT
+    sql = "INSERT INTO vehicle " \
+          "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \
+          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     db.execute(query=sql, args=value_list)
     db.commit()
     result["vehicle_information"] = kwargs
+
     return result, fcm_token
+
+
 
 
 # 사용자 ID로 등록한 차량 GET ALL    차량삭제 유무 확인
