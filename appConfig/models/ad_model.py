@@ -323,10 +323,6 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
                       "VALUES (%s, %s, %s,%s, NOW())",
                 args=[user_id, ad_id, vehicle['vehicle_id'], int(target_ad['recruiting_count']) + 1]
             )
-            db.execute(
-                query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
-                args=ad_id
-            )
             history_name = f"{delivery_area['title']} 광고 신청"
             db.execute(
                 query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
