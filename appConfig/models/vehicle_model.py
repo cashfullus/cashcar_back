@@ -54,7 +54,8 @@ def register_vehicle(**kwargs):
         args=kwargs['user_id']
     )
     if check_apply:
-        value_list = [kwargs['user_id'], 0, kwargs['is_foreign_car'],
+        kwargs['supporters'] = 0
+        value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['is_foreign_car'],
                       kwargs['brand'], kwargs['vehicle_model_name'],
                       kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
     else:
