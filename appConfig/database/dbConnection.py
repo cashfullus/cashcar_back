@@ -129,7 +129,7 @@ class Database:
         sql = "SELECT " \
               "title, owner_name, name, main_address, detail_address, " \
               "aua.recruit_number, max_recruiting_count, aua.status, " \
-              "u.user_id, aua.ad_user_apply_id, call_number," \
+              "u.user_id, aua.ad_user_apply_id, call_number, email, " \
               "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
               "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time " \
               "FROM ad_user_apply aua " \

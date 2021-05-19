@@ -553,8 +553,15 @@ def update_ad_apply_status(**kwargs):
                         args=apply_user_list[i]
                     )
                 db.execute(
-                    query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
+                    query="UPDATE ad_user_apply SET status = %s, reject_status_time = NOW() "
+                          "WHERE ad_user_apply_id = %s",
                     args=[kwargs['status'], apply_user_list[i]]
+                )
+                db.execute(
+                    query="UPDATE ad_user_apply "
+                          "SET recruit_number = recruit_number - 1 "
+                          "WHERE ad_user_apply_id NOT IN (%s) AND ad_id = %s AND recruit_number > %s",
+                    args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
                 )
                 db.execute(
                     query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
@@ -564,12 +571,6 @@ def update_ad_apply_status(**kwargs):
                     query="INSERT INTO ad_mission_reason (ad_user_apply_id, reason, title, is_read, message_type) "
                           "VALUE (%s, %s, %s, %s, %s)",
                     args=[apply_user_list[i], reason, title, 0, "apply_reject"]
-                )
-                db.execute(
-                    query="UPDATE ad_user_apply "
-                          "SET recruit_number = recruit_number - 1 "
-                          "WHERE ad_user_apply_id NOT IN (%s) AND ad_id = %s AND recruit_number > %s",
-                    args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
                 )
                 user_info = db.getOneFcmToken(user_id=apply_status['user_id'])
                 if user_info['alarm'] == 1:
@@ -619,7 +620,8 @@ def update_ad_apply_status(**kwargs):
                                       "stand_by", ]
                             )
                     db.execute(
-                        query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() WHERE ad_user_apply_id = %s",
+                        query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() "
+                              "WHERE ad_user_apply_id = %s",
                         args=[kwargs['status'], apply_user_list[i]]
                     )
                     history_name = f"{apply_status['title']} 광고 신청 승인"

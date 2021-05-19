@@ -63,6 +63,8 @@ responses:
                 description: reject(거절), success(성공 or 종료), accept(승인), stand_by(대기), fail(실패)
               call_number:
                 type: string
+              email:
+                type: string
 
 
 
