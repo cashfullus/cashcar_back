@@ -556,7 +556,8 @@ def update_ad_apply_status(**kwargs):
                 db.execute(
                     query="UPDATE ad_user_apply "
                           "SET recruit_number = recruit_number - 1 "
-                          "WHERE ad_user_apply_id NOT IN (%s) AND ad_id = %s AND recruit_number > %s",
+                          "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success') "
+                          "AND ad_id = %s AND recruit_number > %s",
                     args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
                 )
                 db.execute(
