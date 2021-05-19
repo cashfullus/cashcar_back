@@ -53,10 +53,15 @@ def register_vehicle(**kwargs):
         query="SELECT vehicle_id FROM vehicle WHERE user_id = %s",
         args=kwargs['user_id']
     )
-    value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['is_foreign_car'],
-                  kwargs['brand'], kwargs['vehicle_model_name'],
-                  kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
-    if not check_apply:
+    if check_apply:
+        value_list = [kwargs['user_id'], 0, kwargs['is_foreign_car'],
+                      kwargs['brand'], kwargs['vehicle_model_name'],
+                      kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
+    else:
+        value_list = [kwargs['user_id'], kwargs['supporters'], kwargs['is_foreign_car'],
+                      kwargs['brand'], kwargs['vehicle_model_name'],
+                      kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
+
         if all_vehicle:
             if int(kwargs['supporters']) == 1:
                 for i in range(len(all_vehicle)):
@@ -64,10 +69,6 @@ def register_vehicle(**kwargs):
                         query="UPDATE vehicle SET supporters = 0 WHERE vehicle_id = %s",
                         args=all_vehicle[i]['vehicle_id']
                     )
-    else:
-        value_list = [kwargs['user_id'], 0, kwargs['is_foreign_car'],
-                      kwargs['brand'], kwargs['vehicle_model_name'],
-                      kwargs['year'], kwargs['car_number'], kwargs['owner_relationship']]
 
     # fcm_token get
     fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
