@@ -432,6 +432,10 @@ def get_ongoing_user_by_id(user_id):
     if ad_information['ad_mission_card_user_id'] is None:
         ad_information['ad_mission_card_user_id'] = -1
 
+    if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
+            hours=1) < datetime.now():
+        result["is_delete"] = False
+
     if not ad_information["mission_status"]:
         ad_information["mission_status"] = ""
         ad_information["ad_mission_card_id"] = -1
@@ -455,10 +459,6 @@ def get_ongoing_user_by_id(user_id):
             else:
                 ad_information['point'] = ad_information['point']
             ad_information['ongoing_day_percent'] = int(datetime.now().hour / 24 * 100)
-
-        if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
-                hours=1) < datetime.now():
-            result["is_delete"] = False
             result['ad_information'] = ad_information
             return result
     result['ad_information'] = ad_information
