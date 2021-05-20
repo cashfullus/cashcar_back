@@ -1374,8 +1374,11 @@ def cash_car_tip_information():
     elif request.method == 'POST':
         tip_id = request.args.get('cash_car_tip_id', 0)
         data = get_cash_car_tip_request_data(request)
-        result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
-        return jsonify({"data": result})
+        if data:
+            result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+            return jsonify({"data": result})
+        else:
+            return jsonify({"data": "Not Allowed Image"}), 405
 
     elif request.method == 'DELETE':
         tip_id = request.args.get('cash_car_tip_id', 0)
