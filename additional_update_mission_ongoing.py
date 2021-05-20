@@ -10,10 +10,9 @@ def update_mission_list():
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
               "JOIN user_fcm uf on aua.user_id = uf.user_id "
-              "WHERE amcu.status = 'stand_by' AND amcu.mission_type IN (1) "
+              "WHERE amcu.status = 'stand_by' AND amcu.mission_type IN (1) and aua.status IN ('accept')"
               "AND mission_start_date != '0000-00-00 00:00:00' AND mission_start_date <= NOW()"
     )
-
     if mission_list:
         for i in range(len(mission_list)):
             db.execute(
