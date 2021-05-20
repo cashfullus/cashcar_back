@@ -9,7 +9,7 @@ def select_user():
               "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "WHERE activity_end_date IS NOT NULL AND aua.status != 'success' "
-              "AND activity_end_date <= NOW()"
+              "AND activity_end_date <= NOW() AND activity_end_date != '0000-00-00 00:00:00'"
     )
     return users
 
@@ -70,10 +70,10 @@ def update_point():
                 )
                 content_name = f"{default_point['title']} 서포터즈 활동 성공"
                 db.execute(
-                    query="INSERT INTO point_history (user_id, point, register_time, type, contents) "
-                          "VALUES (%s, %s, NOW(), %s, %s)",
+                    query="INSERT INTO point_history (user_id, point, register_time, contents) "
+                          "VALUES (%s, %s, NOW(), %s)",
                     args=[default_point['user_id'], int(default_point['total_point']) + sum_additional_point,
-                          "ad_apply", content_name]
+                          content_name]
                 )
                 title = "서포터즈 활동에 성공하였습니다:)"
                 reason = """열심히 활동해주신 고객님께 감사드리며 이제 차량에서 스티커를 제거하셔도 됩니다. 다음 활동도 잘 부탁드립니다."""
