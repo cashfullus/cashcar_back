@@ -359,6 +359,14 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    def getOneDonationById(self, donation_organization_id):
+        self.cursor.execute(query="SELECT * FROM donation_organization "
+                                  "WHERE donation_organization_id = %s",
+                            args=donation_organization_id
+                            )
+        row = self.cursor.fetchone()
+        return row
+
 
 
 

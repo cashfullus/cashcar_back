@@ -400,12 +400,19 @@ def get_user_withdrawal_data(user_id):
 
 
 # 사용자 기부 데이터 GET
-def get_user_withdrawal_donate_data(user_id):
+def get_user_withdrawal_donate_data(user_id, donation_id):
     db = Database()
     user_information = db.executeOne(
         query="SELECT user_id, name, deposit FROM user WHERE user_id = %s",
         args=user_id
     )
+    donation_information = db.executeOne(
+        query="SELECT donation_organization_id, donation_organization_name FROM donation_organization "
+              "WHERE donation_organization_id = %s",
+        args=donation_id
+    )
+    user_information['donation_organization_id'] = donation_information['donation_organization_id']
+    user_information['donation_organization_name'] = donation_information['donation_organization_name']
     user_information['status'] = True
     user_information['ongoing'] = ""
     already_ongoing_withdrawal = db.executeOne(
@@ -471,7 +478,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
 
 
 # 사용자 기부 신청
-def update_user_withdrawal_donate(user_id, **kwargs):
+def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
     db = Database()
     status = {"deposit": True, "ongoing": True}
     user_deposit = db.getUserById(user_id=user_id)
@@ -490,13 +497,15 @@ def update_user_withdrawal_donate(user_id, **kwargs):
         status["ongoing"] = False
         return status
 
+    donation_information = db.getOneDonationById(donation_organization_id=donation_id)
+
     db.execute(
-        query="INSERT INTO withdrawal_donate (user_id, amount, receipt, donation_organization, name_of_donor) VALUE "
+        query="INSERT INTO withdrawal_donate (user_id, amount, receipt, donation_organization_id, name_of_donor) VALUE "
               "(%s, %s, %s, %s, %s)",
-        args=[user_id, -int(kwargs['withdrawal_point']), kwargs['is_receipt'], kwargs['organization'],
+        args=[user_id, -int(kwargs['withdrawal_point']), kwargs['is_receipt'], donation_id,
               kwargs['name_of_donor']]
     )
-    history_content_name = f"{kwargs['organization']} 기부"
+    history_content_name = f"{donation_information['donation_organization_name']} 기부"
     db.execute(
         query="INSERT INTO point_history (user_id, point, contents) "
               "VALUES (%s, %s, %s)",
@@ -726,3 +735,39 @@ def user_email_auth_number_check(**kwargs):
     else:
         status["user_information"] = False
         return status
+
+
+# 사용자 기부 리스트 페이지
+def user_donate_list_page(page, count):
+    per_page = (page - 1) * count
+    start_at = per_page + count
+    print(per_page, start_at)
+    db = Database()
+    response_data = db.executeAll(
+        query="SELECT donation_organization_id, donation_organization_name, logo_image, "
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM donation_organization ORDER BY register_time DESC "
+              "LIMIT %s OFFSET %s",
+        args=[start_at, per_page]
+    )
+    return response_data
+
+
+# 사용자 기부 디테일 페이지
+def user_donate_detail(donation_id):
+    db = Database()
+    response_data = db.executeOne(
+        query="SELECT donation_organization_id, donation_organization_name, logo_image, "
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM donation_organization WHERE donation_organization_id = %s",
+        args=donation_id
+    )
+    image_data = db.executeAll(
+        query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
+        args=donation_id
+    )
+    if image_data:
+        response_data['image_information'] = image_data
+    else:
+        response_data['image_information'] = []
+    return response_data

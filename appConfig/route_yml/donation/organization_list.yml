@@ -1,0 +1,41 @@
+tags:
+  - Donation
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: page(default 1)
+    in: query
+    type: integer
+    required: false
+
+  - name: count(default 10)
+    in: query
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: array
+      items:
+        properties:
+          donation_organization_id:
+            type: integer
+          donation_organization_name:
+            type: string
+          logo_image:
+            type: string
+          register_time:
+            type: string
+

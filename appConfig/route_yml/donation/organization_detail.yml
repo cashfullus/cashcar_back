@@ -1,6 +1,5 @@
 tags:
-  - User
-
+  - Donation
 
 parameters:
   - name: Authorization
@@ -13,28 +12,31 @@ parameters:
     type: integer
     required: true
 
+  - name: donation_organization_id
+    in: query
+    type: integer
+    required: true
+
 
 responses:
   200:
-    description: 기부 신청 완료
+    description: OK
     schema:
       type: object
       properties:
-        user_id:
-          type: integer
-        name:
-          type: string
-        deposit:
-          type: integer
         donation_organization_id:
           type: integer
         donation_organization_name:
           type: string
-        status:
+        logo_image:
           type: string
-          description: 진행 가능 여부(True, False)
-        ongoing:
+        register_time:
           type: string
-          description: status가 False일때 현재 출금신청한 상태 출력
-
-
+        image_information:
+          type: array
+          items:
+            properties:
+              description:
+                type: string
+              image:
+                type: string

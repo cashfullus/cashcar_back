@@ -20,6 +20,7 @@ from models import (
 import os
 import logging
 import requests
+import ast
 
 from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
@@ -53,15 +54,15 @@ SERVER_HOST_NAME = "https://app.api.service.cashcarplus.com:50193"
 LOCAL_HOST_NAME = "http://localhost:50123"
 
 
-@app.before_first_request
-def setup_logging():
-    """
-    Setup logging
-    """
-    directory = os.getcwd()
-    handler = WatchedFileHandler(directory + "/flask_app.log")
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.INFO)
+# @app.before_first_request
+# def setup_logging():
+#     """
+#     Setup logging
+#     """
+#     directory = os.getcwd()
+#     handler = WatchedFileHandler(directory + "/flask_app.log")
+#     app.logger.addHandler(handler)
+#     app.logger.setLevel(logging.INFO)
 
 
 # 이미지 파일 형식검사
@@ -818,6 +819,7 @@ def user_withdrawal_point():
         return jsonify(result)
 
 
+# 사용자 기부 신청
 @app.route('/user/withdrawal/donate', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/user/user_withdrawal_donate_get.yml', methods=['GET'])
@@ -828,14 +830,46 @@ def user_withdrawal_donate():
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
+    donation_id = request.args.get('donation_organization_id')
     if request.method == 'GET':
-        result = User.get_user_withdrawal_donate_data(user_id=user_id)
+        result = User.get_user_withdrawal_donate_data(user_id=user_id, donation_id=donation_id)
         return jsonify(result)
 
     elif request.method == 'POST':
         data = request.get_json()
-        result = User.update_user_withdrawal_donate(user_id=user_id, **data)
+        result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
         return jsonify(result)
+
+
+# 사용자 기부 페이지
+@app.route('/user/donate/list')
+@jwt_required()
+@swag_from('route_yml/donation/organization_list.yml')
+def user_donate_list():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    page = request.args.get('page', 1, type=int)
+    count = request.args.get('count', 10, type=int)
+    result = User.user_donate_list_page(page=page, count=count)
+    return jsonify(result)
+
+
+# 기부단체 상세페이지
+@app.route('/user/donate')
+@jwt_required()
+@swag_from('route_yml/donation/organization_detail.yml')
+def user_donate():
+    user_id = request.args.get('user_id', 0)
+    identity_ = get_jwt_identity()
+    if int(user_id) != identity_:
+        return jsonify(Unauthorized), 401
+
+    donation_id = request.args.get('donation_organization_id')
+    result = User.user_donate_detail(donation_id=donation_id)
+    return jsonify(result)
 
 
 # 사용자 캐시카팁 리스트
@@ -1288,7 +1322,7 @@ def get_cash_car_tip_request_data(request):
     allowed_tips = allowed_files(tip_images)
     allowed_thumbnail = allowed_image(thumbnail_image)
     if False in allowed_tips or allowed_thumbnail is False:
-        return jsonify({"status": "Not Allowed Image"}), 405
+        return False
     data = {
         "title": request.form.get('title'),
         "main_description": request.form.get('main_description'),
@@ -1310,9 +1344,11 @@ def cash_car_tip_register():
         return jsonify(status), code
 
     data = get_cash_car_tip_request_data(request)
-    result = Tip.register(**data)
-
-    return jsonify({"data": result})
+    if data:
+        result = Tip.register(**data)
+        return jsonify({"data": result})
+    else:
+        return jsonify({"status": "Not Allowed Image"}), 405
 
 
 # 추가의 경우 이미지 파일
@@ -1361,4 +1397,34 @@ def admin_user_profile_update():
     data = request.get_json()
     result = Admin.admin_user_profile_modify(**data)
     return jsonify(result)
+
+
+@app.route('/admin/donation/register', methods=['POST'])
+@jwt_required()
+def admin_donation_organization_register():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    logo_image = request.files.get('logo_image')
+    donation_images = request.files.getlist('donation_images')
+    allowed_logo = allowed_image(logo_image)
+    allowed_donation_images = allowed_files(donation_images)
+
+    if allowed_logo is False or False in allowed_donation_images:
+        return jsonify({"status": "Not Allowed Image"}), 405
+    descriptions = ast.literal_eval(request.form.get('descriptions'))
+
+    if len(donation_images) != len(descriptions):
+        return jsonify({"data": "Not Allowed Data"}), 400
+
+    data = {
+        "donation_organization_name": request.form.get('organization_name'),
+        "descriptions": descriptions
+    }
+    result = Admin.donation_organization_register(logo_image=logo_image, images=donation_images, **data)
+    return jsonify({"data": result})
 

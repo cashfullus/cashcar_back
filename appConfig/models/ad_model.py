@@ -523,6 +523,9 @@ def update_ad_apply_status(**kwargs):
         if apply_status["status"] == "accept" and kwargs["status"] == "accept":
             apply_information["accept"] = False
 
+        if apply_status["status"] == "accept" or apply_status["status"] == "reject" or apply_status["status"] == "success":
+            continue
+
         if apply_information['rejected'] is False or apply_information["accept"] is False:
             continue
         else:

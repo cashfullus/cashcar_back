@@ -13,7 +13,8 @@ from notification.user_push_nofitication import one_cloud_messaging
 from werkzeug.utils import secure_filename
 
 CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/cash_car_tip"
-
+DONATION_ORGANIZATION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/donation"
+BASE_IMAGE_LOCATION_DONATION = os.getcwd() + "/static/image/donation"
 
 def calculate_age(born):
     today = date.today()
@@ -481,12 +482,14 @@ def get_all_withdrawal_donate(page, count):
     per_page = (int(page) - 1) * int(count)
     result = db.executeAll(
         query="SELECT "
-              "name, user.user_id, amount, `status`, wd.donation_organization, receipt, name_of_donor,"
+              "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
+              "receipt, name_of_donor,"
               "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
               "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
               "WHEN wd.change_done IS NOT NULL "
               "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done, withdrawal_donate_id "
               "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
+              "JOIN donation_organization d on wd.donation_organization_id = d.donation_organization_id "
               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
               "LIMIT %s OFFSET %s",
         args=[int(count), per_page]
@@ -610,3 +613,48 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
     else:
         return False
 
+
+# 기부 단체 등록
+def donation_organization_register(logo_image, images, **kwargs):
+    db = Database()
+    db.execute(
+        query="INSERT INTO donation_organization (donation_organization_name) "
+              "VALUES (%s)",
+        args=kwargs.get('donation_organization_name')
+    )
+    last_insert_id = db.executeOne(
+        query="SELECT donation_organization_id FROM donation_organization ORDER BY register_time DESC LIMIT 1",
+    )['donation_organization_id']
+    directory = f"{BASE_IMAGE_LOCATION_DONATION}/{last_insert_id}"
+    logo_url = f"{DONATION_ORGANIZATION_IMAGE_HOST}/{last_insert_id}/{secure_filename(logo_image.filename)}"
+    os.makedirs(directory, exist_ok=True)
+    db.execute(
+        query="UPDATE donation_organization SET logo_image = %s WHERE donation_organization_id = %s",
+        args=[logo_url, last_insert_id]
+    )
+    logo_image.save(directory + "/" + secure_filename(logo_image.filename))
+    for i in range(len(images)):
+        description = kwargs["descriptions"][i]
+        image = images[i]
+        image_url = f"{DONATION_ORGANIZATION_IMAGE_HOST}/{last_insert_id}/{secure_filename(image.filename)}"
+        db.execute(
+            query="INSERT INTO donation_organization_images (donation_organization_id, image, description) "
+                  "VALUES (%s, %s, %s)",
+            args=[last_insert_id, image_url, description]
+        )
+        image.save(directory + "/" + secure_filename(image.filename))
+    db.commit()
+
+    response_data = db.executeOne(
+        query="SELECT donation_organization_id, donation_organization_name, logo_image, "
+              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+              "FROM donation_organization WHERE donation_organization_id = %s",
+        args=last_insert_id
+    )
+    images = db.executeAll(
+        query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
+        args=last_insert_id
+    )
+    response_data["image_information"] = images
+
+    return response_data

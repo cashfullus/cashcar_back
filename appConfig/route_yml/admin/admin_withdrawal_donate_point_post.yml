@@ -18,6 +18,11 @@ parameters:
     type: integer
     required: true
 
+  - name: status
+    in: body
+    type: string
+    required: true
+
 
 responses:
   200:
