@@ -26,4 +26,10 @@ responses:
           type: string
         deposit:
           type: integer
+        status:
+          type: string
+          description: 진행 가능 여부(True, False)
+        ongoing:
+          type: string
+          description: status가 False일때 현재 출금신청한 상태 출력
 

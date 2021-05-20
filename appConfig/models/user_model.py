@@ -406,6 +406,16 @@ def get_user_withdrawal_donate_data(user_id):
         query="SELECT user_id, name, deposit FROM user WHERE user_id = %s",
         args=user_id
     )
+    user_information['status'] = True
+    user_information['ongoing'] = ""
+    already_ongoing_withdrawal = db.executeOne(
+        query="SELECT withdrawal_donate_id, status FROM withdrawal_donate "
+              "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+    if already_ongoing_withdrawal:
+        user_information['status'] = False
+        user_information['ongoing'] = already_ongoing_withdrawal['status']
     return user_information
 
 
