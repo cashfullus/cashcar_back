@@ -3714,3 +3714,321 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 3066, in save
     dst = open(dst, "wb")
 FileNotFoundError: [Errno 2] No such file or directory: '/home/cashcaruser21/CashCar/appConfig/static/image/cash_car_tip/10/artiom-vallat-fjmD_UZOtBA-unsplash.jpg'
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1341, in cash_car_tip_information
+    result = Tip.modify_cash_car_tip(cash_car_tip_id=tip_id, **data)
+TypeError: modify_cash_car_tip() argument after ** must be a mapping, not tuple
+Exception on /admin/cash-car-tip/register [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 1306, in cash_car_tip_register
+    admin_user_id = request.headers['admin_user_id']
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/werkzeug/datastructures.py", line 1463, in __getitem__
+    return _unicodify_header_value(self.environ["HTTP_" + key])
+KeyError: 'HTTP_ADMIN_USER_ID'
+Exception on /user/withdrawal/point [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 817, in user_withdrawal_point
+    result = User.update_user_withdrawal_data(user_id=user_id, **data)
+TypeError: update_user_withdrawal_data() argument after ** must be a mapping, not NoneType
+Exception on /user/withdrawal/point [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 817, in user_withdrawal_point
+    result = User.update_user_withdrawal_data(user_id=user_id, **data)
+TypeError: update_user_withdrawal_data() argument after ** must be a mapping, not NoneType
+Exception on /user/withdrawal/point [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 817, in user_withdrawal_point
+    result = User.update_user_withdrawal_data(user_id=user_id, **data)
+  File "./models/user_model.py", line 409, in update_user_withdrawal_data
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+KeyError: 'withdrawal_point'
+Exception on /user/withdrawal/point [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 817, in user_withdrawal_point
+    result = User.update_user_withdrawal_data(user_id=user_id, **data)
+  File "./models/user_model.py", line 416, in update_user_withdrawal_data
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+KeyError: 'withdrawal_point'
+Exception on /user/withdrawal/point [POST]
+Traceback (most recent call last):
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "./routes.py", line 817, in user_withdrawal_point
+    result = User.update_user_withdrawal_data(user_id=user_id, **data)
+  File "./models/user_model.py", line 416, in update_user_withdrawal_data
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+KeyError: 'withdrawal_point'
