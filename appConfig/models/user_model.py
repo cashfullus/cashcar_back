@@ -389,10 +389,13 @@ def get_user_withdrawal_data(user_id):
     user_information['status'] = True
     user_information['ongoing'] = ""
     already_ongoing_withdrawal = db.executeOne(
-        query="SELECT withdrawal_self_id FROM withdrawal_self WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        query="SELECT withdrawal_self_id, status FROM withdrawal_self "
+              "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
         args=user_id
     )
-    # if alrea
+    if already_ongoing_withdrawal:
+        user_information['status'] = False
+        user_information['ongoing'] = already_ongoing_withdrawal['status']
     return user_information
 
 

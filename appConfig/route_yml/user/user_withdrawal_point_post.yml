@@ -13,6 +13,11 @@ parameters:
     type: integer
     required: true
 
+  - name: withdrawal_point
+    in: query
+    type: integer
+    required: true
+
   - name: name
     in: body
     type: string
