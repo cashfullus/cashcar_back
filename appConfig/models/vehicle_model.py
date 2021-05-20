@@ -84,8 +84,6 @@ def register_vehicle(**kwargs):
     return result, fcm_token
 
 
-
-
 # 사용자 ID로 등록한 차량 GET ALL    차량삭제 유무 확인
 def vehicle_list_by_user_id(user_id):
     db = Database()
