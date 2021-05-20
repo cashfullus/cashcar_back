@@ -386,6 +386,13 @@ def get_user_withdrawal_data(user_id):
         query="SELECT user_id, name, deposit, account_bank, account_number FROM user WHERE user_id = %s",
         args=user_id
     )
+    user_information['status'] = True
+    user_information['ongoing'] = ""
+    already_ongoing_withdrawal = db.executeOne(
+        query="SELECT withdrawal_self_id FROM withdrawal_self WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+        args=user_id
+    )
+    # if alrea
     return user_information
 
 
@@ -423,7 +430,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
         query="INSERT INTO withdrawal_self (user_id, amount, account_bank, account_name, account_number) "
               "VALUES (%s, %s, %s, %s, %s)",
         args=[user_id, -int(kwargs['withdrawal_point']), kwargs['account_bank'],
-              kwargs['account_name'], kwargs['account_number']]
+              kwargs['name'], kwargs['account_number']]
     )
     # commit 은 데이터 완전 저장 이기떄문에 안전하게 셀렉후 바로 저장
     db.execute(
@@ -436,7 +443,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
             query="UPDATE user "
                   "SET account_bank = %s, account_name = %s, account_number = %s, deposit = deposit - %s "
                   "WHERE user_id = %s",
-            args=[kwargs['account_bank'], kwargs['account_name'],
+            args=[kwargs['account_bank'], kwargs['name'],
                   kwargs['account_number'], int(kwargs['withdrawal_point']), user_id]
         )
     else:

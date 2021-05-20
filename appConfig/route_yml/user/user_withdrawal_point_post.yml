@@ -13,7 +13,7 @@ parameters:
     type: integer
     required: true
 
-  - name: account_name
+  - name: name
     in: body
     type: string
     required: true
