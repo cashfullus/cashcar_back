@@ -253,10 +253,11 @@ def get_information_for_ad_apply(user_id, ad_id):
     return result, status
 
 
-# 광고 신청 POST
+# 광고 신청 POST   이미 신청했던 광고 다시 신청 불가 추가
 def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
     db = Database()
-    status = {"user_information": True, "ad_information": True, "already_apply": True, "area": True, "vehicle": True}
+    status = {"user_information": True, "ad_information": True, "already_apply": True,
+              "area": True, "vehicle": True, "reject_apply": True}
     target_user = db.getUserById(user_id)
     target_ad = db.getOneAdApplyByAdId(ad_id)
     vehicle = db.getOneVehicleByVehicleIdAndUserId(user_id=user_id, vehicle_id=vehicle_id)
@@ -264,12 +265,19 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
         args=user_id
     )
+    reject_apply = db.executeOne(
+        query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
+        args=[user_id, ad_id]
+    )
     area = kwargs['main_address'].split(' ')[0]
     query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
             "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
     delivery_area = db.executeOne(
         query=query
     )
+    if reject_apply:
+        status["reject_apply"] = False
+        return status
 
     if not target_ad:
         status["ad_information"] = False
@@ -583,7 +591,7 @@ def update_ad_apply_status(**kwargs):
                 mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=apply_user_list[i])
                 if mission_items:
                     for mission in mission_items:
-                        first_start_date = date.today() + timedelta(days=2)
+                        first_start_date = date.today()
                         # 필수미션 1회차 일 경우
                         if mission["order"] == 1 and mission["mission_type"] == 0:
                             first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))

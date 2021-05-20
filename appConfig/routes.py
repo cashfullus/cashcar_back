@@ -580,7 +580,7 @@ def ad_apply():
             vehicle_id = request.args.get('vehicle_id', 0)
             status = AD.ad_apply(user_id=user_id, ad_id=ad_id, vehicle_id=vehicle_id, **data)
             if status["user_information"] is False or status["ad_information"] is False or \
-                    status["already_apply"] is False or status["area"] is False:
+                    status["already_apply"] is False or status["area"] is False or status['reject_apply'] is False:
                 return jsonify({"status": False, "data": status}), 404
             else:
                 return jsonify({"status": True, "data": status}), 200
