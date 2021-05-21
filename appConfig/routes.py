@@ -295,7 +295,7 @@ def user_register():
                                                   )
                 if push_result['success'] >= 1:
                     User.saveAlarmHistory(user_id=result['data']['user_id'],
-                                          alarm_type="register", required=0,
+                                          alarm_type="register", required=1,
                                           description="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 리워드가 쌓이는 즐거움을 느껴보세요 :D"
                                           )
             return jsonify({"status": True, "data": result["data"]}), 201
