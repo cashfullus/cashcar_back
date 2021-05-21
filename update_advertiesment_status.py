@@ -19,3 +19,4 @@ def update_ad_status():
 
 
 update_ad_status()
+
