@@ -1256,6 +1256,13 @@ def admin_get_all_user_list():
 @jwt_required()
 @swag_from('route_yml/user/user_get_point_history.yml')
 def get_point_all_by_user_id():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
     user_id = request.args.get('user_id')
     page = request.args.get('page', 1)
     count = request.args.get('count', 10)

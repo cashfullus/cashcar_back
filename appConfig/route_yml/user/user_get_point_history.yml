@@ -7,6 +7,11 @@ parameters:
     type: Bearer String
     required: true
 
+  - name: admin_user_id
+    in: Headers
+    type: Integer
+    required: true
+
   - name: user_id
     in: query string
     type: integer
@@ -45,6 +50,3 @@ responses:
               register_time:
                 type: string
                 default: "2021-04-29 17:32:18"
-              type:
-                type: string
-                default: "ad_apply"
