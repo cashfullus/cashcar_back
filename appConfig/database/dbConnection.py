@@ -367,6 +367,15 @@ class Database:
         row = self.cursor.fetchone()
         return row
 
+    def getOneUserDonateStatus(self, user_id):
+        self.cursor.execute(
+            query="SELECT status FROM withdrawal_donate "
+                  "WHERE user_id = %s AND status IN ('stand_by', 'confirm')",
+            args=user_id
+        )
+        row = self.cursor.fetchone()
+        return row
+
     # # 마케팅 수신동의한 사람만 조회
     # def getAllMarketingUser(self, page, count):
     #     per_page = (page - 1) * count

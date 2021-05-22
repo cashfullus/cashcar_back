@@ -27,15 +27,29 @@ responses:
   200:
     description: OK
     schema:
-      type: array
-      items:
-        properties:
-          donation_organization_id:
-            type: integer
-          donation_organization_name:
-            type: string
-          logo_image:
-            type: string
-          register_time:
-            type: string
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              donation_organization_id:
+                type: integer
+              donation_organization_name:
+                type: string
+              logo_image:
+                type: string
+              register_time:
+                type: string
+              image_information:
+                type: array
+                items:
+                  properties:
+                    description:
+                      type: string
+                    image:
+                      type: string
+        ongoing:
+          type: string
+          description: stand_by, confirm
 

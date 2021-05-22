@@ -738,10 +738,9 @@ def user_email_auth_number_check(**kwargs):
 
 
 # 사용자 기부 리스트 페이지
-def user_donate_list_page(page, count):
+def user_donate_list_page(user_id, page, count):
     per_page = (page - 1) * count
     start_at = per_page + count
-    print(per_page, start_at)
     db = Database()
     response_data = db.executeAll(
         query="SELECT donation_organization_id, donation_organization_name, logo_image, "
@@ -750,7 +749,18 @@ def user_donate_list_page(page, count):
               "LIMIT %s OFFSET %s",
         args=[start_at, per_page]
     )
-    return response_data
+    donate_status = db.getOneUserDonateStatus(user_id=user_id)
+    if response_data:
+        for i in range(len(response_data)):
+            image_data = db.executeAll(
+                query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
+                args=response_data[i]['donation_organization_id']
+            )
+            response_data[i]['image_information'] = image_data
+    if donate_status:
+        return response_data, donate_status['status']
+    else:
+        return response_data, ""
 
 
 # 사용자 기부 디테일 페이지

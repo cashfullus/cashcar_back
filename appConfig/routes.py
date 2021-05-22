@@ -54,15 +54,15 @@ SERVER_HOST_NAME = "https://app.api.service.cashcarplus.com:50193"
 LOCAL_HOST_NAME = "http://localhost:50123"
 
 
-# @app.before_first_request
-# def setup_logging():
-#     """
-#     Setup logging
-#     """
-#     directory = os.getcwd()
-#     handler = WatchedFileHandler(directory + "/flask_app.log")
-#     app.logger.addHandler(handler)
-#     app.logger.setLevel(logging.INFO)
+@app.before_first_request
+def setup_logging():
+    """
+    Setup logging
+    """
+    directory = os.getcwd()
+    handler = WatchedFileHandler(directory + "/flask_app.log")
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.INFO)
 
 
 # 이미지 파일 형식검사
@@ -853,8 +853,8 @@ def user_donate_list():
 
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 10, type=int)
-    result = User.user_donate_list_page(page=page, count=count)
-    return jsonify(result)
+    result, donate_status = User.user_donate_list_page(user_id=user_id, page=page, count=count)
+    return jsonify({"data": result, "ongoing": donate_status})
 
 
 # 기부단체 상세페이지
