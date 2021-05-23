@@ -33,6 +33,23 @@ def allowed_in_role_user(user_id):
         return False
 
 
+def check_area_filter(area):
+    where_area = []
+    if type(area) == str:
+        if area == "":
+            where_area = "area LIKE '%%'"
+        else:
+            where_area = f"area LIKE '%%{area}%%'"
+    else:
+        for i in range(len(area)):
+            if i + 1 != len(area):
+                where_area.append(f"area LIKE '%%{area[i]}%%' OR ")
+            else:
+                where_area.append(f"area LIKE '%%{area[i]}%%'")
+        where_area = "({0})".format(''.join(where_area))
+    return where_area
+
+
 # 사용자 공지사항 리스트
 def user_get_notice_list():
     db = Database()
@@ -158,19 +175,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
 
     # 포인트가 최솟값보다 크고 최대값보다 작은 데이터
     where_point = f"(total_point >= {avg_point[0]} AND total_point <= {avg_point[1]})"
-    where_area = []
-    if type(area) == str:
-        if area == "":
-            where_area = "area LIKE '%%'"
-        else:
-            where_area = f"area LIKE '%%{area}%%'"
-    else:
-        for i in range(len(area)):
-            if i + 1 != len(area):
-                where_area.append(f"area LIKE '%%{area[i]}%%' OR ")
-            else:
-                where_area.append(f"area LIKE '%%{area[i]}%%'")
-        where_area = "({0})".format(''.join(where_area))
+    where_area = check_area_filter(area)
     if int(gender) == 0:
         where_gender = f"gender IN (0, 1, 2)"
     else:

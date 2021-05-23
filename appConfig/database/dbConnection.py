@@ -375,20 +375,3 @@ class Database:
         )
         row = self.cursor.fetchone()
         return row
-
-    # # 마케팅 수신동의한 사람만 조회
-    # def getAllMarketingUser(self, page, count):
-    #     per_page = (page - 1) * count
-    #     self.cursor.execute(
-    #         query="SELECT u.user_id, email, name, resident_registration_number_back as gender, "
-    #               "age, DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-    #               "vehicle_model_name, brand, car_number FROM user u "
-    #               "JOIN "
-    #     )
-
-
-
-
-
-
-

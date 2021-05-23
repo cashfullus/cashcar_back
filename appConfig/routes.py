@@ -15,7 +15,8 @@ from models import (
     mission_model as Mission,
     admin_model as Admin,
     system_model as System,
-    cashcar_tip_model as Tip
+    cashcar_tip_model as Tip,
+    notification_model as Notification
 )
 import os
 import logging
@@ -1437,4 +1438,41 @@ def admin_donation_organization_register():
     }
     result = Admin.donation_organization_register(logo_image=logo_image, images=donation_images, **data)
     return jsonify({"data": result})
+
+
+# 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)
+@app.route('/admin/notification/user-list', methods=['GET', 'POST'])
+@jwt_required()
+@swag_from('route_yml/notification/admin_notification_list.yml', methods=['GET'])
+def admin_notification_user_list():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    if request.method == 'GET':
+        page = request.args.get('page', 1, int)
+        count = request.args.get('count', 10, int)
+        area = request.args.get('area', '')
+        gender = request.args.get('gender', 0)
+        register_time_query = request.args.get('register_time', None)
+
+        if area == '':
+            area_list = area
+        else:
+            if len(area.split(',')) <= 1:
+                area_list = area
+            else:
+                area_list = area.split(',')
+
+        if register_time_query:
+            register_time = register_time_query.split(',')
+        else:
+            register_time = ['0000-00-00 00:00:00', '9999-12-01 23:59:59']
+        result, item_count = Notification.get_all_marketing_user(page=page, count=count, area=area_list,
+                                                                 gender=gender, register_time=register_time
+                                                                 )
+        return jsonify({"data": result, "item_count": item_count})
 

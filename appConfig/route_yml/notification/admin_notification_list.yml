@@ -1,0 +1,77 @@
+tags:
+  - Admin Notification
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: page
+    in: query
+    type: integer
+    required: false
+
+  - name: count
+    in: query
+    type: integer
+    required: false
+
+  - name: area
+    in: query
+    type: string
+    required: false
+
+  - name: gender
+    in: query
+    type: string
+    required: false
+
+  - name: register_time
+    in: query
+    type: string
+    required: false
+
+
+responses:
+  200:
+    description: area(쉼표로 띄어쓰기없이), gender(default 0), register_time(default 0000-00-00 ~ 9999-12-23)
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              age:
+                type: integer
+                description: 현재는 모두 0 아직 데이터가 들어가지않았음
+              call_number:
+                type: string
+              email:
+                type: string
+              gender:
+                type: string
+              name:
+                type: string
+              nickname:
+                type: string
+              register_time:
+                type: string
+              vehicle_information:
+                type: object
+                properties:
+                  brand:
+                    type: string
+                  car_number:
+                    type: string
+                  vehicle_model_name:
+                    type: string
+        item_count:
+          type: integer
