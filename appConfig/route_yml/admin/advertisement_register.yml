@@ -27,6 +27,11 @@ parameters:
     type: file
     required: true
 
+  - name: logo_image
+    in: formData
+    type: file
+    required: true
+
   - name: thumbnail_image
     in: formData
     type: file
