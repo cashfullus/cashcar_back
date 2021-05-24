@@ -1429,8 +1429,7 @@ def admin_donation_organization_register():
 
     if allowed_logo is False or False in allowed_donation_images:
         return jsonify({"status": "Not Allowed Image"}), 405
-    descriptions = ast.literal_eval(request.form.get('descriptions'))
-
+    descriptions = request.form.get('descriptions').split('&&')
     if len(donation_images) != len(descriptions):
         return jsonify({"data": "Not Allowed Data"}), 400
 
@@ -1452,6 +1451,11 @@ def admin_notification_list():
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
+
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    result, item_count = Notification.get_notification_list(page=page, count=count)
+    return jsonify({"data": result, "item_count": item_count})
 
 
 

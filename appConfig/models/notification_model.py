@@ -88,4 +88,10 @@ def user_app_push_notification(*user_list, **kwargs):
         db.updateUserAppPushLog(many_execute_value_list)
         return True
     return False
-#
+
+
+# notification 이력 리스트
+def get_notification_list(page, count):
+    db = Database()
+    result, item_count = db.getAllNotificationList(page=page, count=count)
+    return result, item_count

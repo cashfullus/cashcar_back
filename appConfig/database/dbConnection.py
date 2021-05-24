@@ -424,3 +424,18 @@ class Database:
         )
         self.commit()
         return True
+
+    def getAllNotificationListWithCount(self, page, count):
+        per_page = (page - 1) * count
+        self.cursor.execute(
+            query="SELECT id, notification_title, notification_body, success_count, transfer_count, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') "
+                  "FROM app_push_log ORDER BY id DESC LIMIT %s OFFSET %s",
+            args=[count, per_page]
+        )
+        rows = self.cursor.fetchall()
+        self.cursor.execute(
+            query="SELECT count(id) as item_count FROM app_push_log"
+        )
+        item_count = self.cursor.fetchone()
+        return rows, item_count['item_count']
