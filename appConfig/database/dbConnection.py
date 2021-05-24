@@ -429,7 +429,7 @@ class Database:
         per_page = (page - 1) * count
         self.cursor.execute(
             query="SELECT id, notification_title, notification_body, success_count, transfer_count, "
-                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
                   "FROM app_push_log ORDER BY id DESC LIMIT %s OFFSET %s",
             args=[count, per_page]
         )

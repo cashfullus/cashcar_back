@@ -93,5 +93,5 @@ def user_app_push_notification(*user_list, **kwargs):
 # notification 이력 리스트
 def get_notification_list(page, count):
     db = Database()
-    result, item_count = db.getAllNotificationList(page=page, count=count)
+    result, item_count = db.getAllNotificationListWithCount(page=page, count=count)
     return result, item_count

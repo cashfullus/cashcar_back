@@ -1,0 +1,39 @@
+tags:
+  - Admin Notification
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_list
+    in: body
+    type: array
+    required: true
+
+  - name: title
+    in: body
+    type: string
+    required: true
+
+  - name: body
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: OK user_list 는 user_id 리스트
+    schema:
+      type: object
+      properties:
+        data:
+          type: boolean

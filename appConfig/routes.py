@@ -1441,9 +1441,9 @@ def admin_donation_organization_register():
     return jsonify({"data": result})
 
 
-@app.route('/admin/notification/list')
+@app.route('/admin/app-push/list')
 @jwt_required()
-@swag_from('route_yml/notification/admin_notification_list.yml')
+@swag_from('route_yml/notification/admin_app_push_list.yml')
 def admin_notification_list():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -1458,12 +1458,11 @@ def admin_notification_list():
     return jsonify({"data": result, "item_count": item_count})
 
 
-
-
 # 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)
-@app.route('/admin/notification/user-list', methods=['GET', 'POST'])
+@app.route('/admin/app-push/user-list', methods=['GET', 'POST'])
 @jwt_required()
-@swag_from('route_yml/notification/admin_notification_list.yml', methods=['GET'])
+@swag_from('route_yml/notification/admin_app_push_user_list_get.yml', methods=['GET'])
+@swag_from('route_yml/notification/admin_app_push_user_list_post.yml', methods=['POST'])
 def admin_notification_user_list():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']

@@ -1,0 +1,53 @@
+tags:
+  - Admin Notification
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: page
+    in: query
+    type: integer
+    required: false
+
+  - name: count
+    in: query
+    type: integer
+    required: false
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        item_count:
+          type: integer
+        data:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+                description: 모집번호
+              notification_title:
+                type: string
+                description: 어드민에서만 보는 타이틀
+              notification_body:
+                type: string
+                description: 실제로 전송되는 텍스트
+              success_count:
+                type: integer
+                description: 성공횟수
+              transfer_count:
+                type: integer
+                description: 총 전송 횟수
