@@ -25,10 +25,10 @@ parameters:
 
 responses:
   200:
-    description: 포인트 출금 상태 변경
+    description: 포인트 출금 상태 변경 (confirm, done, reject)
     schema:
       type: object
       properties:
         data:
-          type: boolean
-          default: true
+          type: string
+          default: stand_by

@@ -26,9 +26,10 @@ parameters:
 
 responses:
   200:
-    description: 기부신청 스테이터스 변경
+    description: 기부신청 스테이터스 변경 (confirm, done, reject)
     schema:
       type: object
       properties:
         data:
-          type: boolean
+          type: string
+          default: stand_by

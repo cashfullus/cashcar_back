@@ -95,3 +95,6 @@ def get_notification_list(page, count):
     db = Database()
     result, item_count = db.getAllNotificationListWithCount(page=page, count=count)
     return result, item_count
+
+
+# 앱푸쉬 재전송

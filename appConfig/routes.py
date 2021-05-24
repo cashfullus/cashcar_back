@@ -1317,13 +1317,10 @@ def get_withdrawal_donate_point_all():
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
-        withdrawal_donate_id = request.args.get('withdrawal_donate_id', 0)
-        if withdrawal_donate_id != 0:
-            data = request.get_json()
-            result = Admin.update_withdrawal_donate(withdrawal_donate_id=withdrawal_donate_id, **data)
-            return jsonify({"data": result})
-        else:
-            return jsonify({"data": False})
+        data = request.get_json()
+        result = Admin.update_withdrawal_donate(**data)
+        return jsonify({"data": result})
+
 
 
 def get_cash_car_tip_request_data(request):
@@ -1456,6 +1453,18 @@ def admin_notification_list():
     count = request.args.get('count', 10, int)
     result, item_count = Notification.get_notification_list(page=page, count=count)
     return jsonify({"data": result, "item_count": item_count})
+
+
+@app.route('/admin/app-push/re-transfer')
+def admin_notification_re_transfer():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+
 
 
 # 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)

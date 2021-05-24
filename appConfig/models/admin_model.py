@@ -538,7 +538,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                     else:
                         status_list.append({i: False})
                 db.commit()
-                return True
+                return kwargs['status']
             elif kwargs['status'] == "reject":
                 for i in range(len(user_list)):
                     db.execute(
@@ -548,7 +548,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=user_list[i]
                     )
                 db.commit()
-                return True
+                return kwargs['status']
             elif kwargs['status'] == "confirm":
                 for i in range(len(user_list)):
                     db.execute(
@@ -558,11 +558,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=[kwargs['status'], user_list[i]]
                     )
                 db.commit()
-                return True
-            else:
-                return False
-        else:
-            return False
+                return kwargs['status']
 
     elif withdrawal_type == "donate":
         user_list = kwargs['withdrawal_donate_list']
@@ -588,7 +584,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                     else:
                         status_list.append({i: False})
                 db.commit()
-                return True
+                return kwargs['status']
             # 기부 reject
             elif kwargs['status'] == "reject":
                 for i in range(len(user_list)):
@@ -599,7 +595,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=user_list[i]
                     )
                 db.commit()
-                return True
+                return kwargs['status']
             # 기부 진행중
             elif kwargs['status'] == "confirm":
                 for i in range(len(user_list)):
@@ -610,13 +606,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=[kwargs['status'], user_list[i]]
                     )
                 db.commit()
-                return True
-            else:
-                return False
-        else:
-            return False
-    else:
-        return False
+                return kwargs['status']
 
 
 # 기부 단체 등록
