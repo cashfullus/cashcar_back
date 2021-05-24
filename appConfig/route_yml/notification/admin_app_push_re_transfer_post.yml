@@ -1,0 +1,34 @@
+tags:
+  - Admin Notification
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query
+    type: integer
+    required: true
+
+  - name: id
+    in: query
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: Ok id는 앱푸쉬 보낸 아이디
+    schema:
+      type: object
+      properties:
+        data:
+          type: boolean

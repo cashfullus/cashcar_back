@@ -407,6 +407,15 @@ class Database:
         self.commit()
         return True
 
+    def updateOneSuccessAppPushLog(self, app_push_id):
+        self.cursor.execute(
+            query="UPDATE app_push_log SET success_count = success_count + 1, fail_count = fail_count - 1 "
+                  "WHERE id = %s",
+            args=app_push_id
+        )
+        self.commit()
+        return True
+
     # 사용자 기록남기기
     def insertUserAppPushLog(self, many_value):
         self.cursor.executemany(
@@ -439,3 +448,22 @@ class Database:
         )
         item_count = self.cursor.fetchone()
         return rows, item_count['item_count']
+
+    def updateAllAlarmHistoryByAppPush(self, many_value):
+        if many_value:
+            self.cursor.executemany(
+                query="INSERT INTO alarm_history (user_id, alarm_type, required, description, is_read_alarm) "
+                      "VALUES (%s, %s, %s, %s, 1)",
+                args=many_value
+            )
+            self.commit()
+            return True
+
+    def updateOneAlarmHistoryByAppPush(self, **kwargs):
+        self.cursor.execute(
+            query="INSERT INTO alarm_history (user_id, alarm_type, required, description, is_read_alarm) "
+                  "VALUES (%s, %s, %s, %s, 1)",
+            args=[kwargs['user_id'], "marketing", 0, kwargs['description']]
+        )
+        self.commit()
+        return True

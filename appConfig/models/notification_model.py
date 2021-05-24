@@ -64,28 +64,32 @@ def user_app_push_notification(*user_list, **kwargs):
     db = Database()
     success_list = []
     fail_list = []
+    alarm_history = []
     kwargs.setdefault('transfer_count', len(user_list))
     insert_app_push_log_id = db.insertAppPushLogReturnId(**kwargs)['id']
     if user_list:
         fcm_list = db.getAllUserFcmToken(*user_list)
         sorted_user_list = sorted(user_list, key=lambda x: x)
-        many_execute_value_arr_1 = [[sorted_user_list[i], int(insert_app_push_log_id)]for i in range(len(sorted_user_list))]
+        many_execute_value_arr_1 = [[sorted_user_list[i], int(insert_app_push_log_id)]
+                                    for i in range(len(sorted_user_list))
+                                    ]
         db.insertUserAppPushLog(many_value=many_execute_value_arr_1)
         for i in range(len(fcm_list)):
             result = one_cloud_messaging(token=fcm_list[i]['fcm_token'], body=kwargs.get('body'))
             if int(result['success']) == 1:
-                success_list.append(fcm_list[i]['user_id'])
+                user_id = fcm_list[i]['user_id']
+                success_list.append(["success", user_id])
+                alarm_history.append([user_id, "marketing", 0, kwargs.get('body')])
                 continue
             else:
-                fail_list.append(fcm_list[i]['user_id'])
+                fail_list.append(["fail", fcm_list[i]['user_id']])
         kwargs.setdefault('success_count', len(success_list))
         kwargs.setdefault('fail_count', len(fail_list))
         kwargs.setdefault('id', insert_app_push_log_id)
-        many_execute_value_arr_2 = [["success", success_list[i]] for i in range(len(success_list))]
-        many_execute_value_arr_3 = [["fail", fail_list[i]] for i in range(len(fail_list))]
-        many_execute_value_list = many_execute_value_arr_2 + many_execute_value_arr_3
+        many_execute_value_list = success_list + fail_list
         db.updateAppPushLog(**kwargs)
         db.updateUserAppPushLog(many_execute_value_list)
+        db.updateAllAlarmHistoryByAppPush(alarm_history)
         return True
     return False
 
@@ -98,3 +102,26 @@ def get_notification_list(page, count):
 
 
 # 앱푸쉬 재전송
+def app_push_re_transfer(user_id, app_push_id):
+    db = Database()
+    user_information = db.executeOne(
+        query="SELECT fcm_token, user_id FROM user_fcm WHERE user_id = %s",
+        args=user_id
+    )
+    app_push_information = db.executeOne(
+        query="SELECT * FROM app_push_log WHERE id = %s",
+        args=app_push_id
+    )
+
+    if user_information and app_push_information:
+        push_result = one_cloud_messaging(token=user_information['fcm_token'],
+                                          body=app_push_information['notification_body']
+                                          )
+        if push_result['success'] == 1:
+            data = {"user_id": user_id, "description": app_push_information['notification_body']}
+            db.updateOneSuccessAppPushLog(app_push_id=app_push_id)
+            db.updateOneAlarmHistoryByAppPush(**data)
+            return True
+        else:
+            return False
+    return False

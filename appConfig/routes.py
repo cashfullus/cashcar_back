@@ -1322,7 +1322,6 @@ def get_withdrawal_donate_point_all():
         return jsonify({"data": result})
 
 
-
 def get_cash_car_tip_request_data(request):
     tip_images = request.files.getlist("tip_images")
     thumbnail_image = request.files.get('thumbnail_image')
@@ -1455,7 +1454,9 @@ def admin_notification_list():
     return jsonify({"data": result, "item_count": item_count})
 
 
-@app.route('/admin/app-push/re-transfer')
+@app.route('/admin/app-push/re-transfer', methods=['POST'])
+@jwt_required()
+@swag_from('route_yml/notification/admin_app_push_re_transfer_post.yml')
 def admin_notification_re_transfer():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -1463,6 +1464,12 @@ def admin_notification_re_transfer():
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
+
+    user_id = request.args.get('user_id')
+    app_push_id = request.args.get('id')
+
+    result = Notification.app_push_re_transfer(user_id=user_id, app_push_id=app_push_id)
+    return jsonify({"data": result})
 
 
 
