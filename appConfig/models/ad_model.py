@@ -142,7 +142,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             )
             db.execute(
                 query="UPDATE ad_information "
-                      "SET thumbnail_image = %s, side_image = %s, back_image = %s "
+                      "SET logo_image = %s, thumbnail_image = %s, side_image = %s, back_image = %s "
                       "WHERE ad_id = %s",
                 args=[save_to_db_dict['logo_image'],
                       save_to_db_dict['thumbnail_image'],

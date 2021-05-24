@@ -81,12 +81,11 @@ def user_app_push_notification(*user_list, **kwargs):
         kwargs.setdefault('success_count', len(success_list))
         kwargs.setdefault('fail_count', len(fail_list))
         kwargs.setdefault('id', insert_app_push_log_id)
-        many_execute_value_arr_2 = [[success_list[i], "success"] for i in range(len(success_list))]
-        # many_execute_value_arr_2
+        many_execute_value_arr_2 = [["success", success_list[i]] for i in range(len(success_list))]
+        many_execute_value_arr_3 = [["fail", fail_list[i]] for i in range(len(fail_list))]
+        many_execute_value_list = many_execute_value_arr_2 + many_execute_value_arr_3
         db.updateAppPushLog(**kwargs)
-
-
-        return user_list
-
-    return user_list
+        db.updateUserAppPushLog(many_execute_value_list)
+        return True
+    return False
 #
