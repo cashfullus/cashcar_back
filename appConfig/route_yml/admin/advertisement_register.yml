@@ -196,6 +196,8 @@ responses:
                   type: string
                 total_point:
                   type: integer
+                logo_image:
+                  type: string
                 ad_images:
                   type: array
                   items:
