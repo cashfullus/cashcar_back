@@ -377,8 +377,8 @@ class Database:
         return row
 
     def getAllUserFcmToken(self, *user_list):
-        if len(user_list) <= 1:
-            sql = f"SELECT fcm_token, user_id FROM user_fcm WHERE user_id IN ({user_list}) ORDER BY user_id"
+        if len(user_list) == 1:
+            sql = f"SELECT fcm_token, user_id FROM user_fcm WHERE user_id IN ({list(user_list)[0]})"
         else:
             sql = f"SELECT fcm_token, user_id FROM user_fcm WHERE user_id IN {user_list} ORDER BY user_id"
         self.cursor.execute(

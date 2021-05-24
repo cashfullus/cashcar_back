@@ -65,10 +65,13 @@ def user_app_push_notification(*user_list, **kwargs):
     success_list = []
     fail_list = []
     alarm_history = []
-    kwargs.setdefault('transfer_count', len(user_list))
-    insert_app_push_log_id = db.insertAppPushLogReturnId(**kwargs)['id']
     if user_list:
-        fcm_list = db.getAllUserFcmToken(*user_list)
+        kwargs.setdefault('transfer_count', len(user_list))
+        insert_app_push_log_id = db.insertAppPushLogReturnId(**kwargs)['id']
+        if len(user_list) == 1:
+            fcm_list = db.getAllUserFcmToken(*user_list)
+        else:
+            fcm_list = db.getAllUserFcmToken(*user_list)
         sorted_user_list = sorted(user_list, key=lambda x: x)
         many_execute_value_arr_1 = [[sorted_user_list[i], int(insert_app_push_log_id)]
                                     for i in range(len(sorted_user_list))
