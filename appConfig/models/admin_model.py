@@ -188,7 +188,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
           "max_recruiting_count, recruiting_count, total_point, " \
           "day_point, area, description, gender, min_distance, min_age_group, " \
           "max_age_group, side_image, back_image, side_length, side_width, " \
-          "back_length, back_width, " \
+          "back_length, back_width, logo_image, " \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date " \
           "FROM ad_information " \

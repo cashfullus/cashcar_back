@@ -1000,6 +1000,7 @@ def admin_adverting_register():
     side_image = request.files.get('side_image')
     back_image = request.files.get('back_image')
     thumbnail_image = request.files.get('thumbnail_image')
+    logo_image = request.files.get('logo_image')
     # 썸네일 미지정인 경우 썸네일을 side_image로
     if not thumbnail_image:
         thumbnail_image = side_image
@@ -1009,7 +1010,8 @@ def admin_adverting_register():
     image_dict = {
         "side_image": side_image,
         "back_image": back_image,
-        "thumbnail_image": thumbnail_image
+        "thumbnail_image": thumbnail_image,
+        "logo_image": logo_image
     }
     if images[0].filename == "":
         images = [side_image, back_image]
@@ -1079,7 +1081,7 @@ def admin_ad_list():
     recruit_start_date = request.args.get('recruit_start', '0000-00-00')
     recruit_end_date = request.args.get('recruit_end', '9999-12-30')
     order_by = request.args.get('order_by', 'ad_id')
-    sort = request.args.get('sort', 'ASC')
+    sort = request.args.get('sort', 'DESC')
     count = request.args.get('count', 10)
     if area == '':
         area_list = area
@@ -1475,4 +1477,10 @@ def admin_notification_user_list():
                                                                  gender=gender, register_time=register_time
                                                                  )
         return jsonify({"data": result, "item_count": item_count})
+
+    elif request.method == 'POST':
+        data = json.loads(request.get_data())
+        result = Notification.user_app_push_notification(*data['user_list'], **data)
+        return jsonify({"data": data})
+
 

@@ -1,4 +1,5 @@
 from database.dbConnection import Database
+from notification.user_push_nofitication import one_cloud_messaging
 
 
 def check_gender_filter(gender):
@@ -27,7 +28,7 @@ def check_user_area_filter(area):
 
 
 def get_all_marketing_user(page, count, area, gender, register_time):
-    per_page = (page-1) * count
+    per_page = (page - 1) * count
     db = Database()
 
     where_area = check_user_area_filter(area)
@@ -58,5 +59,34 @@ def get_all_marketing_user(page, count, area, gender, register_time):
     return user_list, item_count
 
 
+# 사용자 앱푸시 전송
+def user_app_push_notification(*user_list, **kwargs):
+    db = Database()
+    success_list = []
+    fail_list = []
+    kwargs.setdefault('transfer_count', len(user_list))
+    insert_app_push_log_id = db.insertAppPushLogReturnId(**kwargs)['id']
+    if user_list:
+        fcm_list = db.getAllUserFcmToken(*user_list)
+        sorted_user_list = sorted(user_list, key=lambda x: x)
+        many_execute_value_arr_1 = [[sorted_user_list[i], int(insert_app_push_log_id)]for i in range(len(sorted_user_list))]
+        db.insertUserAppPushLog(many_value=many_execute_value_arr_1)
+        for i in range(len(fcm_list)):
+            result = one_cloud_messaging(token=fcm_list[i]['fcm_token'], body=kwargs.get('body'))
+            if int(result['success']) == 1:
+                success_list.append(fcm_list[i]['user_id'])
+                continue
+            else:
+                fail_list.append(fcm_list[i]['user_id'])
+        kwargs.setdefault('success_count', len(success_list))
+        kwargs.setdefault('fail_count', len(fail_list))
+        kwargs.setdefault('id', insert_app_push_log_id)
+        many_execute_value_arr_2 = [[success_list[i], "success"] for i in range(len(success_list))]
+        # many_execute_value_arr_2
+        db.updateAppPushLog(**kwargs)
 
 
+        return user_list
+
+    return user_list
+#

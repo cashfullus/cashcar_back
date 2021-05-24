@@ -76,7 +76,7 @@ class Database:
     # 광고 디테일 By ad_id
     def getOneAdByAdId(self, ad_id):
         sql = "SELECT " \
-              "ad_id, title, thumbnail_image, min_distance, " \
+              "ad_id, title, logo_image, thumbnail_image, min_distance, " \
               "side_image, side_length, side_width, " \
               "back_image, back_length, back_width, " \
               "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
@@ -375,3 +375,52 @@ class Database:
         )
         row = self.cursor.fetchone()
         return row
+
+    def getAllUserFcmToken(self, *user_list):
+        sql = f"SELECT fcm_token, user_id FROM user_fcm WHERE user_id IN {user_list} ORDER BY user_id"
+        self.cursor.execute(
+            query=sql
+        )
+        rows = self.cursor.fetchall()
+        return rows
+
+    # 앱 푸시 로그 last_insert_id return
+    def insertAppPushLogReturnId(self, **kwargs):
+        self.cursor.execute(
+            query="INSERT INTO app_push_log (notification_title, notification_body, transfer_count) "
+                  "VALUES (%s, %s, %s)",
+            args=[kwargs.get('title'), kwargs.get('body'), kwargs.get('transfer_count')]
+        )
+        self.commit()
+        self.cursor.execute(
+            query="SELECT * FROM app_push_log ORDER BY register_time DESC LIMIT 1",
+        )
+        row = self.cursor.fetchone()
+        return row
+
+    # 앱푸시 로그
+    def updateAppPushLog(self, **kwargs):
+        self.cursor.execute(
+            query="UPDATE app_push_log SET success_count = %s, fail_count = %s WHERE id = %s",
+            args=[kwargs.get("success_count"), kwargs.get('fail_count'), kwargs.get('id')]
+        )
+        self.commit()
+        return True
+
+    # 사용자 기록남기기
+    def insertUserAppPushLog(self, many_value):
+        self.cursor.executemany(
+            query="INSERT INTO user_app_push_log (user_id, app_push_log_id) VALUE (%s, %s)",
+            args=many_value
+        )
+        self.commit()
+        return True
+
+    # 사용자 진행상태 return
+    def updateUserAppPushLog(self, many_value):
+        self.cursor.executemany(
+            query="UPDATE user_app_push_log SET status = %s, updated_time = NOW() WHERE user_id = %s",
+            args=many_value
+        )
+        self.commit()
+        return True

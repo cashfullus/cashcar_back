@@ -132,6 +132,8 @@ responses:
                     type: string
                   thumbnail_image:
                     type: string
+                  logo_image:
+                    type: string
                   title:
                     type: string
                   total_point:

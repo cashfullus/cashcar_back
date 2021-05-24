@@ -59,9 +59,10 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         )
                 db.execute(
                     query="UPDATE ad_information "
-                          "SET thumbnail_image = %s, side_image = %s, back_image = %s "
+                          "SET logo_image = %s, thumbnail_image = %s, side_image = %s, back_image = %s "
                           "WHERE ad_id = %s",
-                    args=[save_to_db_dict['thumbnail_image'],
+                    args=[save_to_db_dict['logo_image'],
+                          save_to_db_dict['thumbnail_image'],
                           save_to_db_dict['side_image'],
                           save_to_db_dict['back_image'],
                           register_id['ad_id']
@@ -102,6 +103,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 kwargs['ad_id'] = register_id['ad_id']
                 kwargs['side_image'] = save_to_db_dict['side_image']
                 kwargs['back_image'] = save_to_db_dict['back_image']
+                kwargs['logo_image'] = save_to_db_dict['logo_image']
                 kwargs['thumbnail_image'] = save_to_db_dict['thumbnail_image']
                 kwargs['activity_period'] = int(kwargs['activity_period'])
                 kwargs['gender'] = int(kwargs['gender'])
@@ -142,7 +144,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 query="UPDATE ad_information "
                       "SET thumbnail_image = %s, side_image = %s, back_image = %s "
                       "WHERE ad_id = %s",
-                args=[save_to_db_dict['thumbnail_image'],
+                args=[save_to_db_dict['logo_image'],
+                      save_to_db_dict['thumbnail_image'],
                       save_to_db_dict['side_image'],
                       save_to_db_dict['back_image'],
                       kwargs.get('ad_id')
@@ -166,6 +169,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             )
             kwargs['side_image'] = save_to_db_dict['side_image']
             kwargs['back_image'] = save_to_db_dict['back_image']
+            kwargs['logo_image'] = save_to_db_dict['logo_image']
             kwargs['thumbnail_image'] = save_to_db_dict['thumbnail_image']
             kwargs['activity_period'] = int(kwargs['activity_period'])
             kwargs['gender'] = int(kwargs['gender'])
@@ -204,7 +208,7 @@ def get_all_by_category_ad_list(page, category):
           "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
           "TIMESTAMPDIFF(day, DATE_FORMAT(NOW(), '%%Y-%%m-%%d %%H:%%i:%%s'), " \
           "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s')) as time_diff " \
-          f"FROM ad_information WHERE ad_status = %s AND removed = 0 " \
+          f"FROM ad_information WHERE ad_status = %s AND removed = 0 ORDER BY ad_id DESC " \
           "LIMIT %s OFFSET %s"
 
     result = db.executeAll(query=sql, args=[category, start_at, per_page])
@@ -531,7 +535,8 @@ def update_ad_apply_status(**kwargs):
         if apply_status["status"] == "accept" and kwargs["status"] == "accept":
             apply_information["accept"] = False
 
-        if apply_status["status"] == "accept" or apply_status["status"] == "reject" or apply_status["status"] == "success":
+        if apply_status["status"] == "accept" or apply_status["status"] == "reject" or apply_status[
+            "status"] == "success":
             continue
 
         if apply_information['rejected'] is False or apply_information["accept"] is False:

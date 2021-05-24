@@ -34,6 +34,9 @@ responses:
         total_point:
           type: integer
           description: 총 포인트
+        logo_image:
+          type: string
+          description: 로고 이미지
         thumbnail_image:
           type: string
           description: 썸네일 이미지
