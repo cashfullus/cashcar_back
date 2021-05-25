@@ -1506,7 +1506,7 @@ def admin_marketing_user_list():
 # 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)  app_push_id에 해당하는 사용자 리스트가 존재하지않는다.!
 @app.route('/admin/app-push/user-list', methods=['GET', 'POST'])
 @jwt_required()
-@swag_from('route_yml/notification/admin_app_push_user_lit.yml', methods=['GET'])
+@swag_from('route_yml/notification/admin_app_push_user_list.yml', methods=['GET'])
 @swag_from('route_yml/notification/admin_app_push_user_list_post.yml', methods=['POST'])
 def admin_notification_user_list():
     identity_ = get_jwt_identity()
