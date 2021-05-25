@@ -21,6 +21,7 @@ Icon
 run.py
 appConfig/firebaseConfig
 appConfig/static/image
+appConfig/flask_app.log
 # Thumbnails
 ._*
 .png
