@@ -1054,10 +1054,6 @@ def admin_adverting_register():
         return jsonify({"data": {"allowed_image": False, "success": False}})
 
 
-# 광고 미션 수정 or 삭제
-# @app.route('/admin/ad/mission/update', methods=['POST', 'DELETE'])
-# ad_mission_card_id = request.args.get('ad_mission_card_Id')
-
 # 어드민 광고 리스트
 @app.route('/admin/ad/list')
 @jwt_required()
@@ -1474,7 +1470,7 @@ def admin_notification_re_transfer():
 
 @app.route('/admin/marketing/user-list')
 @jwt_required()
-@swag_from('route_yml/notification/admin_app_push_user_list_get.yml', methods=['GET'])
+@swag_from('route_yml/notification/admin_marketing_user_list.yml', methods=['GET'])
 def admin_marketing_user_list():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
@@ -1510,6 +1506,7 @@ def admin_marketing_user_list():
 # 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)  app_push_id에 해당하는 사용자 리스트가 존재하지않는다.!
 @app.route('/admin/app-push/user-list', methods=['GET', 'POST'])
 @jwt_required()
+@swag_from('route_yml/notification/admin_app_push_user_lit.yml', methods=['GET'])
 @swag_from('route_yml/notification/admin_app_push_user_list_post.yml', methods=['POST'])
 def admin_notification_user_list():
     identity_ = get_jwt_identity()

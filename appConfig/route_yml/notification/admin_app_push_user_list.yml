@@ -1,0 +1,71 @@
+tags:
+  - Admin Notification
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: page(default 1)
+    in: query
+    type: integer
+    required: false
+
+  - name: count(default 10)
+    in: query
+    type: integer
+    required: false
+
+  - name: id
+    in: query
+    type: integer
+    required: true
+
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            properties:
+              age:
+                type: integer
+              call_number:
+                type: string
+              gender:
+                type: string
+              register_time:
+                type: string
+                description: 전송시작
+              updated_time:
+                type: string
+                description: 수신시간
+              status:
+                type: string
+                description: stand_by, fail, success
+              user_id:
+                type: integer
+              vehicle_information:
+                type: object
+                properties:
+                  brand:
+                    type: string
+                  car_number:
+                    type: string
+                  vehicle_model_name:
+                    type: string
+
+        item_count:
+          type: integer
