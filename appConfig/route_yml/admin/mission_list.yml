@@ -69,6 +69,8 @@ responses:
               travelled_distance:
                 type: integer
                 description: 주행거리
+              email:
+                type: string
               mission_history:
                 type: array
                 items:

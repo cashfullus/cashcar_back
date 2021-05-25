@@ -309,12 +309,14 @@ def user_mission_list(user_id):
                   "TIMESTAMPDIFF(DAY, activity_start_date, NOW()) as day_diff "
                   "FROM ad_user_apply as aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-                  "WHERE user_id = %s",
+                  "WHERE user_id = %s AND status NOT IN ('success', 'fail')",
             args=user_id
         )
         day_diff = 0
+        if ad_user_information['day_diff'] is None:
+            ad_user_information['day_diff'] = 0
         if ad_user_information['activity_start_date'] != '0000-00-00 00:00:00':
-            day_diff = ((ad_user_information['day_diff'] + 1) / ad_user_information['activity_period'] * 100)
+            day_diff = ((ad_user_information['day_diff']) / ad_user_information['activity_period'] * 100)
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information
         result["images"] = images

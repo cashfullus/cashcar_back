@@ -1147,6 +1147,7 @@ def admin_ad_apply():
         if request.method == "POST":
             data = request.get_json()
             result, user_fcm_list = AD.update_ad_apply_status(**data)
+            print(user_fcm_list)
             if user_fcm_list:
                 if data['status'] == "accept":
                     push_result = multiple_cloud_messaging(tokens=user_fcm_list,
