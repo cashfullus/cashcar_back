@@ -40,6 +40,8 @@ responses:
           type: array
           items:
             properties:
+              name:
+                type: string
               age:
                 type: integer
               call_number:
