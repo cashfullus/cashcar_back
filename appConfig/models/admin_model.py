@@ -290,7 +290,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     )
             if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
                 start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period']) - 1))) \
+                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])))) \
                     .strftime('%Y-%m-%d 23:59:59')
                 db.execute(
                     query="UPDATE ad_user_apply "

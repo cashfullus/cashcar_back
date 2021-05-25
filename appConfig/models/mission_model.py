@@ -24,15 +24,15 @@ def get_mission_type_idx_by_stand_by(ad_mission_card_user_id):
 
 
 # 사용자 미션 하기
-def user_apply_mission(ad_mission_card_user_id, ad_mission_card_id, mission_type, image_dict, travelled_distance):
+def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travelled_distance):
     db = Database()
     save_to_db_dict = {}
-    directory = f"{BASE_IMAGE_LOCATION}/{ad_mission_card_id}"
+    directory = f"{BASE_IMAGE_LOCATION}/{ad_mission_card_user_id}"
     os.makedirs(directory, exist_ok=True)
     # 필수미션 인증하기
     for key, val in image_dict.items():
         val.save(directory + "/" + secure_filename(val.filename))
-        save_to_db_dict.setdefault(key, f"{MISSION_IMAGE_HOST}/{ad_mission_card_id}/" + secure_filename(val.filename))
+        save_to_db_dict.setdefault(key, f"{MISSION_IMAGE_HOST}/{ad_mission_card_user_id}/" + secure_filename(val.filename))
     # mission_fail_count 조회
     fail_count = db.executeOne(
         query="SELECT mission_fail_count FROM ad_mission_card_user WHERE ad_mission_card_user_id = %s",

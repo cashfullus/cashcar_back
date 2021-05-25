@@ -652,7 +652,6 @@ def ad_mission_apply_with_list():
             if False not in allowed_result:
                 result = Mission.user_apply_mission(
                     ad_mission_card_user_id=amcu_id_and_mission_type["ad_mission_card_user_id"],
-                    ad_mission_card_id=amcu_id_and_mission_type["ad_mission_card_id"],
                     mission_type=int(amcu_id_and_mission_type["mission_type"]),
                     image_dict=image_list,
                     travelled_distance=travelled_distance
