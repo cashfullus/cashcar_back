@@ -470,3 +470,8 @@ class Database:
         )
         self.commit()
         return True
+
+    def getUserInformationByNotification(self, *args):
+        return self.cursor.execute(
+            query="SELECT "
+        )

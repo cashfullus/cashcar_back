@@ -698,7 +698,11 @@ class AdminPointGet:
             return False, self.get_item_count()
 
 
-# class AdminPoint
+class AdminPointPost:
+    def __init__(self, user_id, point, contents):
+        self.user_id = user_id
+        self.point = point
+        self.contents = contents
 
 
 

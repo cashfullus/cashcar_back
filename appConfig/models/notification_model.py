@@ -128,3 +128,35 @@ def app_push_re_transfer(user_id, app_push_id):
         else:
             return False
     return False
+
+
+# app_push_id에 해당하는 사용자 리스트
+def get_user_list_by_app_push_id(app_push_id, page, count):
+    db = Database()
+    per_page = (page-1) * count
+    user_list = db.executeAll(
+        query="SELECT uapl.user_id, name, call_number, "
+              "resident_registration_number_back as gender, age, status, "
+              "DATE_FORMAT(uapl.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+              "DATE_FORMAT(updated_time, '%%Y-%%m-%%d %%H:%%i:%%s') as updated_time "
+              "FROM user u "
+              "JOIN user_app_push_log uapl on u.user_id = uapl.user_id "
+              "WHERE uapl.app_push_log_id = %s ORDER BY register_time DESC LIMIT %s OFFSET %s",
+        args=[app_push_id, count, per_page]
+    )
+    vehicle_information = {"vehicle_model_name": "", "brand": "", "car_number": ""}
+    item_count = len(user_list)
+    if user_list:
+        for i in range(len(user_list)):
+            vehicle = db.executeOne(
+                query="SELECT vehicle_model_name, brand, car_number FROM vehicle "
+                      "WHERE user_id = %s ORDER BY supporters DESC",
+                args=user_list[i]['user_id']
+
+            )
+            if vehicle:
+                user_list[i]['vehicle_information'] = vehicle
+            else:
+                user_list[i]['vehicle_information'] = vehicle_information
+        return user_list, item_count
+    return user_list, item_count

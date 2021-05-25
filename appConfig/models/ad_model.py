@@ -529,10 +529,10 @@ def update_ad_apply_status(**kwargs):
         # 현재 apply 의 데이터 가져오기
         apply_status = db.getOneApplyStatus(ad_user_apply_id=apply_user_list[i])
         # apply status 에 대한 중복 데이터 변경시 false
-        if apply_status["status"] == "reject" and kwargs["status"] == "reject":
+        if apply_status["status"] == "reject" and kwargs["status"] == "accept":
             apply_information["rejected"] = False
 
-        if apply_status["status"] == "accept" and kwargs["status"] == "accept":
+        if apply_status["status"] == "accept" and kwargs["status"] == "reject":
             apply_information["accept"] = False
 
         if apply_status["status"] == "accept" or apply_status["status"] == "reject" or apply_status[

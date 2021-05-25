@@ -1472,10 +1472,44 @@ def admin_notification_re_transfer():
     return jsonify({"data": result})
 
 
+@app.route('/admin/marketing/user-list')
+@jwt_required()
+@swag_from('route_yml/notification/admin_app_push_user_list_get.yml', methods=['GET'])
+def admin_marketing_user_list():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    area = request.args.get('area', '')
+    gender = request.args.get('gender', 0)
+    register_time_query = request.args.get('register_time', None)
+
+    if area == '':
+        area_list = area
+    else:
+        if len(area.split(',')) <= 1:
+            area_list = area
+        else:
+            area_list = area.split(',')
+
+    if register_time_query:
+        register_time = register_time_query.split(',')
+    else:
+        register_time = ['0000-00-00 00:00:00', '9999-12-01 23:59:59']
+    result, item_count = Notification.get_all_marketing_user(page=page, count=count, area=area_list,
+                                                             gender=gender, register_time=register_time
+                                                             )
+    return jsonify({"data": result, "item_count": item_count})
+
+
 # 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)  app_push_id에 해당하는 사용자 리스트가 존재하지않는다.!
 @app.route('/admin/app-push/user-list', methods=['GET', 'POST'])
 @jwt_required()
-@swag_from('route_yml/notification/admin_app_push_user_list_get.yml', methods=['GET'])
 @swag_from('route_yml/notification/admin_app_push_user_list_post.yml', methods=['POST'])
 def admin_notification_user_list():
     identity_ = get_jwt_identity()
@@ -1488,25 +1522,8 @@ def admin_notification_user_list():
     if request.method == 'GET':
         page = request.args.get('page', 1, int)
         count = request.args.get('count', 10, int)
-        area = request.args.get('area', '')
-        gender = request.args.get('gender', 0)
-        register_time_query = request.args.get('register_time', None)
-
-        if area == '':
-            area_list = area
-        else:
-            if len(area.split(',')) <= 1:
-                area_list = area
-            else:
-                area_list = area.split(',')
-
-        if register_time_query:
-            register_time = register_time_query.split(',')
-        else:
-            register_time = ['0000-00-00 00:00:00', '9999-12-01 23:59:59']
-        result, item_count = Notification.get_all_marketing_user(page=page, count=count, area=area_list,
-                                                                 gender=gender, register_time=register_time
-                                                                 )
+        app_push_id = request.args.get('id', 0, int)
+        result, item_count = Notification.get_user_list_by_app_push_id(app_push_id=app_push_id, page=page, count=count)
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
@@ -1531,7 +1548,7 @@ def admin_point():
         count = request.args.get('count', 10, int)
         filter_point = request.args.get('point', "0~999999")
         avg_point = filter_point.split('~')
-        set_point = Admin.AdminPoint(page=page, count=count, min_point=int(avg_point[0]), max_point=int(avg_point[1]))
+        set_point = Admin.AdminPointGet(page=page, count=count, min_point=int(avg_point[0]), max_point=int(avg_point[1]))
         result, item_count = set_point.response_user_point_history()
         return jsonify({"data": result, "item_count": item_count})
 
