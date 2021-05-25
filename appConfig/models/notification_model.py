@@ -42,7 +42,7 @@ def get_all_marketing_user(page, count, area, gender, register_time):
             f"ORDER BY register_time DESC LIMIT %s OFFSET %s"
     value_list = [count, per_page]
     user_list = db.executeAll(query=query, args=value_list)
-    vehicle_information = {"vehicle_model": "", "brand": "", "car_number": ""}
+    vehicle_information = {"vehicle_model_name": "", "brand": "", "car_number": ""}
     if user_list:
         for i in range(len(user_list)):
             vehicle = db.executeOne(

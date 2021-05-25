@@ -1472,9 +1472,7 @@ def admin_notification_re_transfer():
     return jsonify({"data": result})
 
 
-
-
-# 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)
+# 앱푸쉬 전송 유저 리스트 (마케팅 수신동의한 사용자만)  app_push_id에 해당하는 사용자 리스트가 존재하지않는다.!
 @app.route('/admin/app-push/user-list', methods=['GET', 'POST'])
 @jwt_required()
 @swag_from('route_yml/notification/admin_app_push_user_list_get.yml', methods=['GET'])
@@ -1515,6 +1513,34 @@ def admin_notification_user_list():
         data = json.loads(request.get_data())
         result = Notification.user_app_push_notification(*data['user_list'], **data)
         return jsonify({"data": result})
+
+
+# 사용자 전체 포인트 관리
+@app.route('/admin/point', methods=['GET', 'POST'])
+@jwt_required()
+def admin_point():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
+
+    if request.method == 'GET':
+        page = request.args.get('page', 1, int)
+        count = request.args.get('count', 10, int)
+        filter_point = request.args.get('point', "0~999999")
+        avg_point = filter_point.split('~')
+        set_point = Admin.AdminPoint(page=page, count=count, min_point=int(avg_point[0]), max_point=int(avg_point[1]))
+        result, item_count = set_point.response_user_point_history()
+        return jsonify({"data": result, "item_count": item_count})
+
+    elif request.method == 'POST':
+        data = json.loads(request.get_data())
+        return jsonify({"data": data})
+
+
+
 
 
 

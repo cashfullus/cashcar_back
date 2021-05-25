@@ -12,8 +12,8 @@ from notification.user_push_nofitication import one_cloud_messaging
 
 from werkzeug.utils import secure_filename
 
-CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/cash_car_tip"
-DONATION_ORGANIZATION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/donation"
+CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/cash_car_tip"
+DONATION_ORGANIZATION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/donation"
 BASE_IMAGE_LOCATION_DONATION = os.getcwd() + "/static/image/donation"
 
 def calculate_age(born):
@@ -653,3 +653,52 @@ def donation_organization_register(logo_image, images, **kwargs):
     response_data["image_information"] = images
 
     return response_data
+
+
+class AdminPointGet:
+    def __init__(self, page, count, min_point, max_point):
+        self.count = count
+        self.per_page = (page-1) * count
+        self.min_point = min_point
+        self.max_point = max_point
+        self.db = Database()
+
+    # item_count
+    def get_item_count(self):
+        return self.db.executeOne(
+            query="SELECT count(user_id) as item_count FROM user WHERE deposit >= %s AND deposit <= %s",
+            args=[self.min_point, self.max_point]
+        )['item_count']
+
+    # Database 의 클래스를 상속받아 부모클래스의 method 사용
+    def get_user_information(self):
+        return self.db.executeAll(
+            query="SELECT user_id, nickname, name, call_number, email, deposit FROM user "
+                  "WHERE deposit >= %s AND deposit <= %s "
+                  "ORDER BY register_time DESC LIMIT %s OFFSET %s",
+            args=[self.min_point, self.max_point, self.count, self.per_page]
+        )
+
+    def get_user_point_history(self, user_id):
+        return self.db.executeAll(
+            query="SELECT user_id, point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register, contents "
+                  "FROM point_history WHERE user_id = %s",
+            args=user_id
+        )
+
+    def response_user_point_history(self):
+        user_information = self.get_user_information()
+        if user_information:
+            for i in range(len(user_information)):
+                point_history = self.get_user_point_history(user_id=user_information[i]['user_id'])
+                user_information[i]['point_history'] = point_history
+
+            return user_information, self.get_item_count()
+        else:
+            return False, self.get_item_count()
+
+
+# class AdminPoint
+
+
+
