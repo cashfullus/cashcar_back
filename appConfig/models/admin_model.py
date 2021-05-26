@@ -765,11 +765,17 @@ class AdminPointAll:
         )
         self.db.commit()
 
+    def get_point_history(self):
+        return self.db.executeOne(
+            query="SELECT point, contents, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM point_history ORDER BY register_time DESC LIMIT 1"
+        )
+
     # 결과
     def response(self):
         self.insert_point_history()
         self.update_point_user()
-        return True
+        return self.get_point_history()
 
 
 
