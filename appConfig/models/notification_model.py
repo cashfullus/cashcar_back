@@ -122,7 +122,7 @@ def app_push_re_transfer(user_id, app_push_id):
                                           )
         if push_result['success'] == 1:
             data = {"user_id": user_id, "description": app_push_information['notification_body']}
-            db.updateOneSuccessAppPushLog(app_push_id=app_push_id)
+            db.updateOneSuccessAppPushLog(app_push_id=app_push_id, user_id=user_id)
             db.updateOneAlarmHistoryByAppPush(**data)
             return True
         else:

@@ -410,11 +410,12 @@ class Database:
         self.commit()
         return True
 
-    def updateOneSuccessAppPushLog(self, app_push_id):
+    def updateOneSuccessAppPushLog(self, app_push_id, user_id):
         self.cursor.execute(
-            query="UPDATE app_push_log SET success_count = success_count + 1, fail_count = fail_count - 1 "
-                  "WHERE id = %s",
-            args=app_push_id
+            query="UPDATE app_push_log apl JOIN user_app_push_log uapl on apl.id = uapl.app_push_log_id "
+                  "SET success_count = success_count + 1, fail_count = fail_count - 1, status = 'success' "
+                  "WHERE app_push_log_id = %s AND user_id = %s",
+            args=[app_push_id, user_id]
         )
         self.commit()
         return True
