@@ -174,8 +174,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
 
             db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
             db.commit()
+            ad_id = kwargs['ad_id']
             default_mission_result, additional_mission_result = ad_insert_mission_card(
-                ad_id=kwargs.get('ad_id'), **kwargs
+                ad_id=ad_id, **kwargs
             )
 
             db.commit()
