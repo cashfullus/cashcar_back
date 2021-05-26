@@ -413,7 +413,8 @@ class Database:
     def updateOneSuccessAppPushLog(self, app_push_id, user_id):
         self.cursor.execute(
             query="UPDATE app_push_log apl JOIN user_app_push_log uapl on apl.id = uapl.app_push_log_id "
-                  "SET success_count = success_count + 1, fail_count = fail_count - 1, status = 'success' "
+                  "SET success_count = success_count + 1, fail_count = fail_count - 1, "
+                  "status = 'success', updated_time = NOW() "
                   "WHERE app_push_log_id = %s AND user_id = %s",
             args=[app_push_id, user_id]
         )
