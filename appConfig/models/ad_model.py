@@ -98,9 +98,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           register_id['ad_id']
                           ]
                 )
+                db.commit()
                 kwargs['ad_id'] = register_id['ad_id']
                 default, additional = ad_insert_mission_card(**kwargs)
-                db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
                     args=register_id['ad_id']
@@ -168,8 +168,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
             db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
-            default, additional = ad_insert_mission_card(**kwargs)
             db.commit()
+            default, additional = ad_insert_mission_card(**kwargs)
+            print(default, additional)
             kwargs['ad_images'] = db.executeAll(
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
                 args=kwargs.get('ad_id')
