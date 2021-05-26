@@ -683,7 +683,7 @@ class AdminPointGet:
     def get_user_point_history(self, user_id):
         return self.db.executeAll(
             query="SELECT point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, contents "
-                  "FROM point_history WHERE user_id = %s",
+                  "FROM point_history WHERE user_id = %s ORDER BY register_time DESC",
             args=user_id
         )
 
@@ -729,3 +729,54 @@ class AdminPointPost:
         self.db.commit()
         point_history = self.get_last_point_history()
         return point_history
+
+
+class AdminPointAll:
+    # 생성자
+    def __init__(self, user_list, point, contents):
+        self.point = point
+        self.contents = contents
+        self.user_list = user_list
+        self.db = Database()
+
+    # executemany 의 value 설정
+    def set_history_many_value(self):
+        history_value_list = [[self.point, self.contents, user] for user in self.user_list]
+        return history_value_list
+
+    # executemany 의 value 설정
+    def set_user_point_many_value(self):
+        point_value_list = [[self.point, user] for user in self.user_list]
+        return point_value_list
+
+    # 포인트 이력 넣기
+    def insert_point_history(self):
+        self.db.executemany(
+            query="INSERT INTO point_history SET point = %s, contents = %s, user_id = %s",
+            args=self.set_history_many_value()
+        )
+        self.db.commit()
+
+    # 포인트 업데이트
+    def update_point_user(self):
+        self.db.executemany(
+            query="UPDATE user SET deposit = deposit + %s WHERE user_id = %s",
+            args=self.set_user_point_many_value()
+        )
+        self.db.commit()
+
+    # 결과
+    def response(self):
+        self.insert_point_history()
+        self.update_point_user()
+        return True
+
+
+
+
+
+
+
+
+
+
