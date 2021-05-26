@@ -24,7 +24,6 @@ def ad_insert_mission_card(ad_id, **kwargs):
                 args=[ad_id, item['mission_type'], mission_name,
                       item['due_date'], item['order'], item['based_on_activity_period']]
             )
-        kwargs['default_mission_items'] = default_mission_items[0]
 
     if additional_mission_items[0]:
         for item in additional_mission_items[0]:
@@ -38,9 +37,7 @@ def ad_insert_mission_card(ad_id, **kwargs):
                       item["due_date"], item["from_default_order"], item['from_default_order_date']
                       ]
             )
-        kwargs['additional_mission_items'] = additional_mission_items[0]
 
-    return kwargs['default_mission_items'], kwargs['additional_mission_items']
 
 
 # Admin 광고등록하기
@@ -100,9 +97,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           register_id['ad_id']
                           ]
                 )
-                default_mission_result, additional_mission_result = ad_insert_mission_card(
-                    ad_id=register_id['ad_id'], **kwargs
-                )
+                ad_insert_mission_card(register_id['ad_id'], **kwargs)
                 db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
@@ -120,8 +115,6 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 kwargs['min_age_group'] = int(kwargs['min_age_group'])
                 kwargs['min_distance'] = int(kwargs['min_distance'])
                 kwargs['total_point'] = int(kwargs['total_point'])
-                kwargs['default_mission_items'] = default_mission_result
-                kwargs['additional_mission_items'] = additional_mission_result
                 return kwargs
             else:
                 return False
@@ -171,14 +164,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
-
-            db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
-            db.commit()
             ad_id = kwargs['ad_id']
-            default_mission_result, additional_mission_result = ad_insert_mission_card(
-                ad_id=ad_id, **kwargs
-            )
-
+            ad_insert_mission_card(ad_id, **kwargs)
+            db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
             db.commit()
             kwargs['ad_images'] = db.executeAll(
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
@@ -195,8 +183,6 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             kwargs['min_age_group'] = int(kwargs['min_age_group'])
             kwargs['min_distance'] = int(kwargs['min_distance'])
             kwargs['total_point'] = int(kwargs['total_point'])
-            kwargs['default_mission_items'] = default_mission_result
-            kwargs['additional_mission_items'] = additional_mission_result
             return kwargs
     else:
         apply_information = db.executeOne(
