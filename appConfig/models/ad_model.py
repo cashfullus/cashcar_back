@@ -10,7 +10,7 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
-def ad_insert_mission_card(ad_id, **kwargs):
+def ad_insert_mission_card(**kwargs):
     db = Database()
     default_mission_items = kwargs['default_mission_items']
     additional_mission_items = kwargs['additional_mission_items']
@@ -21,7 +21,7 @@ def ad_insert_mission_card(ad_id, **kwargs):
                 query="INSERT INTO ad_mission_card "
                       "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
                       "VALUES (%s, %s, %s, %s, %s, %s)",
-                args=[ad_id, item['mission_type'], mission_name,
+                args=[kwargs.get('ad_id'), item['mission_type'], mission_name,
                       item['due_date'], item['order'], item['based_on_activity_period']]
             )
 
@@ -32,7 +32,7 @@ def ad_insert_mission_card(ad_id, **kwargs):
                       "(ad_id, mission_type, mission_name, additional_point, due_date, "
                       "from_default_order, from_default_order_date) "
                       "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                args=[ad_id, item['mission_type'],
+                args=[kwargs.get('ad_id'), item['mission_type'],
                       item["mission_name"], item["additional_point"],
                       item["due_date"], item["from_default_order"], item['from_default_order_date']
                       ]
@@ -97,13 +97,13 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           register_id['ad_id']
                           ]
                 )
-                ad_insert_mission_card(register_id['ad_id'], **kwargs)
+                kwargs['ad_id'] = register_id['ad_id']
+                ad_insert_mission_card(**kwargs)
                 db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
                     args=register_id['ad_id']
                 )
-                kwargs['ad_id'] = register_id['ad_id']
                 kwargs['side_image'] = save_to_db_dict['side_image']
                 kwargs['back_image'] = save_to_db_dict['back_image']
                 kwargs['logo_image'] = save_to_db_dict['logo_image']
@@ -164,8 +164,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
-            ad_id = kwargs['ad_id']
-            ad_insert_mission_card(ad_id, **kwargs)
+            ad_insert_mission_card(**kwargs)
             db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
             db.commit()
             kwargs['ad_images'] = db.executeAll(
