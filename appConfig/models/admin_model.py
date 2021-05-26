@@ -16,6 +16,7 @@ CASH_CAR_TIP_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/c
 DONATION_ORGANIZATION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/donation"
 BASE_IMAGE_LOCATION_DONATION = os.getcwd() + "/static/image/donation"
 
+
 def calculate_age(born):
     today = date.today()
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
@@ -658,7 +659,7 @@ def donation_organization_register(logo_image, images, **kwargs):
 class AdminPointGet:
     def __init__(self, page, count, min_point, max_point):
         self.count = count
-        self.per_page = (page-1) * count
+        self.per_page = (page - 1) * count
         self.min_point = min_point
         self.max_point = max_point
         self.db = Database()
@@ -681,7 +682,7 @@ class AdminPointGet:
 
     def get_user_point_history(self, user_id):
         return self.db.executeAll(
-            query="SELECT user_id, point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register, contents "
+            query="SELECT point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, contents "
                   "FROM point_history WHERE user_id = %s",
             args=user_id
         )
@@ -699,10 +700,32 @@ class AdminPointGet:
 
 
 class AdminPointPost:
+    # 생성자
     def __init__(self, user_id, point, contents):
         self.user_id = user_id
         self.point = point
         self.contents = contents
+        self.db = Database()
 
+    def get_last_point_history(self):
+        point_history = self.db.executeOne(
+            query="SELECT point, contents, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM point_history "
+                  "WHERE user_id = %s ORDER BY register_time DESC LIMIT 1",
+            args=self.user_id
+        )
+        return point_history
 
+    def set_insert_point_history_query(self):
+        return f"INSERT INTO point_history (user_id, point, contents) VALUES " \
+               f"({self.user_id}, {self.point}, '{self.contents}')"
 
+    def set_update_user_deposit_query(self):
+        return f"UPDATE user SET deposit = deposit + {self.point} WHERE user_id = {self.user_id}"
+
+    def update_user_point(self):
+        self.db.execute(query=self.set_update_user_deposit_query(), args=None)
+        self.db.execute(query=self.set_insert_point_history_query(), args=None)
+        self.db.commit()
+        point_history = self.get_last_point_history()
+        return point_history

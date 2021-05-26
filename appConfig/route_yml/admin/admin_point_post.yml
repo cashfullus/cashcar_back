@@ -1,0 +1,45 @@
+tags:
+  - Admin
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: admin_user_id
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: bdoy
+    type: integer
+    required: true
+
+  - name: point
+    in: body
+    type: integer
+    required: true
+
+  - name: contents
+    in: body
+    type: string
+    required: true
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            contents:
+              type: string
+            point:
+              type: integer
+            register_time:
+              type: string
