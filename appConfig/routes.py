@@ -1561,6 +1561,7 @@ def admin_point():
 # 포인트 일괄적용
 @app.route('/admin/point/all', methods=['POST'])
 @jwt_required()
+@swag_from('route_yml/admin/admin_point_all.yml')
 def admin_point_all():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
