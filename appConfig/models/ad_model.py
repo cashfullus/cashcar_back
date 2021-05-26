@@ -10,6 +10,39 @@ BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/adverting"
 AD_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/adverting"
 
 
+def ad_insert_mission_card(ad_id, **kwargs):
+    db = Database()
+    default_mission_items = kwargs['default_mission_items']
+    additional_mission_items = kwargs['additional_mission_items']
+    if default_mission_items[0]:
+        for item in default_mission_items[0]:
+            mission_name = f"{item['order']}차 미션"
+            db.execute(
+                query="INSERT INTO ad_mission_card "
+                      "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
+                      "VALUES (%s, %s, %s, %s, %s, %s)",
+                args=[ad_id, item['mission_type'], mission_name,
+                      item['due_date'], item['order'], item['based_on_activity_period']]
+            )
+        kwargs['default_mission_items'] = default_mission_items[0]
+
+    if additional_mission_items[0]:
+        for item in additional_mission_items[0]:
+            db.execute(
+                query="INSERT INTO ad_mission_card "
+                      "(ad_id, mission_type, mission_name, additional_point, due_date, "
+                      "from_default_order, from_default_order_date) "
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                args=[ad_id, item['mission_type'],
+                      item["mission_name"], item["additional_point"],
+                      item["due_date"], item["from_default_order"], item['from_default_order_date']
+                      ]
+            )
+        kwargs['additional_mission_items'] = additional_mission_items[0]
+
+    return kwargs['default_mission_items'], kwargs['additional_mission_items']
+
+
 # Admin 광고등록하기
 def admin_ad_register(other_images, ad_images, req_method, **kwargs):
     db = Database()
@@ -47,7 +80,6 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                                                    val.filename))
                 if ad_images:
                     for image in ad_images:
-                        print(image)
                         image.save(directory + "/" + secure_filename(image.filename))
                         value = f"{AD_IMAGE_HOST}/{register_id['ad_id']}/{secure_filename(image.filename)}"
                         save_to_db_list.append(value)
@@ -68,33 +100,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           register_id['ad_id']
                           ]
                 )
-                default_mission_items = kwargs['default_mission_items']
-                additional_mission_items = kwargs['additional_mission_items']
-                if default_mission_items[0]:
-                    for item in default_mission_items[0]:
-                        mission_name = f"{item['order']}차 미션"
-                        db.execute(
-                            query="INSERT INTO ad_mission_card "
-                                  "(ad_id, mission_type, mission_name,due_date, `order`, based_on_activity_period) "
-                                  "VALUES (%s, %s, %s, %s, %s, %s)",
-                            args=[register_id['ad_id'], item['mission_type'], mission_name,
-                                  item['due_date'], item['order'], item['based_on_activity_period']]
-                        )
-                    kwargs['default_mission_items'] = default_mission_items[0]
-
-                if additional_mission_items[0]:
-                    for item in additional_mission_items[0]:
-                        db.execute(
-                            query="INSERT INTO ad_mission_card "
-                                  "(ad_id, mission_type, mission_name, additional_point, due_date, "
-                                  "from_default_order, from_default_order_date) "
-                                  "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                            args=[register_id['ad_id'], item['mission_type'],
-                                  item["mission_name"], item["additional_point"],
-                                  item["due_date"], item["from_default_order"], item['from_default_order_date']
-                                  ]
-                        )
-                    kwargs['additional_mission_items'] = additional_mission_items[0]
+                default_mission_result, additional_mission_result = ad_insert_mission_card(
+                    ad_id=register_id['ad_id'], **kwargs
+                )
                 db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
@@ -112,6 +120,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 kwargs['min_age_group'] = int(kwargs['min_age_group'])
                 kwargs['min_distance'] = int(kwargs['min_distance'])
                 kwargs['total_point'] = int(kwargs['total_point'])
+                kwargs['default_mission_items'] = default_mission_result
+                kwargs['additional_mission_items'] = additional_mission_result
                 return kwargs
             else:
                 return False
@@ -162,6 +172,12 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
 
+            db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
+            db.commit()
+            default_mission_result, additional_mission_result = ad_insert_mission_card(
+                ad_id=kwargs.get('ad_id'), **kwargs
+            )
+
             db.commit()
             kwargs['ad_images'] = db.executeAll(
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
@@ -178,6 +194,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             kwargs['min_age_group'] = int(kwargs['min_age_group'])
             kwargs['min_distance'] = int(kwargs['min_distance'])
             kwargs['total_point'] = int(kwargs['total_point'])
+            kwargs['default_mission_items'] = default_mission_result
+            kwargs['additional_mission_items'] = additional_mission_result
             return kwargs
     else:
         apply_information = db.executeOne(
