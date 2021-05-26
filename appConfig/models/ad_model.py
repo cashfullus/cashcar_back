@@ -37,7 +37,7 @@ def ad_insert_mission_card(**kwargs):
                       item["due_date"], item["from_default_order"], item['from_default_order_date']
                       ]
             )
-    return kwargs['default_mission_items'][0], kwargs['additional_mission_items'][0]
+    return default_mission_items, additional_mission_items
 
 
 # Admin 광고등록하기
@@ -166,8 +166,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
-            default, additional = ad_insert_mission_card(**kwargs)
             db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
+            default, additional = ad_insert_mission_card(**kwargs)
             db.commit()
             kwargs['ad_images'] = db.executeAll(
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
