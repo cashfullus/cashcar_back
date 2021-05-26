@@ -1558,7 +1558,18 @@ def admin_point():
         return jsonify({"data": result})
 
 
+# 포인트 일괄적용
+@app.route('/admin/point/all', methods=['POST'])
+@jwt_required()
+def admin_point_all():
+    identity_ = get_jwt_identity()
+    admin_user_id = request.headers['admin_user_id']
+    # 어드민 권한 및 사용자 확인
+    status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
+    if status is not True:
+        return jsonify(status), code
 
-
-
-
+    data = request.get_json()
+    set_result = Admin.AdminPointAll(user_list=data['user_list'], point=data['point'], contents=data['contents'])
+    result = set_result.response()
+    return jsonify({"data": result})

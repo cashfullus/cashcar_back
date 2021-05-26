@@ -16,6 +16,9 @@ class Database:
     def execute(self, query, args):
         self.cursor.execute(query, args)
 
+    def executemany(self, query, args):
+        self.cursor.executemany(query, args)
+
     def executeOne(self, query, args=None):
         if args is None:
             args = {}
@@ -472,8 +475,3 @@ class Database:
         )
         self.commit()
         return True
-
-    def getUserInformationByNotification(self, *args):
-        return self.cursor.execute(
-            query="SELECT "
-        )
