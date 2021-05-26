@@ -37,7 +37,7 @@ def ad_insert_mission_card(**kwargs):
                       item["due_date"], item["from_default_order"], item['from_default_order_date']
                       ]
             )
-
+    return kwargs['default_mission_items'][0], kwargs['additional_mission_items'][0]
 
 
 # Admin 광고등록하기
@@ -98,7 +98,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                           ]
                 )
                 kwargs['ad_id'] = register_id['ad_id']
-                ad_insert_mission_card(**kwargs)
+                default, additional = ad_insert_mission_card(**kwargs)
                 db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
@@ -115,6 +115,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 kwargs['min_age_group'] = int(kwargs['min_age_group'])
                 kwargs['min_distance'] = int(kwargs['min_distance'])
                 kwargs['total_point'] = int(kwargs['total_point'])
+                kwargs['default_mission_items'] = default
+                kwargs['additional_mission_items'] = additional
                 return kwargs
             else:
                 return False
@@ -164,7 +166,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                         query="INSERT INTO ad_images (ad_id, image) VALUES (%s, %s)",
                         args=[kwargs.get('ad_id'), save_to_db_list[i]]
                     )
-            ad_insert_mission_card(**kwargs)
+            default, additional = ad_insert_mission_card(**kwargs)
             db.execute(query="DELETE FROM ad_mission_card WHERE ad_id = %s", args=kwargs.get('ad_id'))
             db.commit()
             kwargs['ad_images'] = db.executeAll(
@@ -182,6 +184,8 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             kwargs['min_age_group'] = int(kwargs['min_age_group'])
             kwargs['min_distance'] = int(kwargs['min_distance'])
             kwargs['total_point'] = int(kwargs['total_point'])
+            kwargs['default_mission_items'] = default
+            kwargs['additional_mission_items'] = additional
             return kwargs
     else:
         apply_information = db.executeOne(
