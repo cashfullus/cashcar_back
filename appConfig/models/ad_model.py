@@ -100,7 +100,6 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 )
                 kwargs['ad_id'] = register_id['ad_id']
                 default, additional = ad_insert_mission_card(**kwargs)
-                print(default, additional)
                 db.commit()
                 kwargs['ad_images'] = db.executeAll(
                     query="SELECT image FROM ad_images WHERE ad_id = %s",
