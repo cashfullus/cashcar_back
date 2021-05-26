@@ -1532,8 +1532,8 @@ def admin_notification_user_list():
 # 사용자 전체 포인트 관리
 @app.route('/admin/point', methods=['GET', 'POST'])
 @jwt_required()
-@swag_from('route_yml/admin/admin_point_get.yml')
-@swag_from('route_yml/admin/admin_point_post.yml')
+@swag_from('route_yml/admin/admin_point_get.yml', methods=['GET'])
+@swag_from('route_yml/admin/admin_point_post.yml', methods=['POST'])
 def admin_point():
     identity_ = get_jwt_identity()
     admin_user_id = request.headers['admin_user_id']
