@@ -1,6 +1,7 @@
 import string
 
 import bcrypt
+import pymysql
 from werkzeug.utils import secure_filename
 
 # Mysql 데이터베이스
@@ -169,27 +170,45 @@ def login(**kwargs):
         return False
 
 
-# 사용자 프로필 GET
-def get_user_profile(user_id):
-    db = Database()
-    user = db.getUserById(user_id=user_id)
-    if user:
-        result = {
-            'user_id': user['user_id'],
-            'nick_name': user['nickname'],
-            'name': user['name'],
-            'email': user['email'],
-            'call_number': user['call_number'],
-            'gender': user['resident_registration_number_back'],
-            'date_of_birth': user['resident_registration_number_front'],
-            'alarm': user['alarm'],
-            'marketing': user['marketing'],
-            'profile_image': user['profile_image']
-        }
-        return result
+class UserProfile:
+    def __init__(self, user_id):
+        self.user = None
+        self.user_id = user_id
+        self.db = Database()
 
-    else:
-        return False
+    def set_response(self):
+        user = self.get_user_information()
+        if user:
+            return user
+        else:
+            return False
+
+    def set_user_data(self):
+        if self.user is None:
+            return False
+        else:
+            return {
+                'user_id': self.user['user_id'],
+                'nick_name': self.user['nickname'],
+                'name': self.user['name'],
+                'email': self.user['email'],
+                'call_number': self.user['call_number'],
+                'gender': self.user['resident_registration_number_back'],
+                'date_of_birth': self.user['resident_registration_number_front'],
+                'alarm': self.user['alarm'],
+                'marketing': self.user['marketing'],
+                'profile_image': self.user['profile_image']
+            }
+
+    def get_user_information(self):
+        return self.db.getUserById(user_id=self.user_id)
+
+    def response(self):
+        response_data = self.set_response()
+        if response_data:
+            self.user = response_data
+
+        return self.set_user_data()
 
 
 def update_user_profile(user_id, profile_image=None, **kwargs):
@@ -739,47 +758,66 @@ def user_email_auth_number_check(**kwargs):
         return status
 
 
-# 사용자 기부 리스트 페이지
-def user_donate_list_page(user_id, page, count):
-    per_page = (page - 1) * count
-    start_at = per_page + count
-    db = Database()
-    response_data = db.executeAll(
-        query="SELECT donation_organization_id, donation_organization_name, logo_image, "
-              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM donation_organization ORDER BY register_time DESC "
-              "LIMIT %s OFFSET %s",
-        args=[start_at, per_page]
-    )
-    donate_status = db.getOneUserDonateStatus(user_id=user_id)
-    if response_data:
+# 기부 리스트 페이지
+class UserDonationList:
+    def __init__(self, user_id, count, page):
+        self.user_id = user_id
+        self.per_page = (page - 1) * count
+        self.count = count
+        self.db = Database()
+
+    def get_ongoing_donation_status(self):
+        status = self.db.getOneUserDonateStatus(user_id=self.user_id)
+        if status:
+            return status['status']
+        else:
+            return ""
+
+    def get_image_data(self):
+        response_data = self.get_response_data()
         for i in range(len(response_data)):
-            image_data = db.executeAll(
+            image_data = self.db.executeAll(
                 query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
                 args=response_data[i]['donation_organization_id']
             )
             response_data[i]['image_information'] = image_data
-    if donate_status:
-        return response_data, donate_status['status']
-    else:
-        return response_data, ""
+        return response_data
+
+    def get_response_data(self):
+        return self.db.executeAll(
+            query="SELECT donation_organization_id, donation_organization_name, logo_image, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM donation_organization ORDER BY register_time DESC "
+                  "LIMIT %s OFFSET %s",
+            args=[self.count, self.per_page]
+        )
+
+    def response(self):
+        response_data = self.get_image_data()
+        return response_data, self.get_ongoing_donation_status()
 
 
-# 사용자 기부 디테일 페이지
-def user_donate_detail(donation_id):
-    db = Database()
-    response_data = db.executeOne(
-        query="SELECT donation_organization_id, donation_organization_name, logo_image, "
-              "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM donation_organization WHERE donation_organization_id = %s",
-        args=donation_id
-    )
-    image_data = db.executeAll(
-        query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
-        args=donation_id
-    )
-    if image_data:
-        response_data['image_information'] = image_data
-    else:
-        response_data['image_information'] = []
-    return response_data
+# 기부 디테일 페이지
+class UserDonationDetail:
+    def __init__(self, donation_id):
+        self.donation_id = donation_id
+        self.db = Database()
+
+    def get_response_data(self):
+        return self.db.executeOne(
+            query="SELECT donation_organization_id, donation_organization_name, logo_image, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM donation_organization WHERE donation_organization_id = %s",
+            args=self.donation_id
+        )
+
+    def get_image_data(self):
+        return self.db.executeAll(
+            query="SELECT image, description FROM donation_organization_images WHERE donation_organization_id = %s",
+            args=self.donation_id
+        )
+
+    def response(self):
+        response_data = self.get_response_data()
+        response_data['image_information'] = self.get_image_data()
+        return response_data

@@ -362,13 +362,14 @@ def user_login():
 @swag_from('route_yml/user/user_profile_post.yml', methods=['POST'])
 def user_profile():
     try:
-        user_id = request.args.get('user_id')
+        user_id = request.args.get('user_id', 0, int)
         identity_ = get_jwt_identity()
-        if int(user_id) != identity_:
+        if user_id != identity_:
             return jsonify(Unauthorized), 401
 
         if request.method == "GET":
-            result = User.get_user_profile(user_id)
+            set_result = User.UserProfile(user_id=user_id)
+            result = set_result.response()
             if result:
                 return jsonify({"status": True, "data": result}), 200
             else:
@@ -853,7 +854,8 @@ def user_donate_list():
 
     page = request.args.get('page', 1, type=int)
     count = request.args.get('count', 10, type=int)
-    result, donate_status = User.user_donate_list_page(user_id=user_id, page=page, count=count)
+    set_result = User.UserDonationList(user_id=user_id, page=page, count=count)
+    result, donate_status = set_result.response()
     return jsonify({"data": result, "ongoing": donate_status})
 
 
@@ -868,8 +870,9 @@ def user_donate():
         return jsonify(Unauthorized), 401
 
     donation_id = request.args.get('donation_organization_id')
-    result = User.user_donate_detail(donation_id=donation_id)
-    return jsonify(result)
+    set_data = User.UserDonationDetail(donation_id=donation_id)
+    response = set_data.response()
+    return jsonify(response)
 
 
 # 사용자 캐시카팁 리스트
@@ -1146,8 +1149,8 @@ def admin_ad_apply():
     try:
         if request.method == "POST":
             data = request.get_json()
-            result, user_fcm_list = AD.update_ad_apply_status(**data)
-            print(user_fcm_list)
+            set_result = AD.AdApplyStatusUpdate(**data)
+            result, user_fcm_list = set_result.response()
             if user_fcm_list:
                 if data['status'] == "accept":
                     push_result = multiple_cloud_messaging(tokens=user_fcm_list,
@@ -1574,3 +1577,10 @@ def admin_point_all():
     set_result = Admin.AdminPointAll(user_list=data['user_list'], point=data['point'], contents=data['contents'])
     result = set_result.response()
     return jsonify({"data": result})
+
+
+@app.route('/test/test')
+def test_db():
+    set_response = User.UserProfile(user_id=1)
+    response = set_response.response()
+    return jsonify({"data": response})

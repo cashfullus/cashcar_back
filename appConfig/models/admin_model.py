@@ -267,28 +267,15 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
             # 미션 성공으로 업데이트
             db.execute(
                 query="UPDATE ad_mission_card_user "
+                      "SET status = 'ongoing' WHERE ad_user_apply_id = %s "
+                      "AND mission_start_date <= NOW() AND ad_mission_card_user_id NOT IN (%s)",
+                args=[ad_apply_id, mission_information['ad_mission_card_user_id']]
+            )
+            db.execute(
+                query="UPDATE ad_mission_card_user "
                       "SET status = 'success', mission_success_datetime = NOW() WHERE ad_mission_card_user_id = %s",
                 args=mission_information['ad_mission_card_user_id']
             )
-            # 필수미션 회차에 따른 추가 미션 정보 조회
-            additional_mission_list = db.getAllAddMissionUserInfoByApplyIdFirst(
-                ad_user_apply_id=ad_apply_id,
-                ad_mission_card_id=mission_card_id,
-                from_default_order=mission_information['order']
-            )
-            if additional_mission_list:
-                for mission in additional_mission_list:
-                    start_date = date.today() + timedelta(days=(int(mission['from_default_order_date'])))
-                    end_date = start_date + timedelta(days=(int(mission['due_date']) - 1))
-                    db.execute(
-                        query="UPDATE ad_mission_card_user "
-                              "SET mission_start_date = %s, mission_end_date = %s "
-                              "WHERE ad_mission_card_user_id = %s",
-                        args=[start_date.strftime('%Y-%m-%d 00:00:00'),
-                              end_date.strftime('%Y-%m-%d 23:59:59'),
-                              mission['ad_mission_card_user_id']
-                              ]
-                    )
             if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
                 start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])))) \

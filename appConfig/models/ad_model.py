@@ -528,158 +528,228 @@ def cancel_apply_user(ad_user_apply_id):
     return status
 
 
-# 광고 status 변경
-def update_ad_apply_status(**kwargs):
-    db = Database()
-    apply_user_list = kwargs['apply_user_list']
-    apply_information = {"rejected": True, "accept": True, "apply_data": True}
-    user_fcm_list = []
-    for i in range(len(apply_user_list)):
-        # 현재 apply 의 데이터 가져오기
-        apply_status = db.getOneApplyStatus(ad_user_apply_id=apply_user_list[i])
-        if kwargs['status'] == "accept" and apply_status['status'] == 'accept':
-            continue
+class AdApplyStatusUpdate:
+    def __init__(self, **kwargs):
+        self.start_date = date.today()
+        self.kwargs = kwargs
+        self.apply_user_list = kwargs['apply_user_list']
+        self.db = Database()
+        self.apply_information = None
+        self.apply_status = None
+        self.apply_id = None
+        self.mission_item = None
+        self.item = None
+        self.user_fcm_list = []
 
-        if kwargs['status'] == 'reject' and apply_status['status'] == 'reject':
-            continue
-        # apply status 에 대한 중복 데이터 변경시 false
-        if apply_status["status"] == "reject" and kwargs["status"] == "accept":
-            apply_information["rejected"] = False
+    def insert_mission_card_user_information(self):
+        ad_mission_card_user_info = self.db.executeAll(
+            query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
+                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+                  "WHERE aua.ad_user_apply_id = %s",
+            args=self.apply_id
+        )
+        ad_mission_card_id_list = [info['ad_mission_card_user_id'] for info in ad_mission_card_user_info]
+        self.db.executemany(
+            query="INSERT INTO mission_images (ad_mission_card_user_id) VALUES (%s)",
+            args=ad_mission_card_id_list
+        )
+        self.db.commit()
 
-        if apply_status["status"] == "accept" and kwargs["status"] == "reject":
-            apply_information["accept"] = False
+    def insert_history(self):
+        history_name = f"{self.apply_status['title']} 광고 신청 승인"
+        self.db.execute(
+            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+            args=[self.apply_status['user_id'], history_name]
+        )
+        user_info = self.db.getOneFcmToken(user_id=self.apply_status['user_id'])
+        if user_info['alarm'] == 1:
+            self.user_fcm_list.append(user_info['fcm_token'])
+            saveAlarmHistory(user_id=self.apply_status['user_id'], alarm_type="apply",
+                             required=1, description="서포터즈 신청이 승인되었습니다. 스티커를 받은 후 1차 미션을 인증해주세요!"
+                             )
+        self.db.commit()
 
-        if apply_status["status"] == "accept" or apply_status["status"] == "reject" or apply_status[
-            "status"] == "success":
-            continue
+    def update_apply_status(self):
+        self.db.execute(query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
+                        args=[self.kwargs['status'], self.apply_id]
+                        )
+        self.db.commit()
 
-        if apply_information['rejected'] is False or apply_information["accept"] is False:
-            continue
-        else:
-            if kwargs["status"] == "reject":
-                history_name = f"{apply_status['title']} 광고 신청 거부"
-                # 광고 신청 실패시 토스트 메세지 추가
-                title = "서포터즈 신청에 실패하였습니다:("
-                reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
-                # ad_user_apply 테이블에서 ad_id 가 같은 ad_information 테이블에서 모집인원 -1 (ad_user_apply_id)에 맞는 데이터
-                if int(apply_status['max_recruiting_count']) == int(apply_status['recruiting_count']):
-                    db.execute(
-                        query="UPDATE ad_information as ad_info "
-                              "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                              "SET ad_info.recruiting_count = ad_info.recruiting_count - 1, ad_status = 'ongoing' "
-                              "WHERE aua.ad_user_apply_id = %s",
-                        args=apply_user_list[i]
-                    )
-                else:
-                    db.execute(
-                        query="UPDATE ad_information as ad_info "
-                              "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                              "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
-                              "WHERE aua.ad_user_apply_id = %s",
-                        args=apply_user_list[i]
-                    )
-                db.execute(
-                    query="UPDATE ad_user_apply SET status = %s, reject_status_time = NOW() "
-                          "WHERE ad_user_apply_id = %s",
-                    args=[kwargs['status'], apply_user_list[i]]
-                )
-                db.execute(
-                    query="UPDATE ad_user_apply "
-                          "SET recruit_number = recruit_number - 1 "
-                          "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success') "
-                          "AND ad_id = %s AND recruit_number > %s",
-                    args=[apply_user_list[i], apply_status["ad_id"], apply_status['recruit_number']]
-                )
-                db.execute(
-                    query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-                    args=[apply_status['user_id'], history_name]
-                )
-                db.execute(
-                    query="INSERT INTO ad_mission_reason (ad_user_apply_id, reason, title, is_read, message_type) "
-                          "VALUE (%s, %s, %s, %s, %s)",
-                    args=[apply_user_list[i], reason, title, 0, "apply_reject"]
-                )
-                user_info = db.getOneFcmToken(user_id=apply_status['user_id'])
-                if user_info['alarm'] == 1:
-                    user_fcm_list.append(user_info['fcm_token'])
-                    saveAlarmHistory(user_id=apply_status['user_id'], alarm_type="apply",
-                                     required=1, description="서포터즈 신청 조건에 만족하지 못하여 신청이 거절되었습니다, 다음 기회에 다시 도전해주세요ㅠㅜ"
-                                     )
+    def check_status(self):
+        status = self.apply_status['status']
+        apply_status = self.kwargs['status']
+        if status == 'accept' and apply_status == "accept":
+            return False
 
-            elif kwargs["status"] == "accept":
-                mission_items = db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=apply_user_list[i])
-                if mission_items:
-                    for mission in mission_items:
-                        first_start_date = date.today()
-                        # 필수미션 1회차 일 경우
-                        if mission["order"] == 1 and mission["mission_type"] == 0:
-                            first_end_date = first_start_date + timedelta(days=(int(mission["due_date"])))
-                            db.execute(
-                                query="INSERT INTO ad_mission_card_user "
-                                      "(ad_user_apply_id, ad_mission_card_id, "
-                                      "mission_type, status, mission_start_date, mission_end_date) "
-                                      "VALUES (%s, %s, %s, %s, %s, %s)",
-                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
-                                      "ongoing", first_start_date.strftime('%Y-%m-%d 00:00:00'),
-                                      first_end_date.strftime('%Y-%m-%d 23:59:59')]
-                            )
-                        # 필수미션 n회차 일 경우 (1제외)
-                        elif mission["order"] != 1 and mission["mission_type"] == 0:
-                            start_date = first_start_date + timedelta(days=mission["based_on_activity_period"])
-                            end_date = start_date + timedelta(days=mission["due_date"])
-                            db.execute(
-                                query="INSERT INTO ad_mission_card_user "
-                                      "(ad_user_apply_id, ad_mission_card_id, "
-                                      "mission_type, status, mission_start_date, mission_end_date) "
-                                      "VALUES (%s, %s, %s, %s, %s, %s)",
-                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
-                                      "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'),
-                                      end_date.strftime('%Y-%m-%d 23:59:59')]
-                            )
-                        # 선택미션 일 경우(우선 활동시작 기간이 필수미션 1회 완료 후 이기때문에 0000-00-00 으로 (필수미션1회 후 시간정해짐)
-                        else:
-                            db.execute(
-                                query="INSERT INTO ad_mission_card_user "
-                                      "(ad_user_apply_id, ad_mission_card_id, "
-                                      "mission_type, status) "
-                                      "VALUES (%s, %s, %s, %s)",
-                                args=[apply_user_list[i], mission["ad_mission_card_id"], mission["mission_type"],
-                                      "stand_by", ]
-                            )
-                    db.execute(
-                        query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() "
-                              "WHERE ad_user_apply_id = %s",
-                        args=[kwargs['status'], apply_user_list[i]]
-                    )
-                    history_name = f"{apply_status['title']} 광고 신청 승인"
-                    db.execute(
-                        query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-                        args=[apply_status['user_id'], history_name]
-                    )
-                    user_info = db.getOneFcmToken(user_id=apply_status['user_id'])
-                    if user_info['alarm'] == 1:
-                        user_fcm_list.append(user_info['fcm_token'])
-                        saveAlarmHistory(user_id=apply_status['user_id'], alarm_type="apply",
-                                         required=1, description="서포터즈 신청이 승인되었습니다. 스티커를 받은 후 1차 미션을 인증해주세요!"
-                                         )
-                    db.commit()
-            else:
-                apply_information["apply_data"] = False
-                return apply_information
+        if status == 'reject' and apply_status == 'reject':
+            return False
 
-            ad_mission_card_user_info = db.executeAll(
-                query="SELECT ad_mission_card_user_id FROM ad_mission_card_user as amcu "
-                      "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
-                      "WHERE aua.ad_user_apply_id = %s",
-                args=apply_user_list[i]
+        if status in ('accept', 'reject', 'success'):
+            return False
+
+        if (status == "accept" and apply_status == "reject") or (status == "reject" and apply_status == "accept"):
+            return False
+
+        return True
+
+    def set_mission_item(self):
+        self.mission_item = self.db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=self.apply_id)
+
+    @staticmethod
+    def get_default_mission(self, ad_user_apply_id, order):
+        return self.db.executeOne(
+            query="SELECT ad_mission_card_id FROM ad_user_apply as aua "
+                  "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id "
+                  "WHERE ad_user_apply_id = %s AND `order` = %s AND mission_type = 0",
+            args=[ad_user_apply_id, order]
+        )
+
+    def get_default_dates(self):
+        default_mission = self.get_default_mission(self, ad_user_apply_id=self.apply_id,
+                                                   order=self.item['from_default_order'])
+        return self.db.executeOne(
+            query="SELECT mission_start_date FROM ad_mission_card_user "
+                  "WHERE ad_user_apply_id = %s AND ad_mission_card_id = %s AND mission_type = 0",
+            args=[self.apply_id, default_mission['ad_mission_card_id']]
+        )
+
+    def default_mission(self):
+        query = "INSERT INTO ad_mission_card_user (ad_user_apply_id, ad_mission_card_id, mission_type, " \
+                "status, mission_start_date, mission_end_date) " \
+                f"VALUES (%s, %s, %s, %s, %s, %s)"
+        if self.item['order'] == 1 and self.item['mission_type'] == 0:
+            end_date = (self.start_date + timedelta(days=self.item["due_date"])).strftime('%Y-%m-%d 23:59:59')
+            self.db.execute(
+                query=query,
+                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
+                      "ongoing", self.start_date.strftime('%Y-%m-%d 00:00:00'), end_date
+                      ]
             )
-            for j in range(len(ad_mission_card_user_info)):
-                db.execute(
-                    query="INSERT INTO "
-                          "mission_images (ad_mission_card_user_id) "
-                          "VALUES "
-                          "(%s)",
-                    args=ad_mission_card_user_info[j]["ad_mission_card_user_id"]
+        elif self.item['order'] != 1 and self.item['mission_type'] == 0 and self.item['based_on_activity_period'] != 0:
+            start_date = date.today() + timedelta(days=self.item['based_on_activity_period'])
+            end_date = (start_date + timedelta(days=self.item['due_date'])).strftime('%Y-%m-%d 23:59:59')
+            self.db.execute(
+                query=query,
+                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
+                      "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'), end_date
+                      ]
+            )
+        elif self.item['order'] != 1 and self.item['mission_type'] == 0 and self.item['based_on_activity_period'] == 0:
+            start_date = date.today() + timedelta(days=self.item['based_on_activity_period'])
+            end_date = (start_date + timedelta(days=self.item['due_date'])).strftime('%Y-%m-%d 23:59:59')
+            self.db.execute(
+                query=query,
+                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
+                      "ongoing", start_date.strftime('%Y-%m-%d 00:00:00'), end_date
+                      ]
+            )
+        else:
+            self.db.commit()
+            self.additional_mission()
+
+    def additional_mission(self):
+        # 미션 아이템
+        default_date = self.get_default_dates()
+        start_date = default_date['mission_start_date'].date()
+        additional_start_date = (date.today() + timedelta(days=self.item['from_default_order_date']))
+        if self.start_date == additional_start_date:
+            mission_start_date = additional_start_date.strftime('%Y-%m-%d 00:00:00')
+            mission_end_date = (additional_start_date + timedelta(days=self.item['due_date'])).strftime(
+                '%Y-%m-%d 23:59:59')
+        else:
+            mission_start_date = (start_date + timedelta(days=self.item['from_default_order_date']))
+            mission_end_date = (mission_start_date + timedelta(days=self.item['due_date'])).strftime(
+                '%Y-%m-%d 23:59:59')
+        self.db.execute(
+            query="INSERT INTO ad_mission_card_user "
+                  "(ad_user_apply_id, ad_mission_card_id, "
+                  "mission_type, status, mission_start_date, mission_end_date) "
+                  "VALUES (%s, %s, %s, %s, %s, %s)",
+            args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
+                  "stand_by", mission_start_date, mission_end_date]
+        )
+        self.db.commit()
+
+    def apply_reject(self):
+        if self.kwargs['status'] == "reject":
+            if int(self.apply_status['max_recruiting_count'] == int(self.apply_status['recruiting_count'])):
+                self.db.execute(
+                    query="UPDATE ad_information as ad_info "
+                          "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                          "SET ad_info.recruiting_count = ad_info.recruiting_count - 1, ad_status = 'ongoing' "
+                          "WHERE aua.ad_user_apply_id = %s",
+                    args=self.apply_id
                 )
-            db.commit()
-    return apply_information, user_fcm_list
+        else:
+            self.db.execute(
+                query="UPDATE ad_information as ad_info "
+                      "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                      "SET ad_info.recruiting_count = ad_info.recruiting_count - 1 "
+                      "WHERE aua.ad_user_apply_id = %s",
+                args=self.apply_id
+            )
+        history_name = f"{self.apply_status['title']} 광고 신청 거부"
+        # 광고 신청 실패시 토스트 메세지 추가
+        title = "서포터즈 신청에 실패하였습니다:("
+        reason = "브랜드가 제안한 조건에 맞지 않아 안타깝게도 서포터즈 신청에 실패하였습니다. 다음기회에 다시 신청해주세요!"
+        self.db.execute(
+            query="UPDATE ad_user_apply SET status = %s, reject_status_time = NOW() "
+                  "WHERE ad_user_apply_id = %s",
+            args=[self.kwargs['status'], self.apply_id]
+        )
+        self.db.execute(
+            query="UPDATE ad_user_apply "
+                  "SET recruit_number = recruit_number - 1 "
+                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success') "
+                  "AND ad_id = %s AND recruit_number > %s",
+            args=[self.apply_id, self.apply_status["ad_id"], self.apply_status['recruit_number']]
+        )
+        self.db.execute(
+            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+            args=[self.apply_status['user_id'], history_name]
+        )
+        self.db.execute(
+            query="INSERT INTO ad_mission_reason (ad_user_apply_id, reason, title, is_read, message_type) "
+                  "VALUE (%s, %s, %s, %s, %s)",
+            args=[self.apply_id, reason, title, 0, "apply_reject"]
+        )
+        user_info = self.db.getOneFcmToken(user_id=self.apply_status['user_id'])
+        if user_info['alarm'] == 1:
+            self.user_fcm_list.append(user_info['fcm_token'])
+            saveAlarmHistory(user_id=self.apply_status['user_id'], alarm_type="apply",
+                             required=1, description="서포터즈 신청 조건에 만족하지 못하여 신청이 거절되었습니다, 다음 기회에 다시 도전해주세요ㅠㅜ"
+                             )
+        self.db.commit()
+
+    def apply_accept(self):
+        self.default_mission()
+        self.update_apply_status()
+
+    def apply(self):
+        apply_information = {"rejected": True, "accept": True, "apply_data": True}
+        for i in range(len(self.apply_user_list)):
+            self.apply_status = self.db.getOneApplyStatus(ad_user_apply_id=self.apply_user_list[i])
+            status = self.check_status()
+            if status is False:
+                continue
+            else:
+                self.apply_id = self.apply_user_list[i]
+                self.set_mission_item()
+                for item in self.mission_item:
+                    self.item = item
+                    if self.kwargs['status'] == "reject":
+                        self.apply_reject()
+                    elif self.kwargs['status'] == "accept":
+                        self.apply_accept()
+                    else:
+                        apply_information['apply_data'] = False
+                        return apply_information, self.user_fcm_list
+                self.insert_mission_card_user_information()
+                self.insert_history()
+        return apply_information
+
+    def response(self):
+        response_data = self.apply()
+        print(self.user_fcm_list)
+        return response_data, self.user_fcm_list
+

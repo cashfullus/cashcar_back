@@ -237,21 +237,20 @@ class Database:
         return row
 
     # 필수미션 기준으로 추가할 추가미션 데이터 조회
-    def getAllAddMissionUserInfoByApplyIdFirst(self, ad_user_apply_id, ad_mission_card_id, from_default_order):
-        sql = "SELECT " \
-              "ad_mission_card_user_id, amc.mission_type, amc.additional_point, " \
-              "amc.order, amc.from_default_order, amc.from_default_order_date, due_date " \
-              "FROM ad_mission_card_user amcu " \
-              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
-              "WHERE amcu.ad_user_apply_id = %s " \
-              "AND amcu.ad_mission_card_id NOT IN (%s) " \
-              "AND amc.mission_type NOT IN (0) " \
-              "AND amc.from_default_order IN (%s) " \
-              "AND amcu.status = 'stand_by' " \
-              "AND mission_start_date = '0000-00-00 00:00:00'"
-        self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
-        rows = self.cursor.fetchall()
-        return rows
+    # def getAllAddMissionUserInfoByApplyIdFirst(self, ad_user_apply_id, ad_mission_card_id, from_default_order):
+    #     sql = "SELECT " \
+    #           "ad_mission_card_user_id, amc.mission_type, amc.additional_point, " \
+    #           "amc.order, amc.from_default_order, amc.from_default_order_date, due_date " \
+    #           "FROM ad_mission_card_user amcu " \
+    #           "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+    #           "WHERE amcu.ad_user_apply_id = %s " \
+    #           "AND amcu.ad_mission_card_id NOT IN (%s) " \
+    #           "AND amc.mission_type NOT IN (0) " \
+    #           "AND amc.from_default_order IN (%s) " \
+    #           "AND amcu.status = 'stand_by'"
+    #     self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
+    #     rows = self.cursor.fetchall()
+    #     return rows
 
     # 사용자의 광고 상태 및 미션 처리 메세지 가져오기
     def getOneReason(self, user_id):
