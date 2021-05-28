@@ -526,7 +526,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                             args=user_list[i]
                         )
                         db.execute(
-                            query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                            query="UPDATE user SET deposit = deposit + %s WHERE user_id = %s",
                             args=[int(user_information['amount']), user_information['user_id']]
                         )
                     else:
@@ -574,10 +574,6 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                                   "WHERE withdrawal_donate_id = %s",
                             args=user_list[i]
                         )
-                        db.execute(
-                            query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
-                            args=[int(user_information['amount']), user_information['user_id']]
-                        )
                     else:
                         status_list.append({i: False})
                 db.commit()
@@ -586,11 +582,20 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
             # 기부 reject
             elif kwargs['status'] == "reject":
                 for i in range(len(user_list)):
+                    user_information = db.executeOne(
+                        query="SELECT u.user_id, deposit, amount FROM withdrawal_donate "
+                              "JOIN user u on withdrawal_donate.user_id = u.user_id WHERE withdrawal_donate_id = %s",
+                        args=user_list[i]
+                    )
                     db.execute(
                         query="UPDATE withdrawal_donate "
                               "SET status = 'reject', change_reject = NOW() "
                               "WHERE withdrawal_donate_id = %s",
                         args=user_list[i]
+                    )
+                    db.execute(
+                        query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                        args=[user_information['amount'], user_information['user_id']]
                     )
                 db.commit()
                 db.db_close()
