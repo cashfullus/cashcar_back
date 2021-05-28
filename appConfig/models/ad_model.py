@@ -487,12 +487,16 @@ class UserMyAd:
             ad_information["point"] = 0
         else:
             start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
-            ad_information['ongoing_days'] = ((date.today() + timedelta(days=1)) - start_date).days
+            end_date = datetime.strptime(ad_information['activity_end_date'], '%Y-%m-%d %H:%M:%S').date()
+            ad_information['ongoing_days'] = (date.today() - start_date).days
+            check_days = (end_date - start_date).days
             if (datetime.now().date() - start_date).days > 0:
                 ad_information['point'] = (datetime.now().date() - start_date).days * ad_information['point']
-            else:
-                ad_information['point'] = 0
-            ad_information['ongoing_day_percent'] = int(datetime.now().hour / 24 * 100)
+            # time_diff = ((date.today() + timedelta(days=1)) - start_date).days
+            time_diff = (ad_information['activity_period'] - check_days)
+            day_diff = ((time_diff / ad_information['activity_period']) * 100)
+            ad_information['ongoing_day_percent'] = int(day_diff)
+            ad_information['ongoing_days'] = time_diff
 
         # 미션 상태에 따른 에외처리
         if not ad_information["mission_status"]:
