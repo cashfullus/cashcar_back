@@ -334,6 +334,9 @@ def user_mission_list(user_id):
         day_diff = 0
         if ad_user_information['day_diff'] is None:
             ad_user_information['day_diff'] = 0
+        if ad_user_information['activity_start_date'] == '0000-00-00 00:00:00':
+            ad_user_information['activity_start_date'] = ""
+            ad_user_information['activity_end_date'] = ""
         if ad_user_information['activity_start_date'] != '0000-00-00 00:00:00':
             day_diff = ((ad_user_information['day_diff']) / ad_user_information['activity_period'] * 100)
         result["mission_information"] = mission_information
