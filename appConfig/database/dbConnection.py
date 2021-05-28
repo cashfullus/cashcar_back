@@ -79,7 +79,7 @@ class Database:
     # 광고 디테일 By ad_id
     def getOneAdByAdId(self, ad_id):
         sql = "SELECT " \
-              "ad_id, title, logo_image, thumbnail_image, min_distance, " \
+              "ad_id, title, logo_image, thumbnail_image, gender, min_distance, " \
               "side_image, side_length, side_width, " \
               "back_image, back_length, back_width, " \
               "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \

@@ -683,8 +683,9 @@ def home_my_ad():
         return jsonify(Unauthorized), 401
 
     if request.method == 'GET':
-        result = AD.get_ongoing_user_by_id(user_id=user_id)
-        return jsonify({"status": True, "data": result}), 200
+        set_response = AD.UserMyAd(user_id=user_id)
+        response = set_response.response()
+        return jsonify({"status": True, "data": response}), 200
 
     elif request.method == 'DELETE':
         ad_user_apply_id = request.args.get('ad_user_apply_id')
@@ -1581,6 +1582,7 @@ def admin_point_all():
 
 @app.route('/test/test')
 def test_db():
-    set_response = User.UserProfile(user_id=1)
+    user_id = 14
+    set_response = AD.UserMyAd(user_id=user_id)
     response = set_response.response()
     return jsonify({"data": response})

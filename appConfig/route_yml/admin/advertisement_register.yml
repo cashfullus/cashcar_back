@@ -216,9 +216,7 @@ responses:
                         type: string
                       mission_type:
                         type: integer
-                      from_default_order:
-                        type: integer
-                      from_default_order_date:
+                      based_on_activity_period:
                         type: integer
                 default_mission_items:
                   type: array

@@ -15,7 +15,7 @@ parameters:
 
 responses:
   200:
-    description: 광고 정보
+    description: 광고 정보 gender 는 0 -> 무관, 1 -> 남자, 2 -> 여자
     schema:
       type: object
       properties:
@@ -77,6 +77,9 @@ responses:
         min_distance:
           type: string
           description: 최소 거리
+        gender:
+          type: integer
+          description: 성별
 
   404:
     description: ID에 해당하는 광고를 찾을수 없을때
