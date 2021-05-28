@@ -95,6 +95,12 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 Forbidden = {"status": False, "data": "Forbidden"}
 
 
+# 제3자 정보제공 동의
+@app.route('/agree/provide-policy')
+@swag_from('route_yml/agree/provide_policy.yml')
+def provide_policy():
+    return render_template('provide_policy.html')
+
 # 개인정보처리방침
 @app.route('/agree/privacy_policy')
 @swag_from('route_yml/agree/privacy_policy.yml')
