@@ -34,30 +34,31 @@ def default_mission_list():
         sleep(0.2)
 
     mission_list = db.executeAll(
-        query="SELECT u.user_id, fcm_token, ad_mission_card_user_id, mission_name FROM ad_mission_card_user amcu "
+        query="SELECT u.user_id, fcm_token, ad_mission_card_user_id, mission_name, alarm "
+              "FROM ad_mission_card_user amcu "
               "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN user_fcm uf on aua.user_id = uf.user_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
-              "WHERE amcu.mission_type = 0 AND amc.order NOT IN (1) AND amcu.status = 'stand_by' AND alarm = 1 "
+              "WHERE amcu.mission_type = 0 AND amc.order NOT IN (1) AND amcu.status = 'stand_by'"
               "AND aua.status = 'accept' AND amcu.mission_start_date <= NOW() "
               "GROUP BY u.user_id"
     )
-
     if mission_list:
         for i in range(len(mission_list)):
             db.execute(
                 query="UPDATE ad_mission_card_user SET status = 'ongoing' WHERE ad_mission_card_user_id = %s",
                 args=mission_list[i]['ad_mission_card_user_id']
             )
-            body_name = f"[{mission_list[i]['mission_name']}]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"
-            one_cloud_messaging(token=mission_list[i]['fcm_token'], body=body_name)
-            db.execute(
-                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                      "VALUES (%s, %s, %s, %s)",
-                args=[mission_list[i]['user_id'], "mission", 1, body_name]
-            )
-            db.commit()
+            if mission_list[i]['alarm'] == 1:
+                body_name = f"[{mission_list[i]['mission_name']}]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"
+                one_cloud_messaging(token=mission_list[i]['fcm_token'], body=body_name)
+                db.execute(
+                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                          "VALUES (%s, %s, %s, %s)",
+                    args=[mission_list[i]['user_id'], "mission", 1, body_name]
+                )
+                db.commit()
             sleep(0.08)
 
     return True
