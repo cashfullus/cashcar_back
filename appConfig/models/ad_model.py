@@ -705,24 +705,6 @@ class AdApplyStatusUpdate:
     def set_mission_item(self):
         self.mission_item = self.db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=self.apply_id)
 
-    @staticmethod
-    def get_default_mission(self, ad_user_apply_id, order):
-        return self.db.executeOne(
-            query="SELECT ad_mission_card_id FROM ad_user_apply as aua "
-                  "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id "
-                  "WHERE ad_user_apply_id = %s AND `order` = %s AND mission_type = 0",
-            args=[ad_user_apply_id, order]
-        )
-
-    def get_default_dates(self):
-        default_mission = self.get_default_mission(self, ad_user_apply_id=self.apply_id,
-                                                   order=self.item['from_default_order'])
-        return self.db.executeOne(
-            query="SELECT mission_start_date FROM ad_mission_card_user "
-                  "WHERE ad_user_apply_id = %s AND ad_mission_card_id = %s AND mission_type = 0",
-            args=[self.apply_id, default_mission['ad_mission_card_id']]
-        )
-
     def default_mission(self):
         query = "INSERT INTO ad_mission_card_user (ad_user_apply_id, ad_mission_card_id, mission_type, " \
                 "status, mission_start_date, mission_end_date) " \
@@ -759,24 +741,20 @@ class AdApplyStatusUpdate:
 
     def additional_mission(self):
         # 미션 아이템
-        default_date = self.get_default_dates()
-        start_date = default_date['mission_start_date'].date()
-        additional_start_date = (date.today() + timedelta(days=self.item['based_on_activity_period']))
-        if self.start_date == additional_start_date:
-            mission_start_date = additional_start_date.strftime('%Y-%m-%d 00:00:00')
-            mission_end_date = (additional_start_date + timedelta(days=self.item['due_date'])).strftime(
-                '%Y-%m-%d 23:59:59')
+        mission_start_date = (date.today() + timedelta(days=self.item['based_on_activity_period']))
+        mission_end_date = (mission_start_date + timedelta(days=self.item['due_date'])).strftime(
+            '%Y-%m-%d 23:59:59')
+        if date.today() == mission_start_date:
+            mission_status = "ongoing"
         else:
-            mission_start_date = (start_date + timedelta(days=self.item['based_on_activity_period']))
-            mission_end_date = (mission_start_date + timedelta(days=self.item['due_date'])).strftime(
-                '%Y-%m-%d 23:59:59')
+            mission_status = "stand_by"
         self.db.execute(
             query="INSERT INTO ad_mission_card_user "
                   "(ad_user_apply_id, ad_mission_card_id, "
                   "mission_type, status, mission_start_date, mission_end_date) "
                   "VALUES (%s, %s, %s, %s, %s, %s)",
             args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
-                  "stand_by", mission_start_date, mission_end_date]
+                  mission_status, mission_start_date, mission_end_date]
         )
         self.db.commit()
 
