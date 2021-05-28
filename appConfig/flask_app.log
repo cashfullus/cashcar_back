@@ -5789,3 +5789,215 @@ Traceback (most recent call last):
   File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
     query = query % self._escape_args(args, conn)
 ValueError: unsupported format character 'Y' (0x59) at index 53
+Exception on /user/withdrawal/donate [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 841, in user_withdrawal_donate
+    result = User.get_user_withdrawal_donate_data(user_id=user_id, donation_id=donation_id)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 438, in get_user_withdrawal_donate_data
+    return user_information
+TypeError: 'NoneType' object is not subscriptable
+Exception on /user/withdrawal/donate [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 846, in user_withdrawal_donate
+    result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 548, in update_user_withdrawal_donate
+    db.execute(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 20, in execute
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 143, in execute
+    while self.nextset():
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 96, in nextset
+    return self._nextset(False)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 83, in _nextset
+    conn = self._get_db()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 65, in _get_db
+    raise err.ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed
+Exception on /user/withdrawal/donate [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 846, in user_withdrawal_donate
+    result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 548, in update_user_withdrawal_donate
+    db.execute(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 20, in execute
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 143, in execute
+    while self.nextset():
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 96, in nextset
+    return self._nextset(False)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 83, in _nextset
+    conn = self._get_db()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 65, in _get_db
+    raise err.ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed
+Exception on /user/withdrawal/donate [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 846, in user_withdrawal_donate
+    result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 548, in update_user_withdrawal_donate
+    db.execute(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 21, in execute
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 143, in execute
+    while self.nextset():
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 96, in nextset
+    return self._nextset(False)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 83, in _nextset
+    conn = self._get_db()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 65, in _get_db
+    raise err.ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed
+Exception on /user/withdrawal/donate [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 846, in user_withdrawal_donate
+    result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 548, in update_user_withdrawal_donate
+    db.execute(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 21, in execute
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 143, in execute
+    while self.nextset():
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 96, in nextset
+    return self._nextset(False)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 83, in _nextset
+    conn = self._get_db()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 65, in _get_db
+    raise err.ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed
+Exception on /user/withdrawal/donate [POST]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 846, in user_withdrawal_donate
+    result = User.update_user_withdrawal_donate(user_id=user_id, donation_id=donation_id, **data)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 549, in update_user_withdrawal_donate
+    db.execute(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 21, in execute
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 143, in execute
+    while self.nextset():
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 96, in nextset
+    return self._nextset(False)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 83, in _nextset
+    conn = self._get_db()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 65, in _get_db
+    raise err.ProgrammingError("Cursor closed")
+pymysql.err.ProgrammingError: Cursor closed

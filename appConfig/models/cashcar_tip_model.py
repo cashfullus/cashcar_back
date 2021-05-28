@@ -25,6 +25,7 @@ def save_tip_images(cash_car_tip_id, **kwargs):
         )
         order_cnt += 1
     db.commit()
+    db.db_close()
     return True
 
 
@@ -63,6 +64,7 @@ def register(**kwargs):
     )
     db.commit()
     result = tip_info_response_data(cash_car_tip_id=last_insert_id)
+    db.db_close()
     return result
 
 
@@ -146,6 +148,7 @@ def modify_cash_car_tip(cash_car_tip_id, **kwargs):
         db.commit()
         save_tip_images(cash_car_tip_id=cash_car_tip_id, **kwargs)
         result = tip_info_response_data(cash_car_tip_id=cash_car_tip_id)
+        db.db_close()
         return result
     else:
         return False
@@ -168,6 +171,7 @@ def delete_cash_car_tip(cash_car_tip_id):
             args=cash_car_tip_id
         )
         db.commit()
+        db.db_close()
         return True
     else:
         return False

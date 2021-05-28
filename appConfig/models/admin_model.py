@@ -303,6 +303,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 ad_user_apply_id=ad_apply_id, reason=save_message_name, message_type="mission_success"
             )
             db.commit()
+            db.db_close()
             result['status'] = "success"
             return result
 
@@ -334,6 +335,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     )
                     one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                     db.commit()
+                    db.db_close()
                     result['status'] = "fail"
                     return result
                 # 추가 미션의 경우 실패해도 상관없음(point 미지급)
@@ -362,6 +364,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 )
                 one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
+                db.db_close()
                 result['status'] = "fail"
                 return result
 
@@ -390,6 +393,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 )
                 one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
+                db.db_close()
                 result['status'] = "reject"
                 return result
 
@@ -439,6 +443,7 @@ def admin_user_profile_modify(**kwargs):
               kwargs.get('detail_address'), kwargs.get('user_id')]
     )
     db.commit()
+    db.db_close()
     return kwargs
 
 
@@ -526,6 +531,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                     else:
                         status_list.append({i: False})
                 db.commit()
+                db.db_close()
                 return kwargs['status']
             elif kwargs['status'] == "reject":
                 for i in range(len(user_list)):
@@ -536,6 +542,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=user_list[i]
                     )
                 db.commit()
+                db.db_close()
                 return kwargs['status']
             elif kwargs['status'] == "confirm":
                 for i in range(len(user_list)):
@@ -546,6 +553,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=[kwargs['status'], user_list[i]]
                     )
                 db.commit()
+                db.db_close()
                 return kwargs['status']
 
     elif withdrawal_type == "donate":
@@ -572,6 +580,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                     else:
                         status_list.append({i: False})
                 db.commit()
+                db.db_close()
                 return kwargs['status']
             # 기부 reject
             elif kwargs['status'] == "reject":
@@ -583,6 +592,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=user_list[i]
                     )
                 db.commit()
+                db.db_close()
                 return kwargs['status']
             # 기부 진행중
             elif kwargs['status'] == "confirm":
@@ -594,6 +604,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                         args=[kwargs['status'], user_list[i]]
                     )
                 db.commit()
+                db.db_close()
                 return kwargs['status']
 
 
@@ -639,7 +650,7 @@ def donation_organization_register(logo_image, images, **kwargs):
         args=last_insert_id
     )
     response_data["image_information"] = images
-
+    db.db_close()
     return response_data
 
 
@@ -715,6 +726,7 @@ class AdminPointPost:
         self.db.execute(query=self.set_insert_point_history_query(), args=None)
         self.db.commit()
         point_history = self.get_last_point_history()
+        self.db.db_close()
         return point_history
 
 
@@ -762,7 +774,9 @@ class AdminPointAll:
     def response(self):
         self.insert_point_history()
         self.update_point_user()
-        return self.get_point_history()
+        response = self.get_point_history()
+        self.db.db_close()
+        return response
 
 
 

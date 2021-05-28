@@ -15,9 +15,11 @@ def get_app_version_check(device):
             query="SELECT android_version as version FROM android_release ORDER BY register_time DESC LIMIT 1"
         )
     else:
+        db.db_close()
         return result
     if app_version:
         result["version"] = int(app_version['version'])
+    db.db_close()
     return result
 
 
@@ -31,6 +33,8 @@ def delete_image(location, idx, image):
             args=filename
         )
         db.commit()
+        db.db_close()
         return True
     else:
+        db.db_close()
         return False

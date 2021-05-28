@@ -56,6 +56,7 @@ def get_all_marketing_user(page, count, area, gender, register_time):
             else:
                 user_list[i]['vehicle_information'] = vehicle_information
     item_count = len(user_list)
+    db.db_close()
     return user_list, item_count
 
 
@@ -93,7 +94,9 @@ def user_app_push_notification(*user_list, **kwargs):
         db.updateAppPushLog(**kwargs)
         db.updateUserAppPushLog(many_execute_value_list)
         db.updateAllAlarmHistoryByAppPush(alarm_history)
+        db.db_close()
         return True
+    db.db_close()
     return False
 
 
@@ -101,6 +104,7 @@ def user_app_push_notification(*user_list, **kwargs):
 def get_notification_list(page, count):
     db = Database()
     result, item_count = db.getAllNotificationListWithCount(page=page, count=count)
+    db.db_close()
     return result, item_count
 
 
@@ -124,9 +128,12 @@ def app_push_re_transfer(user_id, app_push_id):
             data = {"user_id": user_id, "description": app_push_information['notification_body']}
             db.updateOneSuccessAppPushLog(app_push_id=app_push_id, user_id=user_id)
             db.updateOneAlarmHistoryByAppPush(**data)
+            db.db_close()
             return True
         else:
+            db.db_close()
             return False
+    db.db_close()
     return False
 
 
@@ -158,5 +165,7 @@ def get_user_list_by_app_push_id(app_push_id, page, count):
                 user_list[i]['vehicle_information'] = vehicle
             else:
                 user_list[i]['vehicle_information'] = vehicle_information
+        db.db_close()
         return user_list, item_count
+    db.db_close()
     return user_list, item_count

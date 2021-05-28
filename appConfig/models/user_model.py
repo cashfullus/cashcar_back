@@ -52,6 +52,7 @@ def non_user_register():
     db.execute(query=sql, args=1)
     db.commit()
     result = db.executeOne(query="SELECT user_id, is_non FROM user ORDER BY register_time DESC LIMIT 1")
+    db.db_close()
     return result
 
 
@@ -61,6 +62,7 @@ def register(**kwargs):
     result = {"status": True, "email_regex": True, "register_type": True, "data": "", "default": True}
     if 'email' not in kwargs.keys():
         result['default'] = False
+        db.db_close()
         return result
 
     # Email 정규식 검사
@@ -70,10 +72,12 @@ def register(**kwargs):
     # 확인사항 검사
     if check_email is False:
         result["email_regex"] = False
+        db.db_close()
         return result
 
     elif user:
         result["status"] = False
+        db.db_close()
         return result
 
     # 기본 회원가입 Query
@@ -87,6 +91,7 @@ def register(**kwargs):
     elif kwargs.get("login_type") == "normal":
         if kwargs.get("password") is None:
             result["status"] = False
+            db.db_close()
             return result
 
         encrypted_password = bcrypt.hashpw(
@@ -96,6 +101,7 @@ def register(**kwargs):
     # 정해지지않은 회원가입 시도
     else:
         result["register_type"] = False
+        db.db_close()
         return result
 
     db.execute(query=sql, args=value_list)
@@ -119,6 +125,7 @@ def register(**kwargs):
     db.commit()
 
     result["data"] = {"user_id": target_user["user_id"], "jwt_token": jwt_token}
+    db.db_close()
     return result
 
 
@@ -154,6 +161,7 @@ def login(**kwargs):
         # 제한된 데이터만 response
         if kwargs.get("login_type") == "kakao":
             login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
+            db.db_close()
             return login_user
 
         elif kwargs.get("login_type") == "normal":
@@ -161,12 +169,16 @@ def login(**kwargs):
             encode_password = kwargs.get('password').encode('utf8')
             if bcrypt.checkpw(encode_password, user["hashed_password"].encode('utf8')):
                 login_user = {"user_id": user["user_id"], "jwt_token": user["jwt_token"]}
+                db.db_close()
                 return login_user
             else:
+                db.db_close()
                 return False
         else:
+            db.db_close()
             return False
     else:
+        db.db_close()
         return False
 
 
@@ -208,7 +220,9 @@ class UserProfile:
         if response_data:
             self.user = response_data
 
-        return self.set_user_data()
+        response = self.set_user_data
+        self.db.db_close()
+        return response
 
 
 def update_user_profile(user_id, profile_image=None, **kwargs):
@@ -248,8 +262,10 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
                           ]
             db.execute(query=sql, args=value_list)
             db.commit()
+            db.db_close()
             return True
     else:
+        db.db_close()
         return False
 
 
@@ -447,6 +463,7 @@ def get_user_withdrawal_donate_data(user_id, donation_id):
     if already_ongoing_withdrawal:
         user_information['status'] = False
         user_information['ongoing'] = already_ongoing_withdrawal['status']
+    db.db_close()
     return user_information
 
 
@@ -519,6 +536,7 @@ def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
 
     if already_ongoing_withdrawal:
         status["ongoing"] = False
+        db.db_close()
         return status
 
     donation_information = db.getOneDonationById(donation_organization_id=donation_id)
@@ -540,6 +558,7 @@ def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
         args=[int(kwargs['withdrawal_point']), user_id]
     )
     db.commit()
+    db.db_close()
     return status
 
 
@@ -551,6 +570,7 @@ def update_reason_by_user(reason_id):
         args=reason_id
     )
     db.commit()
+    db.db_close()
     return
 
 
@@ -561,6 +581,7 @@ def get_user_my_page(user_id):
         query="SELECT user_id, profile_image, name, email, deposit, login_type FROM user WHERE user_id = %s",
         args=user_id
     )
+    db.db_close()
     return {"user_information": user_information}
 
 
@@ -573,6 +594,7 @@ def get_all_my_badge_list(user_id):
               "WHERE user_id = %s AND status IN ('success', 'fail') ORDER BY ad_user_apply_id",
         args=user_id
     )
+    db.db_close()
     return badge_information
 
 
@@ -642,6 +664,7 @@ def get_user_point_and_history(user_id):
               "point_history": user_point_history,
               "is_ongoing_point": ongoing_point,
               "is_ongoing_donate": ongoing_donate}
+    db.db_close()
     return result
 
 
@@ -669,6 +692,7 @@ def get_user_alarm_history(user_id, page):
         args=user_id
     )
     db.commit()
+    db.db_close()
     return result
 
 
@@ -677,6 +701,7 @@ def getAllFaQ():
     result = db.executeAll(
         query="SELECT title, description FROM faq"
     )
+    db.db_close()
     return result
 
 
@@ -689,6 +714,7 @@ def login_user_change_password(user_id, **kwargs):
 
     if new_password_first != new_password_second:
         status["new_password_check"] = False
+        db.db_close()
         return status
 
     user = db.getUserById(user_id=user_id)
@@ -704,14 +730,17 @@ def login_user_change_password(user_id, **kwargs):
                 args=[encrypted_password, user_id]
             )
             db.commit()
+            db.db_close()
             return status
         else:
             status['old_password_check'] = False
+            db.db_close()
             return status
 
     else:
         status["new_password_check"] = False
         status["old_password_check"] = False
+        db.db_close()
         return status
 
 
@@ -737,8 +766,10 @@ def user_email_check_for_password(**kwargs):
                 args=[user['user_id'], auth_number]
             )
         db.commit()
+        db.db_close()
         return True, auth_number
     else:
+        db.db_close()
         return False, ""
 
 
@@ -752,12 +783,15 @@ def user_email_auth_number_check(**kwargs):
             args=user['user_id']
         )
         if check_auth['authentication_number'] == kwargs.get('authentication_number'):
+            db.db_close()
             return status
         else:
             status["authentication"] = False
+            db.db_close()
             return status
     else:
         status["user_information"] = False
+        db.db_close()
         return status
 
 
@@ -797,7 +831,9 @@ class UserDonationList:
 
     def response(self):
         response_data = self.get_image_data()
-        return response_data, self.get_ongoing_donation_status()
+        donation_status = self.get_ongoing_donation_status()
+        self.db.db_close()
+        return response_data, donation_status
 
 
 # 기부 디테일 페이지
@@ -823,4 +859,5 @@ class UserDonationDetail:
     def response(self):
         response_data = self.get_response_data()
         response_data['image_information'] = self.get_image_data()
+        self.db.db_close()
         return response_data

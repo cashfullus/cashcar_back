@@ -152,8 +152,6 @@ def get_image(location, idx, image_file):
             return jsonify({"status": False, "data": "Not Found Image"}), 404
 
 
-
-
 # 지도 API (Daum postcode)
 @app.route('/kakao/postcode', methods=['GET'])
 @swag_from('route_yml/address/kakao_address.yml')

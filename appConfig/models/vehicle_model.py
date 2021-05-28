@@ -17,6 +17,7 @@ def register_vehicle(**kwargs):
     if not user:
         result["user"] = False
         fcm_token = ""
+        db.db_close()
         return result, fcm_token
 
     # 본인이 등록한 차량 수 조회
@@ -34,12 +35,14 @@ def register_vehicle(**kwargs):
     if counter_register_vehicle["cnt"] >= 3:
         result["register"] = False
         fcm_token = ""
+        db.db_close()
         return result, fcm_token
 
     # 차량 번호 중복 확인
     elif check_vehicle_number:
         result["double_check_number"] = False
         fcm_token = ""
+        db.db_close()
         return result, fcm_token
 
     else:
@@ -80,7 +83,7 @@ def register_vehicle(**kwargs):
     db.execute(query=sql, args=value_list)
     db.commit()
     result["vehicle_information"] = kwargs
-
+    db.db_close()
     return result, fcm_token
 
 
@@ -99,6 +102,7 @@ def vehicle_list_by_user_id(user_id):
                 vehicle_list[i]['is_delete'] = False
             else:
                 vehicle_list[i]['is_delete'] = True
+    db.db_close()
     return vehicle_list
 
 
@@ -119,7 +123,7 @@ def vehicle_detail_by_id(user_id, vehicle_id):
             target_vehicle['is_delete'] = False
         else:
             target_vehicle['is_delete'] = True
-
+    db.db_close()
     return target_vehicle
 
 
@@ -137,6 +141,7 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
     double_check_data = db.executeOne(query=sql, args=[vehicle_id, kwargs.get('car_number')])
     if double_check_data:
         result["double_check_number"] = False
+        db.db_close()
         return result
 
     # vehicle_id 와 user_id에 맞는 데이터가 존재한다면
@@ -157,6 +162,7 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
                       ]
             )
             db.commit()
+            db.db_close()
             return result
         else:
             # 업데이트 쿼리 진행
@@ -170,11 +176,12 @@ def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
                           ]
             db.execute(query=sql, args=value_list)
             db.commit()
-
+            db.db_close()
             return result
     # 차량 정보가 존재하지않다면 False
     else:
         result["target_vehicle"] = False
+        db.db_close()
         return result
 
 
@@ -194,6 +201,7 @@ def vehicle_delete_by_id(vehicle_id, user_id):
             args=[vehicle_id, user_id]
         )
         if is_delete:
+            db.db_close()
             return False
         else:
             db.execute(
@@ -201,9 +209,11 @@ def vehicle_delete_by_id(vehicle_id, user_id):
                 args=[vehicle_id, user_id]
             )
             db.commit()
+            db.db_close()
             return True
 
     else:
+        db.db_close()
         return False
 
 
