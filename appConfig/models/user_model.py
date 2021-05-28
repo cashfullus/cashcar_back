@@ -394,19 +394,15 @@ def user_apply_id_by_ad_id(page, count, ad_id):
 
 
 # 사용자 포인트 기록 조회
-def get_point_all_by_user(user_id, page, count):
-    per_page = (int(page) - 1) * 10
+def get_point_all_by_user(user_id):
     db = Database()
     user_point_history = db.executeAll(
         query="SELECT point, contents, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM point_history WHERE user_id = %s ORDER BY register_time DESC LIMIT %s OFFSET %s",
-        args=[user_id, int(count), per_page]
-    )
-    item_count = db.executeOne(
-        query="SELECT count(user_id) as item_count FROM point_history WHERE user_id = %s",
+              "FROM point_history WHERE user_id = %s ORDER BY register_time DESC",
         args=user_id
     )
-    return user_point_history, item_count['item_count']
+    db.db_close()
+    return user_point_history
 
 
 # fcm token 가져오기
@@ -416,6 +412,7 @@ def get_fcm_token_by_user_id(user_id):
         query="SELECT fcm_token FROM user_fcm WHERE user_id = %s",
         args=user_id
     )
+    db.db_close()
     return user_fcm_token
 
 
@@ -436,6 +433,7 @@ def get_user_withdrawal_data(user_id):
     if already_ongoing_withdrawal:
         user_information['status'] = False
         user_information['ongoing'] = already_ongoing_withdrawal['status']
+    db.db_close()
     return user_information
 
 
@@ -476,6 +474,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
 
     if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
         status["deposit"] = False
+        db.db_close()
         return status
 
     already_ongoing_withdrawal = db.executeOne(
@@ -485,6 +484,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
 
     if already_ongoing_withdrawal:
         status["ongoing"] = False
+        db.db_close()
         return status
 
     db.execute(
@@ -515,6 +515,7 @@ def update_user_withdrawal_data(user_id, **kwargs):
             args=[int(kwargs['withdrawal_point']), user_id]
         )
     db.commit()
+    db.db_close()
     return status
 
 
@@ -526,6 +527,7 @@ def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
 
     if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
         status["deposit"] = False
+        db.db_close()
         return status
 
     already_ongoing_withdrawal = db.executeOne(

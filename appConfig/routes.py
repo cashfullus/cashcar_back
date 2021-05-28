@@ -1271,10 +1271,8 @@ def get_point_all_by_user_id():
         return jsonify(status), code
 
     user_id = request.args.get('user_id')
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
-    result, item_count = User.get_point_all_by_user(user_id=user_id, page=page, count=count)
-    return jsonify({"data": result, "item_count": item_count})
+    result = User.get_point_all_by_user(user_id=user_id)
+    return jsonify({"data": result})
 
 
 # 어드민 출금 신청 리스트  ## status 의 값들 swagger 추가
