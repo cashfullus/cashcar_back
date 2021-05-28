@@ -37,6 +37,7 @@ def ad_insert_mission_card(**kwargs):
                       ]
             )
     db.commit()
+    db.db_close()
     return default_mission_items[0], additional_mission_items[0]
 
 
@@ -117,6 +118,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 kwargs['total_point'] = int(kwargs['total_point'])
                 kwargs['default_mission_items'] = default
                 kwargs['additional_mission_items'] = additional
+                db.db_close()
                 return kwargs
             else:
                 return False
@@ -173,6 +175,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 query="SELECT image FROM ad_images WHERE ad_id = %s",
                 args=kwargs.get('ad_id')
             )
+            db.db_close()
             kwargs['side_image'] = save_to_db_dict['side_image']
             kwargs['back_image'] = save_to_db_dict['back_image']
             kwargs['logo_image'] = save_to_db_dict['logo_image']
@@ -201,6 +204,7 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
                 args=kwargs.get('ad_id')
             )
             db.commit()
+            db.db_close()
             return True
 
 
@@ -318,6 +322,7 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
                 args=ad_id
             )
             db.commit()
+            db.db_close()
             status['ad_information'] = False
             return status
         else:
@@ -357,7 +362,7 @@ def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
                 args=[user_id, vehicle['vehicle_id']]
             )
             db.commit()
-
+            db.db_close()
             return status
 
 
@@ -500,104 +505,8 @@ class UserMyAd:
 
     def response(self):
         self.set_null_value()
+        self.db.db_close()
         return self.result
-
-
-# 메인화면 본인이 진행중인 광고 카드의 정보 order 와 ad_mission_card_user_id,
-# def get_ongoing_user_by_id(user_id):
-#     db = Database()
-#     ad_information = db.getMainMyAd(user_id=user_id)
-#     vehicle_information = db.getAllVehicleByUserId(user_id=user_id)
-#     result = {"ad_information": {
-#         "activity_end_date": "", "activity_start_date": "", "ad_id": -1,
-#         "ad_mission_card_id": -1, "ad_mission_card_user_id": -1, "ad_user_apply_id": -1,
-#         "additional_mission_success_count": -1, "apply_register_time": "",
-#         "apply_status": "", "default_mission_success_count": -1, "mission_end_date": "", "mission_status": "",
-#         "mission_type": -1, "ongoing_day_percent": -1, "ongoing_days": -1,
-#         "order": -1, "point": -1, "thumbnail_image": "", "title": "", "user_id": -1
-#     }, "is_delete": True,
-#         "vehicle_information": [],
-#         "message": {
-#             "is_read": -1,
-#             "reason": "",
-#             "reason_id": 0,
-#             "title": "",
-#             "message_type": ""
-#         }
-#     }
-#     if vehicle_information:
-#         result["vehicle_information"] = vehicle_information
-#     is_not_read_alarm = db.executeOne(
-#         query="SELECT user_id FROM alarm_history WHERE is_read_alarm = 0 AND user_id = %s",
-#         args=user_id
-#     )
-#
-#     # 현재 읽지안흔 알람이 존재할겨웅 True, False
-#     if is_not_read_alarm:
-#         result["is_read_alarm"] = True
-#     else:
-#         result['is_read_alarm'] = False
-#
-#     message = db.getOneReason(user_id=user_id)
-#     if message:
-#         result["message"] = message
-#
-#     # 현재 진행중인 광고가 존재하지 않을경우
-#     if not ad_information:
-#         return result
-#
-#     # 현재 진행중인 일수
-#     if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
-#         ad_information['ongoing_days'] = 0
-#     else:
-#         start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
-#         ad_information['ongoing_days'] = (date.today() - start_date).days
-#
-#     if ad_information['ad_mission_card_user_id']:
-#         order_information = db.executeOne(
-#             query="SELECT `order` FROM ad_mission_card WHERE ad_mission_card_id = %s",
-#             args=ad_information['ad_mission_card_id']
-#         )
-#         ad_information['order'] = order_information['order']
-#
-#     if ad_information['ad_mission_card_user_id'] is None:
-#         ad_information['ad_mission_card_user_id'] = -1
-#
-#     if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
-#             hours=1) < datetime.now():
-#         result["is_delete"] = False
-#
-#     if not ad_information["mission_status"]:
-#         ad_information["mission_status"] = ""
-#         ad_information["ad_mission_card_id"] = -1
-#         ad_information["mission_type"] = -1
-#         ad_information['activity_start_date'] = ''
-#         ad_information['activity_end_date'] = ''
-#         ad_information['ongoing_day_percent'] = 0
-#         result['ad_information'] = ad_information
-#         return result
-#
-#     if ad_information["mission_status"]:
-#         if ad_information['activity_start_date'] == '0000-00-00 00:00:00':
-#             ad_information['point'] = 0
-#             ad_information['ongoing_day_percent'] = 0
-#             ad_information['activity_start_date'] = ''
-#             ad_information['activity_end_date'] = ''
-#         else:
-#             start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d')
-#             if (datetime.now().date() - start_date.date()).days > 0:
-#                 ad_information['point'] = (datetime.now().date() - start_date.date()).days * ad_information['point']
-#             else:
-#                 ad_information['point'] = ad_information['point']
-#             ad_information['ongoing_day_percent'] = int(datetime.now().hour / 24 * 100)
-#             result['ad_information'] = ad_information
-#             return result
-#     result['ad_information'] = ad_information
-#     if is_not_read_alarm:
-#         result["is_read_alarm"] = True
-#     else:
-#         result["is_read_alarm"] = False
-#     return result
 
 
 # 신청한 광고 취소 (사용자)
@@ -635,6 +544,7 @@ def cancel_apply_user(ad_user_apply_id):
         args=[ad_information['user_id'], history_name]
     )
     db.commit()
+    db.db_close()
     return status
 
 
@@ -663,7 +573,6 @@ class AdApplyStatusUpdate:
             query="INSERT INTO mission_images (ad_mission_card_user_id) VALUES (%s)",
             args=ad_mission_card_id_list
         )
-        self.db.commit()
 
     def insert_history(self):
         history_name = f"{self.apply_status['title']} 광고 신청 승인"
@@ -834,6 +743,7 @@ class AdApplyStatusUpdate:
                         return apply_information, self.user_fcm_list
                 self.insert_mission_card_user_information()
                 self.insert_history()
+        self.db.db_close()
         return apply_information
 
     def response(self):

@@ -13,6 +13,10 @@ class Database:
 
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 
+    def db_close(self):
+        self.cursor.close()
+        self.db.close()
+
     def execute(self, query, args):
         self.cursor.execute(query, args)
 

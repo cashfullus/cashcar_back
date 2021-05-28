@@ -69,9 +69,11 @@ def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travel
             args=[review_status, ad_mission_card_user_id]
         )
     else:
+        db.db_close()
         return False
 
     db.commit()
+    db.db_close()
     return True
 
 
@@ -120,6 +122,7 @@ def admin_review_mission_list(page, count):
               "AND amcu.status IN ('review', 're_review', 'reject', 'success', 'fail') "
               "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail') "
     )
+    db.db_close()
     return result, item_count['item_count']
 
 
@@ -139,4 +142,5 @@ def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
               "GROUP BY amcu.ad_mission_card_user_id",
         args=[ad_mission_card_id, ad_user_apply_id]
     )
+    db.db_close()
     return result
