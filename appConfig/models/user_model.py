@@ -199,7 +199,7 @@ class UserProfile:
         if self.user is None:
             return False
         else:
-            return {
+            response = {
                 'user_id': self.user['user_id'],
                 'nick_name': self.user['nickname'],
                 'name': self.user['name'],
@@ -211,6 +211,7 @@ class UserProfile:
                 'marketing': self.user['marketing'],
                 'profile_image': self.user['profile_image']
             }
+            return response
 
     def get_user_information(self):
         return self.db.getUserById(user_id=self.user_id)
@@ -220,7 +221,7 @@ class UserProfile:
         if response_data:
             self.user = response_data
 
-        response = self.set_user_data
+        response = self.set_user_data()
         self.db.db_close()
         return response
 
