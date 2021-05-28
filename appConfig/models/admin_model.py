@@ -277,7 +277,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 args=mission_information['ad_mission_card_user_id']
             )
             if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
-                start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                start_date = date.today().strftime('%Y-%m-%d 00:00:00')
                 end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])))) \
                     .strftime('%Y-%m-%d 23:59:59')
                 db.execute(
