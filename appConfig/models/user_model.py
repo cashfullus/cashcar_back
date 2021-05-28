@@ -380,7 +380,7 @@ def get_point_all_by_user(user_id, page, count):
     db = Database()
     user_point_history = db.executeAll(
         query="SELECT point, contents, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM point_history WHERE user_id = %s LIMIT %s OFFSET %s",
+              "FROM point_history WHERE user_id = %s ORDER BY register_time DESC LIMIT %s OFFSET %s",
         args=[user_id, int(count), per_page]
     )
     item_count = db.executeOne(
