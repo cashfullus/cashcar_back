@@ -352,7 +352,7 @@ def user_mission_list(user_id):
             ad_user_information['day_diff'] = 0
             ad_user_information['activity_start_date'] = ""
             ad_user_information['activity_end_date'] = ""
-        if ad_user_information['activity_start_date'] != '0000-00-00 00:00:00':
+        else:
             start_date = datetime.strptime(ad_user_information['activity_start_date'], '%Y-%m-%d %H:%M:%S').date()
             time_diff = ((date.today() + timedelta(days=1)) - start_date).days
             day_diff = ((time_diff / ad_user_information['activity_period']) * 100)

@@ -268,7 +268,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
             db.execute(
                 query="UPDATE ad_mission_card_user "
                       "SET status = 'ongoing' WHERE ad_user_apply_id = %s "
-                      "AND mission_start_date <= NOW() AND ad_mission_card_user_id NOT IN (%s)",
+                      "AND mission_start_date <= NOW() AND ad_mission_card_user_id NOT IN (%s) "
+                      "AND status NOT IN ('success', 'fail')",
                 args=[ad_apply_id, mission_information['ad_mission_card_user_id']]
             )
             db.execute(
