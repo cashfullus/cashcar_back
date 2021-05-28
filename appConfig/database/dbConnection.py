@@ -169,8 +169,8 @@ class Database:
 
     def getAllAdMissionCardInfoByAcceptApply(self, ad_user_apply_id):
         sql = "SELECT ad_mission_card_id, mission_type, mission_name, " \
-              "additional_point, due_date, `order`, from_default_order, " \
-              "from_default_order_date, based_on_activity_period " \
+              "additional_point, due_date, `order`," \
+              "based_on_activity_period " \
               "FROM ad_user_apply as aua " \
               "JOIN ad_mission_card amc on aua.ad_id = amc.ad_id " \
               "WHERE ad_user_apply_id = %s ORDER BY mission_type, `order`"
@@ -222,8 +222,8 @@ class Database:
     def getOneMissionUserInfoByIdx(self, ad_user_apply_id, ad_mission_card_id):
         sql = "SELECT " \
               "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
-              "amc.mission_name, amc.mission_type, amc.additional_point, amc.from_default_order, " \
-              "amc.from_default_order_date, based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
+              "amc.mission_name, amc.mission_type, amc.additional_point, " \
+              "based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
               "mission_fail_count, title, u.user_id as user_id, fcm_token, alarm " \
               "FROM ad_mission_card_user as amcu " \
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
@@ -235,22 +235,6 @@ class Database:
         self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id])
         row = self.cursor.fetchone()
         return row
-
-    # 필수미션 기준으로 추가할 추가미션 데이터 조회
-    # def getAllAddMissionUserInfoByApplyIdFirst(self, ad_user_apply_id, ad_mission_card_id, from_default_order):
-    #     sql = "SELECT " \
-    #           "ad_mission_card_user_id, amc.mission_type, amc.additional_point, " \
-    #           "amc.order, amc.from_default_order, amc.from_default_order_date, due_date " \
-    #           "FROM ad_mission_card_user amcu " \
-    #           "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
-    #           "WHERE amcu.ad_user_apply_id = %s " \
-    #           "AND amcu.ad_mission_card_id NOT IN (%s) " \
-    #           "AND amc.mission_type NOT IN (0) " \
-    #           "AND amc.from_default_order IN (%s) " \
-    #           "AND amcu.status = 'stand_by'"
-    #     self.cursor.execute(query=sql, args=[ad_user_apply_id, ad_mission_card_id, from_default_order])
-    #     rows = self.cursor.fetchall()
-    #     return rows
 
     # 사용자의 광고 상태 및 미션 처리 메세지 가져오기
     def getOneReason(self, user_id):

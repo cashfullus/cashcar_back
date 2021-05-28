@@ -761,13 +761,13 @@ class AdApplyStatusUpdate:
         # 미션 아이템
         default_date = self.get_default_dates()
         start_date = default_date['mission_start_date'].date()
-        additional_start_date = (date.today() + timedelta(days=self.item['from_default_order_date']))
+        additional_start_date = (date.today() + timedelta(days=self.item['based_on_activity_period']))
         if self.start_date == additional_start_date:
             mission_start_date = additional_start_date.strftime('%Y-%m-%d 00:00:00')
             mission_end_date = (additional_start_date + timedelta(days=self.item['due_date'])).strftime(
                 '%Y-%m-%d 23:59:59')
         else:
-            mission_start_date = (start_date + timedelta(days=self.item['from_default_order_date']))
+            mission_start_date = (start_date + timedelta(days=self.item['based_on_activity_period']))
             mission_end_date = (mission_start_date + timedelta(days=self.item['due_date'])).strftime(
                 '%Y-%m-%d 23:59:59')
         self.db.execute(
