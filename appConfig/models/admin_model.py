@@ -600,7 +600,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                             fcm_list.append(fcm_token['fcm_token'])
                     else:
                         status_list.append({i: False})
-                multiple_cloud_messaging(totens=fcm_list, body="[기부]가 완료되었습니다. 당신의 나눔으로 세상이 더욱 따듯해졌습니다 :)")
+                multiple_cloud_messaging(tokens=fcm_list, body="[기부]가 완료되었습니다. 당신의 나눔으로 세상이 더욱 따듯해졌습니다 :)")
                 db.commit()
                 db.db_close()
                 return kwargs['status']
