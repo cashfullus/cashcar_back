@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from database.dbConnection import Database
 # JwtToken
 from flask_jwt_extended import create_access_token, create_refresh_token
-
+from notification.user_push_nofitication import one_cloud_messaging
 # 시간
 from datetime import datetime, date, timedelta
 import re
@@ -516,6 +516,12 @@ def update_user_withdrawal_data(user_id, **kwargs):
                   "WHERE user_id = %s",
             args=[int(kwargs['withdrawal_point']), user_id]
         )
+    fcm_token = db.executeOne(query="SELECT fcm_token, alarm FROM user_fcm uf JOIN user u on uf.user_id = u.user_id "
+                                    "WHERE u.user_id = %s AND alarm = 1",
+                              args=user_id)
+    if fcm_token:
+        one_cloud_messaging(token=fcm_token['fcm_token'],
+                            body="[출금] 신청이 등록되었습니다. 영업일 기준 2-3일 정도 후에 통장으로 입금될 예정입니다.")
     db.commit()
     db.db_close()
     return status
@@ -561,6 +567,12 @@ def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
         query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
         args=[int(kwargs['withdrawal_point']), user_id]
     )
+    fcm_token = db.executeOne(query="SELECT fcm_token, alarm FROM user_fcm uf JOIN user u on uf.user_id = u.user_id "
+                                    "WHERE u.user_id = %s AND alarm = 1",
+                              args=user_id)
+    if fcm_token:
+        one_cloud_messaging(token=fcm_token['fcm_token'],
+                            body="[기부]에 함께 동참해주셔서 감사합니다. 영수증의 경우, 영업일 기준 2-3일 내에 기부 단체에서 별도의 연락을 드립니다.")
     db.commit()
     db.db_close()
     return status

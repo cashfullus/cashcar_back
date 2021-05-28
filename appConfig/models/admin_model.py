@@ -8,7 +8,7 @@ from flask_jwt_extended import create_access_token
 # 시간
 from datetime import datetime, date, timedelta
 import os
-from notification.user_push_nofitication import one_cloud_messaging
+from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
 
 from werkzeug.utils import secure_filename
 
@@ -512,6 +512,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
         user_list = kwargs['withdrawal_list']
         if user_list:
             if kwargs['status'] == "done":
+                fcm_list = []
                 for i in range(len(user_list)):
                     user_information = db.executeOne(
                         query="SELECT u.user_id, deposit, amount FROM withdrawal_self "
@@ -525,22 +526,38 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                                   "WHERE withdrawal_self_id = %s",
                             args=user_list[i]
                         )
-                        db.execute(
-                            query="UPDATE user SET deposit = deposit + %s WHERE user_id = %s",
-                            args=[int(user_information['amount']), user_information['user_id']]
-                        )
+                        fcm_token = db.executeOne(
+                            query="SELECT fcm_token, alarm FROM user_fcm uf JOIN user u on uf.user_id = u.user_id "
+                                  "WHERE u.user_id = %s AND alarm = 1",
+                            args=user_information['user_id'])
+                        if fcm_token:
+                            fcm_list.append(fcm_token['fcm_token'])
                     else:
                         status_list.append({i: False})
+                multiple_cloud_messaging(totens=fcm_list, body="[출금]이 완료되었습니다. 통장 내역을 확인해보세요 :)")
                 db.commit()
                 db.db_close()
                 return kwargs['status']
             elif kwargs['status'] == "reject":
                 for i in range(len(user_list)):
+                    user_information = db.executeOne(
+                        query="SELECT u.user_id, deposit, amount FROM withdrawal_donate "
+                              "JOIN user u on withdrawal_donate.user_id = u.user_id WHERE withdrawal_donate_id = %s",
+                        args=user_list[i]
+                    )
                     db.execute(
                         query="UPDATE withdrawal_self "
                               "SET status = 'reject', change_reject = NOW() "
                               "WHERE withdrawal_self_id = %s",
                         args=user_list[i]
+                    )
+                    db.execute(
+                        query="UPDATE user SET deposit = deposit - %s WHERE user_id = %s",
+                        args=[user_information['amount'], user_information['user_id']]
+                    )
+                    db.execute(
+                        query="INSERT INTO point_history (user_id, point, contents) VALUES (%s, %s, %s)",
+                        args=[user_information['user_id'], -user_information['amount'], "[출금] 이 거부되었습니다."]
                     )
                 db.commit()
                 db.db_close()
@@ -562,6 +579,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
         if user_list:
             # 기부 완료
             if kwargs['status'] == "done":
+                fcm_list = []
                 for i in range(len(user_list)):
                     user_information = db.executeOne(
                         query="SELECT u.user_id, deposit, amount FROM withdrawal_donate "
@@ -574,8 +592,15 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                                   "WHERE withdrawal_donate_id = %s",
                             args=user_list[i]
                         )
+                        fcm_token = db.executeOne(
+                            query="SELECT fcm_token, alarm FROM user_fcm uf JOIN user u on uf.user_id = u.user_id "
+                                  "WHERE u.user_id = %s AND alarm = 1",
+                            args=user_information['user_id'])
+                        if fcm_token:
+                            fcm_list.append(fcm_token['fcm_token'])
                     else:
                         status_list.append({i: False})
+                multiple_cloud_messaging(totens=fcm_list, body="[기부]가 완료되었습니다. 당신의 나눔으로 세상이 더욱 따듯해졌습니다 :)")
                 db.commit()
                 db.db_close()
                 return kwargs['status']
