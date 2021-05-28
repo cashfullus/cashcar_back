@@ -487,7 +487,7 @@ class UserMyAd:
             ad_information["point"] = 0
         else:
             start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
-            ad_information['ongoing_days'] = (date.today() - start_date).days
+            ad_information['ongoing_days'] = ((date.today() + timedelta(days=1)) - start_date).days
             if (datetime.now().date() - start_date).days > 0:
                 ad_information['point'] = (datetime.now().date() - start_date).days * ad_information['point']
             else:
@@ -589,7 +589,8 @@ class AdApplyStatusUpdate:
         self.db.commit()
 
     def update_apply_status(self):
-        self.db.execute(query="UPDATE ad_user_apply SET status = %s WHERE ad_user_apply_id = %s",
+        self.db.execute(query="UPDATE ad_user_apply SET status = %s, accept_status_time = NOW() "
+                              "WHERE ad_user_apply_id = %s",
                         args=[self.kwargs['status'], self.apply_id]
                         )
         self.db.commit()
