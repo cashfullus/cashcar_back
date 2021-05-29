@@ -516,10 +516,9 @@ def vehicle_get():
 @swag_from('route_yml/advertisement/advertisement_list_get.yml', methods=['GET'])
 def ongoing_ad_information():
     category = request.args.get('category')
-    page = request.args.get('page')
-    if int(page) == 0:
-        page = 1
-    result, status = AD.get_all_by_category_ad_list(page=int(page), category=category)
+    page = request.args.get('page', 1, int)
+    advertisement = AD.AdvertisementList()
+    result, status = advertisement.get_all_by_category_ad_list(page=page, category=category)
     if status["correct_category"] is True:
         return jsonify({"status": True, "data": result}), 200
     else:
@@ -584,7 +583,8 @@ def ad_apply():
         elif request.method == "POST":
             data = request.get_json()
             vehicle_id = request.args.get('vehicle_id', 0)
-            status = AD.ad_apply(user_id=user_id, ad_id=ad_id, vehicle_id=vehicle_id, **data)
+            set_status = AD.UserAdApply(user_id=user_id, ad_id=ad_id, vehicle_id=vehicle_id, **data)
+            status = set_status.response()
             if status["user_information"] is False or status["ad_information"] is False or \
                     status["already_apply"] is False or status["area"] is False or status['reject_apply'] is False:
                 return jsonify({"status": False, "data": status}), 404
@@ -1132,9 +1132,10 @@ def admin_user_apply_list():
     if status is not True:
         return jsonify(status), code
 
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
-    result, item_count = AD.ad_apply_list(page=page, count=count)
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    advertisement = AD.AdvertisementList()
+    result, item_count = advertisement.get_ad_apply_list(page=page, count=count)
     if result:
         return jsonify({"status": True, "data": result, "item_count": item_count}), 200
     else:

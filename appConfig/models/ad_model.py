@@ -208,23 +208,41 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             return True
 
 
-# 광고 리스트 (parameter query_string)
-def get_all_by_category_ad_list(page, category):
-    db = Database()
-    per_page = (page - 1) * 20
-    start_at = per_page + 20
-    status = {"correct_category": True}
-    sql = "SELECT ad_id, title, thumbnail_image, " \
-          "max_recruiting_count, recruiting_count, total_point, area," \
-          "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
-          "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
-          "TIMESTAMPDIFF(day, DATE_FORMAT(NOW(), '%%Y-%%m-%%d %%H:%%i:%%s'), " \
-          "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s')) as time_diff " \
-          f"FROM ad_information WHERE ad_status = %s AND removed = 0 ORDER BY ad_id DESC " \
-          "LIMIT %s OFFSET %s"
+class AdvertisementList:
+    def __init__(self):
+        self.db = Database()
 
-    result = db.executeAll(query=sql, args=[category, start_at, per_page])
-    return result, status
+    def get_all_by_category_ad_list(self, page, category):
+        per_page = (page - 1) * 20
+        start_at = per_page + 20
+        status = {"correct_category": True}
+        sql = "SELECT ad_id, title, thumbnail_image, " \
+              "max_recruiting_count, recruiting_count, total_point, area," \
+              "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
+              "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
+              "TIMESTAMPDIFF(day, DATE_FORMAT(NOW(), '%%Y-%%m-%%d %%H:%%i:%%s'), " \
+              "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s')) as time_diff " \
+              f"FROM ad_information WHERE ad_status = %s AND removed = 0 ORDER BY ad_id DESC " \
+              "LIMIT %s OFFSET %s"
+
+        print(per_page, start_at)
+
+        result = self.db.executeAll(query=sql, args=[category, start_at, per_page])
+        return result, status
+
+    def get_ad_apply_list(self, page, count):
+        per_page = (page - 1) * count
+        result = self.db.getAllAdUserApply(count=int(count), per_page=per_page)
+        item_count = self.db.executeOne(query="SELECT "
+                                              "count(aua.ad_user_apply_id) as item_count "
+                                              "FROM ad_user_apply aua "
+                                              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                                              "JOIN user u on aua.user_id = u.user_id "
+                                              "WHERE status IN ('stand_by', 'accept', 'success', 'reject') "
+                                              "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
+                                              "aua.register_time DESC"
+                                        )
+        return result, item_count['item_count']
 
 
 # 광고 디테일
@@ -269,133 +287,246 @@ def get_information_for_ad_apply(user_id, ad_id):
     return result, status
 
 
-# 광고 신청 POST   이미 신청했던 광고 다시 신청 불가 추가
-def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
-    db = Database()
-    status = {"user_information": True, "ad_information": True, "already_apply": True,
-              "area": True, "vehicle": True, "reject_apply": True}
-    target_user = db.getUserById(user_id)
-    target_ad = db.getOneAdApplyByAdId(ad_id)
-    vehicle = db.getOneVehicleByVehicleIdAndUserId(user_id=user_id, vehicle_id=vehicle_id)
-    already_apply_ad = db.executeOne(
-        query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
-        args=user_id
-    )
-    reject_apply = db.executeOne(
-        query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
-        args=[user_id, ad_id]
-    )
-    area = kwargs['main_address'].split(' ')[0]
-    query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
-            "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
-    delivery_area = db.executeOne(
-        query=query
-    )
-    if reject_apply:
-        status["reject_apply"] = False
-        return status
+class UserAdApply:
+    def __init__(self, user_id, ad_id, vehicle_id, **kwargs):
+        self.db = Database()
+        self.user_id = user_id
+        self.ad_id = ad_id
+        self.vehicle_id = vehicle_id
+        self.kwargs = kwargs
+        self.status = {"user_information": True, "ad_information": True, "already_apply": True,
+                       "area": True, "vehicle": True, "reject_apply": True}
+        self.status_bool_list = []
+        self.user = self.set_user()
+        self.advertisement = self.set_advertisement()
+        self.vehicle = self.set_vehicle()
+        self.already_apply = self.set_already_apply_advertisement()
+        self.rejected_apply = self.set_rejected_apply()
+        self.possible_area = self.set_possible_area()
 
-    if not target_ad:
-        status["ad_information"] = False
-        return status
+    def set_status(self):
+        if self.rejected_apply:
+            self.status["reject_apply"] = False
+            self.status_bool_list.append(False)
 
-    elif not target_user:
-        status["user_information"] = False
-        return status
+        if not self.advertisement:
+            self.status["ad_information"] = False
+            self.status_bool_list.append(False)
 
-    elif already_apply_ad:
-        status["already_apply"] = False
-        return status
+        elif not self.user:
+            self.status["user_information"] = False
+            self.status_bool_list.append(False)
 
-    elif not delivery_area:
-        status['area'] = False
-        return status
+        elif self.already_apply:
+            self.status["already_apply"] = False
+            self.status_bool_list.append(False)
 
-    elif not vehicle:
-        status['vehicle'] = False
-        return status
+        elif not self.possible_area:
+            self.status["area"] = False
+            self.status_bool_list.append(False)
 
-    else:
-        if int(delivery_area['recruiting_count']) == int(delivery_area['max_recruiting_count']):
-            db.execute(
-                query="UPDATE ad_information SET ad_status = 'done' WHERE ad_id = %s",
-                args=ad_id
-            )
-            db.commit()
-            db.db_close()
-            status['ad_information'] = False
-            return status
+        elif not self.vehicle:
+            self.status['vehicle'] = False
+            self.status_bool_list.append(False)
+
         else:
-            if int(delivery_area['recruiting_count']) + 1 == int(delivery_area['max_recruiting_count']):
-                db.execute(
+            self.update_done_advertisement()
+            if False in self.status_bool_list:
+                return
+
+            self.update_user()
+            self.insert_advertisement_apply()
+            self.insert_activity_history()
+            self.update_vehicle()
+
+    def set_user(self):
+        return self.db.getUserById(user_id=self.user_id)
+
+    def set_advertisement(self):
+        return self.db.getOneAdApplyByAdId(ad_id=self.ad_id)
+
+    def set_vehicle(self):
+        return self.db.getOneVehicleByVehicleIdAndUserId(user_id=self.user_id, vehicle_id=self.vehicle_id)
+
+    def set_already_apply_advertisement(self):
+        return self.db.executeOne(
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status IN ('stand_by', 'accept') AND user_id = %s",
+            args=self.user_id
+        )
+
+    def set_rejected_apply(self):
+        return self.db.executeOne(
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
+            args=[self.user_id, self.ad_id]
+        )
+
+    def set_possible_area(self):
+        area = self.kwargs['main_address'].split(' ')[0]
+        query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
+                "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, self.ad_id)
+        return self.db.executeOne(
+            query=query
+        )
+
+    def update_done_advertisement(self):
+        if self.possible_area['recruiting_count'] == self.possible_area['max_recruiting_count']:
+            self.db.execute(
+                query="UPDATE ad_information SET ad_status = 'done' WHERE ad_id = %s",
+                args=self.ad_id
+            )
+            self.db.commit()
+            self.status['ad_information'] = False
+            self.status_bool_list.append(False)
+        else:
+            if self.possible_area['recruiting_count'] + 1 == self.possible_area['max_recruiting_count']:
+                self.db.execute(
                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1, ad_status = 'done' "
                           "WHERE ad_id = %s",
-                    args=ad_id
+                    args=self.ad_id
                 )
             else:
-                db.execute(
+                self.db.execute(
                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
-                    args=ad_id
+                    args=self.ad_id
                 )
-            db.execute(
-                query="UPDATE user SET main_address = %s, "
-                      "detail_address = %s, call_number = %s, name = %s "
-                      "WHERE user_id = %s",
-                args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
-            )
-            db.execute(
-                query="INSERT INTO ad_user_apply (user_id, ad_id, vehicle_id,recruit_number, register_time) "
-                      "VALUES (%s, %s, %s,%s, NOW())",
-                args=[user_id, ad_id, vehicle['vehicle_id'], int(target_ad['recruiting_count']) + 1]
-            )
-            history_name = f"{delivery_area['title']} 광고 신청"
-            db.execute(
-                query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-                args=[user_id, history_name]
-            )
-            db.execute(
-                query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
-                args=[user_id, vehicle['vehicle_id']]
-            )
-            db.execute(
-                query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
-                args=[user_id, vehicle['vehicle_id']]
-            )
-            db.commit()
-            db.db_close()
-            return status
+            self.db.commit()
+
+    def update_user(self):
+        self.db.execute(
+            query="UPDATE user SET main_address = %s, detail_address = %s, "
+                  "call_number = %s, name = %s "
+                  "WHERE user_id = %s",
+            args=[self.kwargs.get('main_address'), self.kwargs.get('detail_address'),
+                  self.kwargs.get('call_number'), self.kwargs.get('name'), self.user_id
+                  ]
+        )
+
+    def insert_advertisement_apply(self):
+        self.db.execute(
+            query="INSERT INTO ad_user_apply (user_id, ad_id, vehicle_id, recruit_number, register_time) "
+                  "VALUES (%s, %s, %s, %s, NOW())",
+            args=[self.user_id, self.ad_id, self.vehicle_id, self.advertisement['recruiting_count'] + 1]
+        )
+
+    def insert_activity_history(self):
+        activity_history = f"{self.advertisement['title']} 광고 신청"
+        self.db.execute(
+            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+            args=[self.user_id, activity_history]
+        )
+
+    def update_vehicle(self):
+        self.db.execute(
+            query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
+            args=[self.user_id, self.vehicle_id]
+        )
+        self.db.execute(
+            query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
+            args=[self.user_id, self.vehicle_id]
+        )
+
+    def response(self):
+        self.set_status()
+        self.db.commit()
+        self.db.db_close()
+        return self.status
 
 
-# 진행중인 광고 By User
-def get_ongoing_ad(user_id):
-    db = Database()
-    result = db.executeOne(
-        query="SELECT "
-              "* "
-              "FROM ad_mission_card_user as amcu "
-              "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id AND aua.user_id = %s",
-        args=user_id
-    )
-    return result
-
-
-# 광고 신청 목록
-def ad_apply_list(page, count):
-    per_page = (int(page) - 1) * int(count)
-    db = Database()
-    result = db.getAllAdUserApply(count=int(count), per_page=per_page)
-    item_count = db.executeOne(query="SELECT "
-                                     "count(aua.ad_user_apply_id) as item_count "
-                                     "FROM ad_user_apply aua "
-                                     "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-                                     "JOIN user u on aua.user_id = u.user_id "
-                                     "WHERE status IN ('stand_by', 'accept', 'success', 'reject') "
-                                     "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
-                                     "aua.register_time DESC"
-                               )
-    return result, item_count['item_count']
-
-
+# 광고 신청 POST   이미 신청했던 광고 다시 신청 불가 추가
+# def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
+#     db = Database()
+#     status = {"user_information": True, "ad_information": True, "already_apply": True,
+#               "area": True, "vehicle": True, "reject_apply": True}
+#     target_user = db.getUserById(user_id)
+#     target_ad = db.getOneAdApplyByAdId(ad_id)
+#     vehicle = db.getOneVehicleByVehicleIdAndUserId(user_id=user_id, vehicle_id=vehicle_id)
+#     already_apply_ad = db.executeOne(
+#         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
+#         args=user_id
+#     )
+#     reject_apply = db.executeOne(
+#         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
+#         args=[user_id, ad_id]
+#     )
+#     area = kwargs['main_address'].split(' ')[0]
+#     query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
+#             "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
+#     delivery_area = db.executeOne(
+#         query=query
+#     )
+#     if reject_apply:
+#         status["reject_apply"] = False
+#         return status
+#
+#     if not target_ad:
+#         status["ad_information"] = False
+#         return status
+#
+#     elif not target_user:
+#         status["user_information"] = False
+#         return status
+#
+#     elif already_apply_ad:
+#         status["already_apply"] = False
+#         return status
+#
+#     elif not delivery_area:
+#         status['area'] = False
+#         return status
+#
+#     elif not vehicle:
+#         status['vehicle'] = False
+#         return status
+#
+#     else:
+#         if int(delivery_area['recruiting_count']) == int(delivery_area['max_recruiting_count']):
+#             db.execute(
+#                 query="UPDATE ad_information SET ad_status = 'done' WHERE ad_id = %s",
+#                 args=ad_id
+#             )
+#             db.commit()
+#             db.db_close()
+#             status['ad_information'] = False
+#             return status
+#         else:
+#             if int(delivery_area['recruiting_count']) + 1 == int(delivery_area['max_recruiting_count']):
+#                 db.execute(
+#                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1, ad_status = 'done' "
+#                           "WHERE ad_id = %s",
+#                     args=ad_id
+#                 )
+#             else:
+#                 db.execute(
+#                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
+#                     args=ad_id
+#                 )
+#             db.execute(
+#                 query="UPDATE user SET main_address = %s, "
+#                       "detail_address = %s, call_number = %s, name = %s "
+#                       "WHERE user_id = %s",
+#                 args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
+#             )
+#             db.execute(
+#                 query="INSERT INTO ad_user_apply (user_id, ad_id, vehicle_id,recruit_number, register_time) "
+#                       "VALUES (%s, %s, %s,%s, NOW())",
+#                 args=[user_id, ad_id, vehicle['vehicle_id'], int(target_ad['recruiting_count']) + 1]
+#             )
+#             history_name = f"{delivery_area['title']} 광고 신청"
+#             db.execute(
+#                 query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+#                 args=[user_id, history_name]
+#             )
+#             db.execute(
+#                 query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
+#                 args=[user_id, vehicle['vehicle_id']]
+#             )
+#             db.execute(
+#                 query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
+#                 args=[user_id, vehicle['vehicle_id']]
+#             )
+#             db.commit()
+#             db.db_close()
+#             return status
 class UserMyAd:
     def __init__(self, user_id):
         self.db = Database()
@@ -475,7 +606,8 @@ class UserMyAd:
             )['order']
 
         # 삭제여부
-        if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(hours=1) < datetime.now():
+        if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
+                hours=1) < datetime.now():
             self.set_is_delete()
 
         # 활동시간에 따른 예외처리
@@ -777,4 +909,3 @@ class AdApplyStatusUpdate:
     def response(self):
         response_data = self.apply()
         return response_data, self.user_fcm_list
-
