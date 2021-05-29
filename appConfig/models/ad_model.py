@@ -487,15 +487,12 @@ class UserMyAd:
             ad_information["point"] = 0
         else:
             start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
-            end_date = datetime.strptime(ad_information['activity_end_date'], '%Y-%m-%d %H:%M:%S').date()
             ad_information['ongoing_days'] = (date.today() - start_date).days
             if (datetime.now().date() - start_date).days > 0:
                 ad_information['point'] = (datetime.now().date() - start_date).days * ad_information['point']
             time_diff = ((date.today() + timedelta(days=1)) - start_date).days
-            print(time_diff)
             if time_diff > ad_information['activity_period']:
                 time_diff = ad_information['activity_period']
-            # time_diff = (ad_information['activity_period'] - check_days)
             day_diff = ((time_diff / ad_information['activity_period']) * 100)
             ad_information['ongoing_day_percent'] = int(day_diff)
             ad_information['ongoing_days'] = time_diff
@@ -515,43 +512,67 @@ class UserMyAd:
         return self.result
 
 
-# 신청한 광고 취소 (사용자)
-def cancel_apply_user(ad_user_apply_id):
-    db = Database()
-    status = {"apply_information": True, "time_out": True}
-    user_apply_information = db.executeOne(
-        query="SELECT * FROM ad_user_apply WHERE ad_user_apply_id = %s",
-        args=ad_user_apply_id
-    )
-    if not user_apply_information:
-        status["apply_information"] = False
-        return status
+class UserApplyCancel:
+    def __init__(self, ad_user_apply_id):
+        self.ad_user_apply_id = ad_user_apply_id
+        self.db = Database()
+        self.status = {"apply_information": True, "time_out": True}
 
-    if user_apply_information["register_time"] + timedelta(hours=1) < datetime.now():
-        status["time_out"] = False
-        return status
-    ad_information = db.executeOne(
-        query="SELECT title, user_id FROM ad_information as ai JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
-              "WHERE ad_user_apply_id = %s",
-        args=ad_user_apply_id
-    )
-    history_name = f"{ad_information['title']} 광고 신청 취소"
-    db.execute(
-        query="DELETE FROM ad_user_apply WHERE ad_user_apply_id = %s",
-        args=ad_user_apply_id
-    )
-    db.execute(
-        query="UPDATE ad_information SET recruiting_count = recruiting_count - 1 WHERE ad_id = %s",
-        args=user_apply_information["ad_id"]
-    )
+    def check_status(self):
+        apply_information = self.get_user_apply_information()
+        if not apply_information:
+            self.status['apply_information'] = False
+            return False
 
-    db.execute(
-        query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-        args=[ad_information['user_id'], history_name]
-    )
-    db.commit()
-    db.db_close()
-    return status
+        if apply_information['register_time'] + timedelta(hours=1) < datetime.now():
+            self.status['time_out'] = False
+            return False
+        return True
+
+    def get_user_apply_information(self):
+        return self.db.executeOne(
+            query="SELECT * FROM ad_user_apply WHERE ad_user_apply_id = %s",
+            args=self.ad_user_apply_id
+        )
+
+    def get_ad_information(self):
+        return self.db.executeOne(
+            query="SELECT title, user_id, ai.ad_id FROM ad_information as ai "
+                  "JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
+                  "WHERE ad_user_apply_id = %s",
+            args=self.ad_user_apply_id
+        )
+
+    def set_history_and_recruiting_count(self):
+        adId_userId_information = self.get_ad_information()
+        history_name = f"{adId_userId_information['title']} 광고 신청 취소"
+        self.db.execute(
+            query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
+            args=[adId_userId_information['user_id'], history_name]
+        )
+        self.db.execute(
+            query="UPDATE ad_information SET recruiting_count = recruiting_count - 1 WHERE ad_id = %s",
+            args=adId_userId_information['ad_id']
+        )
+        self.db.commit()
+
+    def delete_apply_information(self):
+        self.db.execute(
+            query="DELETE FROM ad_user_apply WHERE ad_user_apply_id = %s",
+            args=self.ad_user_apply_id
+        )
+        self.db.commit()
+
+    def response(self):
+        check_status = self.check_status()
+        if check_status is False:
+            self.db.db_close()
+            return self.status
+        else:
+            self.set_history_and_recruiting_count()
+            self.delete_apply_information()
+            self.db.db_close()
+            return self.status
 
 
 class AdApplyStatusUpdate:

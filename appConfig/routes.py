@@ -693,7 +693,8 @@ def home_my_ad():
 
     elif request.method == 'DELETE':
         ad_user_apply_id = request.args.get('ad_user_apply_id')
-        result = AD.cancel_apply_user(ad_user_apply_id=ad_user_apply_id)
+        set_response = AD.UserApplyCancel(ad_user_apply_id=ad_user_apply_id)
+        result = set_response.response()
         if result["apply_information"] is False:
             return jsonify({"status": False, "data": "Not Found Apply"}), 404
         elif result["time_out"] is False:
