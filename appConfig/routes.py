@@ -955,21 +955,26 @@ def modify_notice_by_admin():
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
     try:
+        set_response = Admin.Notice()
         if request.method == 'GET':
-            page = request.args.get('page', 1)
-            count = request.args.get('count', 10)
-            result, item_count = Admin.admin_get_notice_list(page=int(page), count=int(count))
+            page = request.args.get('page', 1, int)
+            count = request.args.get('count', 10, int)
+            set_response.set_page_count(page=page, count=count)
+            result, item_count = set_response.get_notice_list()
             return jsonify({"data": result, "item_count": item_count})
 
         elif request.method == 'POST':
-            notice_id = request.args.get('notice_id', 0)
+            notice_id = request.args.get('notice_id', 0, int)
             data = request.get_json()
-            result = Admin.update_notice(notice_id=notice_id, **data)
+            set_response.set_notice_id(notice_id=notice_id)
+            set_response.set_kwargs(**data)
+            result = set_response.update_notice()
             return jsonify({"data": result})
 
         elif request.method == 'DELETE':
-            notice_id = request.args.get('notice_id', 0)
-            Admin.delete_notice(notice_id=notice_id)
+            notice_id = request.args.get('notice_id', 0, int)
+            set_response.set_notice_id(notice_id=notice_id)
+            set_response.delete_notice()
             return jsonify({"status": True})
     except KeyError:
         return jsonify({"status": False})

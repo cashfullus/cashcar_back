@@ -73,32 +73,54 @@ def admin_register_notice(**kwargs):
     db.commit()
     return result
 
+# router /admin/notice
+class Notice:
+    def __init__(self):
+        self.page = None
+        self.count = None
+        self.per_page = None
+        self.kwargs = None
+        self.notice_id = None
+        self.db = Database()
 
-# 어드민 공지사항 리스트
-def admin_get_notice_list(page, count):
-    per_page = (int(page) - 1) * int(count)
-    db = Database()
-    result = db.getAdminAllNotice(count=int(count), per_page=per_page)
-    item_count = db.executeOne(
-        query="SELECT count(notice_id) as item_count "
-              "FROM notice_information WHERE is_removed = 0 ORDER BY register_time DESC",
-    )
-    return result, item_count['item_count']
+    def set_page_count(self, page, count):
+        self.page = page
+        self.count = count
+        self.per_page = (page-1) * count
 
+    def set_notice_id(self, notice_id):
+        self.notice_id = notice_id
 
-# 공지사항 업데이트
-def update_notice(notice_id, **kwargs):
-    db = Database()
-    db.updateNotice(notice_id=notice_id, title=kwargs.get('title'), description=kwargs.get('description'))
-    kwargs['notice_id'] = int(notice_id)
-    return kwargs
+    def set_kwargs(self, **kwargs):
+        self.kwargs = kwargs
 
+    def get_item_count(self):
+        return self.db.executeOne(
+            query="SELECT count(notice_id) as item_count FROM notice_information "
+                  "WHERE is_removed = 0 ORDER BY register_time DESC"
+        )
 
-# 공지사항 삭제 (실제 데이터는 삭제되지 않는다.)
-def delete_notice(notice_id):
-    db = Database()
-    db.deleteNotice(notice_id=notice_id)
-    return True
+    def get_admin_all_notice(self):
+        return self.db.getAdminAllNotice(count=self.count, per_page=self.per_page), self.get_item_count()
+
+    # 어드민 공지사항 리스트
+    def get_notice_list(self):
+        response, item_count = self.get_admin_all_notice()
+        self.db.db_close()
+        return response, item_count
+
+    # 어드민 공지사항 업데이트
+    def update_notice(self):
+        self.db.updateNotice(notice_id=self.notice_id, title=self.kwargs.get('title'),
+                             description=self.kwargs.get('description')
+                             )
+        self.kwargs['notice_id'] = self.notice_id
+        self.db.db_close()
+        return self.kwargs
+
+    def delete_notice(self):
+        self.db.deleteNotice(notice_id=self.notice_id)
+        self.db.db_close()
 
 
 def register(**kwargs):
