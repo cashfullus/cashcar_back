@@ -421,74 +421,170 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 return result
 
 
-# 어드민 회원리스트 및 회원 관리  모집번호 추가
-def get_all_user_list(page, count):
-    db = Database()
-    per_page = (int(page) - 1) * int(count)
-    user_list = db.executeAll(
-        query="SELECT user_id, nickname, name, call_number, email, "
-              "resident_registration_number_back as gender, "
-              "resident_registration_number_front as date_of_birth, "
-              "marketing, main_address, detail_address, deposit, "
-              "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM user u  ORDER BY register_time DESC LIMIT %s OFFSET %s",
-        args=[int(count), per_page]
-    )
-    item_count = db.executeOne(
-        query="SELECT count(user_id) as item_count FROM user"
-    )
-    if user_list:
-        for i in range(len(user_list)):
-            vehicle = db.executeAll(
+class AdminUserList:
+    def __init__(self):
+        self.page = None
+        self.count = None
+        self.per_page = None
+        self.user_list = None
+        self.item_count = None
+        self.each_user_id = None
+        self.kwargs = None
+        self.db = Database()
+
+    def set_pages(self, page, count):
+        self.page = page
+        self.count = count
+        self.per_page = (page-1) * count
+
+    def set_kwargs(self, **kwargs):
+        self.kwargs = kwargs
+
+    def set_item_count(self):
+        self.item_count = self.get_item_count()
+
+    def set_user_list(self):
+        self.user_list = self.get_user_list()
+        if self.user_list:
+            for i in range(len(self.user_list)):
+                self.each_user_id = self.user_list[i]['user_id']
+                self.user_list[i]['vehicle_information'] = self.get_vehicle_information()
+                self.user_list[i]['activity_history'] = self.get_activity_history()
+
+    def get_user_list(self):
+        return self.db.executeAll(
+            query="SELECT user_id, nickname, name, call_number, email, "
+                  "resident_registration_number_back as gender, "
+                  "resident_registration_number_front as date_of_birth, "
+                  "marketing, main_address, detail_address, deposit, "
+                  "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM user u  ORDER BY register_time DESC LIMIT %s OFFSET %s",
+            args=[self.count, self.per_page]
+        )
+
+    def get_item_count(self):
+        return self.db.executeOne(
+            query="SELECT count(user_id) as item_count FROM user"
+        )
+
+    def get_vehicle_information(self):
+        return self.db.executeAll(
+            query="SELECT vehicle_id, vehicle_model_name, car_number, brand, owner_relationship, supporters "
+                  "FROM vehicle WHERE user_id = %s AND removed = 0",
+            args=self.each_user_id
+        )
+
+    def get_activity_history(self):
+        return self.db.executeAll(
+            query="SELECT history_name, "
+                  "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
+                  "FROM user_activity_history WHERE user_id = %s ORDER BY register_time DESC",
+            args=self.each_user_id
+        )
+
+    # 어드민 회원 정보 수정
+    def user_profile_modify(self):
+        self.db.execute(
+            query="UPDATE user SET nickname = %s, email = %s, main_address = %s, detail_address = %s WHERE user_id = %s",
+            args=[self.kwargs.get('nickname'), self.kwargs.get('email'), self.kwargs.get('main_address'),
+                  self.kwargs.get('detail_address'), self.kwargs.get('user_id')]
+        )
+        self.db.commit()
+        self.db.db_close()
+        return self.kwargs
+
+    # 어드민 회원리스트 및 회원 관리  모집번호 추가
+    def response(self):
+        self.set_user_list()
+        self.set_item_count()
+        self.db.db_close()
+        return self.user_list, self.item_count['item_count']
+
+
+class AdminWithdrawal:
+    def __init__(self, is_point):
+        self.is_point = is_point
+        self.page = None
+        self.count = None
+        self.per_page = None
+        self.kwargs = None
+        self.status_list = []
+        self.db = Database()
+
+    def set_pages(self, page, count):
+        self.page = page
+        self.count = count
+        self.per_page = (page-1) * count
+
+    def get_item_count(self):
+        if self.is_point:
+            return self.db.executeOne(
+                query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
+            )
+        else:
+            return self.db.executeOne(
+                query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
+            )
+
+    def get_all_withdrawal(self):
+        if self.is_point:
+            return self.db.executeAll(
                 query="SELECT "
-                      "vehicle_id, vehicle_model_name, car_number, brand,owner_relationship, supporters "
-                      "FROM vehicle WHERE user_id = %s AND removed = 0",
-                args=user_list[i]['user_id']
+                      "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
+                      "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+                      "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
+                      "WHEN w.change_done IS NOT NULL "
+                      "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
+                      "FROM user JOIN withdrawal_self w on user.user_id = w.user_id "
+                      "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
+                args=[self.count, self.per_page]
             )
-            activity_history = db.executeAll(
-                query="SELECT history_name, "
-                      "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                      "FROM user_activity_history WHERE user_id = %s ORDER BY register_time DESC",
-                args=user_list[i]['user_id']
+        else:
+            return self.db.executeAll(
+                query="SELECT "
+                      "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
+                      "receipt, name_of_donor, withdrawal_donate_id, "
+                      "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+                      "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
+                      "WHEN wd.change_done IS NOT NULL "
+                      "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
+                      "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
+                      "JOIN donation_organization d on wd.donation_organization_id = d.donation_organization_id "
+                      "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
+                      "LIMIT %s OFFSET %s",
+                args=[self.count, self.per_page]
             )
-            user_list[i]['vehicle_information'] = vehicle
-            user_list[i]['activity_history'] = activity_history
 
-    return user_list, item_count['item_count']
+    def response(self):
+        response = self.get_all_withdrawal()
+        item_count = self.get_item_count()
+        return response, item_count['item_count']
 
+    # def update_withdrawal(self):
+    #     if self.is_point:
+    #         user_list = self.kwargs['withdrawal_list']
 
-# 어드민 회원 정보 수정
-def admin_user_profile_modify(**kwargs):
-    db = Database()
-    db.execute(
-        query="UPDATE user SET nickname = %s, email = %s, main_address = %s, detail_address = %s WHERE user_id = %s",
-        args=[kwargs.get('nickname'), kwargs.get('email'), kwargs.get('main_address'),
-              kwargs.get('detail_address'), kwargs.get('user_id')]
-    )
-    db.commit()
-    db.db_close()
-    return kwargs
 
 
 # 어드민 포인트 출금 신청 리스트
-def get_all_withdrawal_point(page, count):
-    db = Database()
-    per_page = (int(page) - 1) * int(count)
-    result = db.executeAll(
-        query="SELECT "
-              "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
-              "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-              "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
-              "WHEN w.change_done IS NOT NULL "
-              "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
-              "FROM user JOIN withdrawal_self w on user.user_id = w.user_id "
-              "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
-        args=[int(count), per_page]
-    )
-    item_count = db.executeOne(
-        query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
-    )
-    return result, item_count['item_count']
+# def get_all_withdrawal_point(page, count):
+#     db = Database()
+#     per_page = (int(page) - 1) * int(count)
+#     result = db.executeAll(
+#         query="SELECT "
+#               "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
+#               "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+#               "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
+#               "WHEN w.change_done IS NOT NULL "
+#               "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
+#               "FROM user JOIN withdrawal_self w on user.user_id = w.user_id "
+#               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
+#         args=[int(count), per_page]
+#     )
+#     item_count = db.executeOne(
+#         query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
+#     )
+#     return result, item_count['item_count']
 
 
 # 어드민 포인트 출금 상태 변경  (waiting(대기중), confirm(확인), done(승인), reject(반려))
@@ -498,27 +594,27 @@ def update_withdrawal_point(**kwargs):
 
 
 # 어드민 기부 신청 리스트
-def get_all_withdrawal_donate(page, count):
-    db = Database()
-    per_page = (int(page) - 1) * int(count)
-    result = db.executeAll(
-        query="SELECT "
-              "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
-              "receipt, name_of_donor,"
-              "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-              "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
-              "WHEN wd.change_done IS NOT NULL "
-              "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done, withdrawal_donate_id "
-              "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
-              "JOIN donation_organization d on wd.donation_organization_id = d.donation_organization_id "
-              "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
-              "LIMIT %s OFFSET %s",
-        args=[int(count), per_page]
-    )
-    item_count = db.executeOne(
-        query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
-    )
-    return result, item_count['item_count']
+# def get_all_withdrawal_donate(page, count):
+#     db = Database()
+#     per_page = (int(page) - 1) * int(count)
+#     result = db.executeAll(
+#         query="SELECT "
+#               "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
+#               "receipt, name_of_donor,"
+#               "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+#               "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
+#               "WHEN wd.change_done IS NOT NULL "
+#               "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done, withdrawal_donate_id "
+#               "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
+#               "JOIN donation_organization d on wd.donation_organization_id = d.donation_organization_id "
+#               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
+#               "LIMIT %s OFFSET %s",
+#         args=[int(count), per_page]
+#     )
+#     item_count = db.executeOne(
+#         query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
+#     )
+#     return result, item_count['item_count']
 
 
 # 어드민 기부 출금 상태 변경 (waiting(대기중), checking(확인중), done(승인), reject(반려))

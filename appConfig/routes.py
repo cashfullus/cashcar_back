@@ -1253,15 +1253,18 @@ def admin_get_all_user_list():
     if status is not True:
         return jsonify(status), code
 
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
     # area = request.args.get('area', '')
     # gender = request.args.get('gender', 0)
     # age = request.args.get('age', '0~200')
     # register_time = request.args.get('register_time', '0000-00-00 00:00:00 ~ 9999-12-30 00:00:00')
     # avg_register_time = register_time.split('~')
     # avg_age = age.split('~')
-    result, item_count = Admin.get_all_user_list(page=page, count=count)
+    set_pages = Admin.AdminUserList()
+    set_pages.set_pages(page=page, count=count)
+    result, item_count = set_pages.response()
+    # result, item_count = Admin.get_all_user_list(page=page, count=count)
     return jsonify({"data": result, "item_count": item_count})
 
 
@@ -1294,10 +1297,12 @@ def get_withdrawal_self_point_all():
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    set_response = Admin.AdminWithdrawal(is_point=True)
     if request.method == 'GET':
-        result, item_count = Admin.get_all_withdrawal_point(page=page, count=count)
+        set_response.set_pages(count=count, page=page)
+        result, item_count = set_response.response()
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
@@ -1319,10 +1324,12 @@ def get_withdrawal_donate_point_all():
     if status is not True:
         return jsonify(status), code
 
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    set_response = Admin.AdminWithdrawal(is_point=False)
     if request.method == 'GET':
-        result, item_count = Admin.get_all_withdrawal_donate(page=page, count=count)
+        set_response.set_pages(page=page, count=count)
+        result, item_count = set_response.response()
         return jsonify({"data": result, "item_count": item_count})
 
     elif request.method == 'POST':
@@ -1413,7 +1420,9 @@ def admin_user_profile_update():
         return jsonify(status), code
 
     data = request.get_json()
-    result = Admin.admin_user_profile_modify(**data)
+    set_response = Admin.AdminUserList()
+    set_response.set_kwargs(**data)
+    result = set_response.user_profile_modify()
     return jsonify(result)
 
 
