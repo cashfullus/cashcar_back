@@ -225,8 +225,6 @@ class AdvertisementList:
               f"FROM ad_information WHERE ad_status = %s AND removed = 0 ORDER BY ad_id DESC " \
               "LIMIT %s OFFSET %s"
 
-        print(per_page, start_at)
-
         result = self.db.executeAll(query=sql, args=[category, start_at, per_page])
         return result, status
 
@@ -432,101 +430,6 @@ class UserAdApply:
         return self.status
 
 
-# 광고 신청 POST   이미 신청했던 광고 다시 신청 불가 추가
-# def ad_apply(user_id, ad_id, vehicle_id, **kwargs):
-#     db = Database()
-#     status = {"user_information": True, "ad_information": True, "already_apply": True,
-#               "area": True, "vehicle": True, "reject_apply": True}
-#     target_user = db.getUserById(user_id)
-#     target_ad = db.getOneAdApplyByAdId(ad_id)
-#     vehicle = db.getOneVehicleByVehicleIdAndUserId(user_id=user_id, vehicle_id=vehicle_id)
-#     already_apply_ad = db.executeOne(
-#         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE status in ('stand_by', 'accept') and user_id = %s",
-#         args=user_id
-#     )
-#     reject_apply = db.executeOne(
-#         query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
-#         args=[user_id, ad_id]
-#     )
-#     area = kwargs['main_address'].split(' ')[0]
-#     query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
-#             "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, ad_id)
-#     delivery_area = db.executeOne(
-#         query=query
-#     )
-#     if reject_apply:
-#         status["reject_apply"] = False
-#         return status
-#
-#     if not target_ad:
-#         status["ad_information"] = False
-#         return status
-#
-#     elif not target_user:
-#         status["user_information"] = False
-#         return status
-#
-#     elif already_apply_ad:
-#         status["already_apply"] = False
-#         return status
-#
-#     elif not delivery_area:
-#         status['area'] = False
-#         return status
-#
-#     elif not vehicle:
-#         status['vehicle'] = False
-#         return status
-#
-#     else:
-#         if int(delivery_area['recruiting_count']) == int(delivery_area['max_recruiting_count']):
-#             db.execute(
-#                 query="UPDATE ad_information SET ad_status = 'done' WHERE ad_id = %s",
-#                 args=ad_id
-#             )
-#             db.commit()
-#             db.db_close()
-#             status['ad_information'] = False
-#             return status
-#         else:
-#             if int(delivery_area['recruiting_count']) + 1 == int(delivery_area['max_recruiting_count']):
-#                 db.execute(
-#                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1, ad_status = 'done' "
-#                           "WHERE ad_id = %s",
-#                     args=ad_id
-#                 )
-#             else:
-#                 db.execute(
-#                     query="UPDATE ad_information SET recruiting_count = recruiting_count + 1 WHERE ad_id = %s",
-#                     args=ad_id
-#                 )
-#             db.execute(
-#                 query="UPDATE user SET main_address = %s, "
-#                       "detail_address = %s, call_number = %s, name = %s "
-#                       "WHERE user_id = %s",
-#                 args=[kwargs['main_address'], kwargs['detail_address'], kwargs['call_number'], kwargs['name'], user_id]
-#             )
-#             db.execute(
-#                 query="INSERT INTO ad_user_apply (user_id, ad_id, vehicle_id,recruit_number, register_time) "
-#                       "VALUES (%s, %s, %s,%s, NOW())",
-#                 args=[user_id, ad_id, vehicle['vehicle_id'], int(target_ad['recruiting_count']) + 1]
-#             )
-#             history_name = f"{delivery_area['title']} 광고 신청"
-#             db.execute(
-#                 query="INSERT INTO user_activity_history (user_id, history_name) VALUES (%s, %s)",
-#                 args=[user_id, history_name]
-#             )
-#             db.execute(
-#                 query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s AND vehicle_id NOT IN (%s)",
-#                 args=[user_id, vehicle['vehicle_id']]
-#             )
-#             db.execute(
-#                 query="UPDATE vehicle SET supporters = 1 WHERE user_id = %s AND vehicle_id = %s",
-#                 args=[user_id, vehicle['vehicle_id']]
-#             )
-#             db.commit()
-#             db.db_close()
-#             return status
 class UserMyAd:
     def __init__(self, user_id):
         self.db = Database()

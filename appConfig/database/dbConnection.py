@@ -89,7 +89,7 @@ class Database:
               "DATE_FORMAT(recruit_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_start_date, " \
               "DATE_FORMAT(recruit_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as recruit_end_date, " \
               "activity_period, max_recruiting_count, recruiting_count, " \
-              "total_point, area, description " \
+              "total_point, area, description, min_age_group, max_age_group " \
               "FROM ad_information WHERE ad_id = %s AND removed = 0"
         self.cursor.execute(query=sql, args=ad_id)
         row = self.cursor.fetchone()

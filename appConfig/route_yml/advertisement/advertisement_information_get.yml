@@ -80,6 +80,13 @@ responses:
         gender:
           type: integer
           description: 성별
+        min_age_group:
+          type: integer
+          description: 최소 연령
+        max_age_group:
+          type: integer
+          description: 최소연령 과 최대연령 0일시 무관
+
 
   404:
     description: ID에 해당하는 광고를 찾을수 없을때
