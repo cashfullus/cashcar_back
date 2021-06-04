@@ -617,9 +617,44 @@ def get_all_my_badge_list(user_id):
     return badge_information
 
 
+# negative positive, donate
+def user_point_history_query(user_id, q, per_page, count):
+    if q == "":
+        sql = "SELECT " \
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "contents " \
+              f"FROM point_history WHERE user_id = {user_id} " \
+              f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
+        return sql
+    elif q == "negative":
+        sql = "SELECT " \
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "contents " \
+              f"FROM point_history WHERE user_id = {user_id} AND SIGN(point) = -1 " \
+              f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
+        return sql
+
+    elif q == "positive":
+        sql = "SELECT " \
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "contents " \
+              f"FROM point_history WHERE user_id = {user_id} AND (SIGN(point) = 0 OR SIGN(point) = 1) " \
+              f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
+        return sql
+    elif q == "donate":
+        sql = "SELECT " \
+            "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+            "contents " \
+            f"FROM point_history WHERE user_id = {user_id} AND contents LIKE '%%기부%%' " \
+            f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
+        return sql
+
+
 # 사용자 포인트 와 적립예정 포인트 및 포인트 이력
-def get_user_point_and_history(user_id):
+def get_user_point_and_history(user_id, page, count, q):
     db = Database()
+    per_page = (page-1) * count
+    point_query = user_point_history_query(user_id=user_id, q=q, per_page=per_page, count=count)
     user_scheduled_point = 0
     user_point = db.executeOne(
         query="SELECT deposit FROM user WHERE user_id = %s",
@@ -656,11 +691,7 @@ def get_user_point_and_history(user_id):
         args=user_id
     )
     user_point_history = db.executeAll(
-        query="SELECT "
-              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-              "contents "
-              "FROM point_history WHERE user_id = %s ORDER BY register_time DESC",
-        args=user_id
+        query=point_query
     )
 
     if scheduled_point:

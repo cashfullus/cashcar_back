@@ -20281,3 +20281,183 @@ Traceback (most recent call last):
   File "/home/cashcaruser21/CashCar/flaskenv/lib/python3.6/site-packages/pymysql/err.py", line 143, in raise_mysql_exception
     raise errorclass(errno, errval)
 pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '-20' at line 1")
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 804, in user_point_information
+    page: int = request.arg.get('page', 1, int)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/werkzeug/local.py", line 347, in __getattr__
+    return getattr(self._get_current_object(), name)
+AttributeError: 'Request' object has no attribute 'arg'
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 807, in user_point_information
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 677, in get_user_point_and_history
+    user_point_history = db.executeAll(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 36, in executeAll
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 145, in execute
+    query = self.mogrify(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
+    query = query % self._escape_args(args, conn)
+TypeError: unsupported operand type(s) for %: 'tuple' and 'dict'
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 807, in user_point_information
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 678, in get_user_point_and_history
+    user_point_history = db.executeAll(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 36, in executeAll
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 145, in execute
+    query = self.mogrify(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
+    query = query % self._escape_args(args, conn)
+TypeError: unsupported operand type(s) for %: 'tuple' and 'dict'
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 807, in user_point_information
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 678, in get_user_point_and_history
+    user_point_history = db.executeAll(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 36, in executeAll
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 145, in execute
+    query = self.mogrify(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
+    query = query % self._escape_args(args, conn)
+TypeError: unsupported operand type(s) for %: 'tuple' and 'dict'
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 807, in user_point_information
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 678, in get_user_point_and_history
+    user_point_history = db.executeAll(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 36, in executeAll
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 145, in execute
+    query = self.mogrify(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
+    query = query % self._escape_args(args, conn)
+TypeError: unsupported operand type(s) for %: 'tuple' and 'dict'
+Exception on /user/information/point [GET]
+Traceback (most recent call last):
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flask_jwt_extended/view_decorators.py", line 116, in decorator
+    return fn(*args, **kwargs)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/flasgger/utils.py", line 273, in wrapper
+    return function(*args, **kwargs)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/routes.py", line 807, in user_point_information
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/models/user_model.py", line 693, in get_user_point_and_history
+    user_point_history = db.executeAll(
+  File "/Users/park/SolutionProjects/basicFlask/appConfig/database/dbConnection.py", line 36, in executeAll
+    self.cursor.execute(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 145, in execute
+    query = self.mogrify(query, args)
+  File "/Users/park/miniconda3/envs/basicFlask/lib/python3.8/site-packages/pymysql/cursors.py", line 125, in mogrify
+    query = query % self._escape_args(args, conn)
+ValueError: unsupported format character '?' (0xae30) at index 153

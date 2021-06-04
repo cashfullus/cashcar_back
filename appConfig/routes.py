@@ -101,6 +101,7 @@ Forbidden = {"status": False, "data": "Forbidden"}
 def provide_policy():
     return render_template('provide_policy.html')
 
+
 # 개인정보처리방침
 @app.route('/agree/privacy_policy')
 @swag_from('route_yml/agree/privacy_policy.yml')
@@ -269,7 +270,6 @@ def kakao_callback():
 @app.route('/oauth/apple')
 def apple_auth():
     return render_template("apple_login.html")
-
 
 
 # 애플 로그인 callback
@@ -791,7 +791,7 @@ def notice_list():
     return jsonify({"data": result})
 
 
-# 사용자 포인트 페이지
+# 사용자 포인트 페이지 q = "", "donate", "positive", "negative"
 @app.route('/user/information/point')
 @jwt_required()
 @swag_from('route_yml/user/user_point_information.yml')
@@ -801,7 +801,10 @@ def user_point_information():
     if int(user_id) != identity_:
         return jsonify(Unauthorized), 401
 
-    result = User.get_user_point_and_history(user_id=user_id)
+    page: int = request.args.get('page', 1, int)
+    count: int = request.args.get('count', 8, int)
+    q: str = request.args.get('q', '', str)
+    result = User.get_user_point_and_history(user_id=user_id, page=page, count=count, q=q)
     return jsonify({"data": result})
 
 
@@ -1569,7 +1572,8 @@ def admin_point():
         count = request.args.get('count', 10, int)
         filter_point = request.args.get('point', "0~999999")
         avg_point = filter_point.split('~')
-        set_point = Admin.AdminPointGet(page=page, count=count, min_point=int(avg_point[0]), max_point=int(avg_point[1]))
+        set_point = Admin.AdminPointGet(page=page, count=count, min_point=int(avg_point[0]),
+                                        max_point=int(avg_point[1]))
         result, item_count = set_point.response_user_point_history()
         return jsonify({"data": result, "item_count": item_count})
 
