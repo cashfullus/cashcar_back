@@ -13,11 +13,21 @@ parameters:
     type: integer
     required: true
 
+  - name: page
+    in: query
+    type: integer
+    required: false
+
+  - name: q
+    in: query
+    type: string
+    required: false
+
 
 
 responses:
   200:
-    description: 사용자 포인트 정보 조회
+    description: 사용자 포인트 정보 조회 (q = 'donate', 'positive', 'negative')
     schema:
       type: object
       properties:
