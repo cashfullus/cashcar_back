@@ -34,6 +34,9 @@ responses:
         data:
           type: object
           properties:
+            page_count:
+              type: integer
+              description: 페이지 개수
             is_ongoing_donate:
               type: string
               description: stand_by(기부신청), confirm(기부중)

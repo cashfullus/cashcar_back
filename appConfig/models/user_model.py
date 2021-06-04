@@ -693,6 +693,13 @@ def get_user_point_and_history(user_id, page, count, q):
     user_point_history = db.executeAll(
         query=point_query
     )
+    point_history_page_count = db.executeOne(
+        query="SELECT count(user_id) as item_count FROM point_history WHERE user_id = %s",
+        args=user_id
+    )
+    page_count = point_history_page_count['item_count'] / count
+    if page_count > point_history_page_count['item_count'] // count:
+        page_count += 1
 
     if scheduled_point:
         user_scheduled_point += int(scheduled_point['scheduled_point'])
@@ -713,7 +720,8 @@ def get_user_point_and_history(user_id, page, count, q):
               "scheduled_point": user_scheduled_point,
               "point_history": user_point_history,
               "is_ongoing_point": ongoing_point,
-              "is_ongoing_donate": ongoing_donate}
+              "is_ongoing_donate": ongoing_donate,
+              "page_count": int(page_count)}
     db.db_close()
     return result
 
