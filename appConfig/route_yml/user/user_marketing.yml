@@ -1,0 +1,29 @@
+tags:
+  - Alarm
+
+
+parameters:
+  - name: Authorization
+    in: Headers
+    type: Bearer String
+    required: true
+
+  - name: user_id
+    in: query string
+    type: integer
+    required: true
+
+  - name: is_on
+    in: query string
+    type: integer
+    required: true
+
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        status:
+          type: boolean

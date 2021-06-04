@@ -643,17 +643,17 @@ def user_point_history_query(user_id, q, per_page, count):
         return sql
     elif q == "donate":
         sql = "SELECT " \
-            "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
-            "contents " \
-            f"FROM point_history WHERE user_id = {user_id} AND contents LIKE '%%기부%%' " \
-            f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
+              "point, DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, " \
+              "contents " \
+              f"FROM point_history WHERE user_id = {user_id} AND contents LIKE '%%기부%%' " \
+              f"ORDER BY register_time DESC LIMIT {count} OFFSET {per_page}"
         return sql
 
 
 # 사용자 포인트 와 적립예정 포인트 및 포인트 이력
 def get_user_point_and_history(user_id, page, count, q):
     db = Database()
-    per_page = (page-1) * count
+    per_page = (page - 1) * count
     point_query = user_point_history_query(user_id=user_id, q=q, per_page=per_page, count=count)
     user_scheduled_point = 0
     user_point = db.executeOne(
@@ -911,3 +911,28 @@ class UserDonationDetail:
         response_data['image_information'] = self.get_image_data()
         self.db.db_close()
         return response_data
+
+
+class UserAlarm:
+    def __init__(self, user_id, is_on):
+        self.user_id = user_id
+        self.is_on = is_on
+        self.db = Database()
+
+    def update_alarm(self):
+        self.db.execute(
+            query="UPDATE user SET alarm = %s WHERE user_id = %s",
+            args=[self.is_on, self.user_id]
+        )
+        self.db.commit()
+        self.db.db_close()
+        return True
+
+    def update_marketing(self):
+        self.db.execute(
+            query="UPDATE user SET marketing = %s WHERE user_id = %s",
+            args=[self.is_on, self.user_id]
+        )
+        self.db.commit()
+        self.db.db_close()
+        return True

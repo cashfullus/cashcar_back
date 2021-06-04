@@ -913,6 +913,39 @@ def user_cash_car_tip():
     return jsonify(result)
 
 
+# 사용자 서포터즈  활동대한 필수 알림
+@app.route('/user/alarm')
+@jwt_required()
+@swag_from('route_yml/user/user_alarm.yml')
+def user_alarm():
+    user_id: int = request.args.get('user_id', 0, int)
+    identity_: int = get_jwt_identity()
+    if user_id != identity_:
+        return jsonify(Unauthorized), 401
+
+    is_on: int = request.args.get('is_on', 0, int)
+    set_response = User.UserAlarm(user_id=user_id, is_on=is_on)
+    response = set_response.update_alarm()
+    return jsonify({"status": response})
+
+
+@app.route('/user/marketing')
+@jwt_required()
+@swag_from('route_yml/user/user_marketing.yml')
+def user_marketing():
+    user_id: int = request.args.get('user_id', 0, int)
+    identity_: int = get_jwt_identity()
+    if user_id != identity_:
+        return jsonify(Unauthorized), 401
+
+    is_on: int = request.args.get('is_on', 0, int)
+    set_response = User.UserAlarm(user_id=user_id, is_on=is_on)
+    response = set_response.update_marketing()
+    return jsonify({"status": response})
+
+
+# 마케팅 정보 수신 알림
+
 ########### ADMIN ############
 # 어드민 권한 확인
 def admin_allowed_user_check(admin_user_id, identity_):
