@@ -794,18 +794,22 @@ class AdApplyStatusUpdate:
                 continue
             else:
                 self.apply_id = self.apply_user_list[i]
-                self.set_mission_item()
-                for item in self.mission_item:
-                    self.item = item
-                    if self.kwargs['status'] == "reject":
-                        self.apply_reject()
-                    elif self.kwargs['status'] == "accept":
+                if self.kwargs['status'] == "reject":
+                    self.apply_reject()
+                    self.db.db_close()
+                    return apply_information
+                elif self.kwargs['status'] != 'reject' and self.kwargs['status'] != 'accept':
+                    apply_information['apply_data'] = False
+                    return apply_information, self.user_fcm_list
+
+                if self.kwargs['status'] == "accept":
+                    self.set_mission_item()
+                    for item in self.mission_item:
+                        self.item = item
                         self.apply_accept()
-                    else:
-                        apply_information['apply_data'] = False
-                        return apply_information, self.user_fcm_list
-                self.insert_mission_card_user_information()
-                self.insert_history()
+                    self.insert_history()
+                    self.insert_mission_card_user_information()
+
         self.db.db_close()
         return apply_information
 
