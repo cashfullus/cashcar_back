@@ -536,7 +536,7 @@ def update_user_withdrawal_donate(user_id, donation_id, **kwargs):
     status = {"deposit": True, "ongoing": True}
     user_deposit = db.getUserById(user_id=user_id)
 
-    if user_deposit['deposit'] < int(kwargs['withdrawal_point']):
+    if user_deposit['deposit'] < int(kwargs['withdrawal_point']) or kwargs['withdrawal_point'] == 0:
         status["deposit"] = False
         db.db_close()
         return status
