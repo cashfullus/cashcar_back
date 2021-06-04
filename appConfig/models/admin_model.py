@@ -543,7 +543,7 @@ class AdminWithdrawal:
             return self.db.executeAll(
                 query="SELECT "
                       "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
-                      "receipt, name_of_donor, withdrawal_donate_id, "
+                      "receipt, name_of_donor, withdrawal_donate_id, call_number, "
                       "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
                       "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
                       "WHEN wd.change_done IS NOT NULL "

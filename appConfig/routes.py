@@ -1633,11 +1633,3 @@ def admin_point_all():
     set_result = Admin.AdminPointAll(user_list=data['user_list'], point=data['point'], contents=data['contents'])
     result = set_result.response()
     return jsonify({"data": result})
-
-
-@app.route('/test/test')
-def test_db():
-    user_id = 14
-    set_response = AD.UserMyAd(user_id=user_id)
-    response = set_response.response()
-    return jsonify({"data": response})
