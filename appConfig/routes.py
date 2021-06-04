@@ -914,7 +914,7 @@ def user_cash_car_tip():
 
 
 # 사용자 서포터즈  활동대한 필수 알림
-@app.route('/user/alarm')
+@app.route('/user/alarm', methods=['POST'])
 @jwt_required()
 @swag_from('route_yml/user/user_alarm.yml')
 def user_alarm():
@@ -929,7 +929,7 @@ def user_alarm():
     return jsonify({"status": response})
 
 
-@app.route('/user/marketing')
+@app.route('/user/marketing', methods=['POST'])
 @jwt_required()
 @swag_from('route_yml/user/user_marketing.yml')
 def user_marketing():
