@@ -622,6 +622,7 @@ class AdApplyStatusUpdate:
         self.mission_item = None
         self.item = None
         self.user_fcm_list = []
+        self.apply_information = {"rejected": True, "accept": True, "apply_data": True}
 
     def insert_mission_card_user_information(self):
         ad_mission_card_user_info = self.db.executeAll(
@@ -661,18 +662,18 @@ class AdApplyStatusUpdate:
         status = self.apply_status['status']
         apply_status = self.kwargs['status']
         if status == 'accept' and apply_status == "accept":
-            return False
+            self.apply_information["accept"] = False
 
         if status == 'reject' and apply_status == 'reject':
-            return False
+            self.apply_information["rejected"] = False
 
         if status in ('accept', 'reject', 'success'):
-            return False
+            self.apply_information['accept'] = False
+            self.apply_information['rejected'] = False
 
         if (status == "accept" and apply_status == "reject") or (status == "reject" and apply_status == "accept"):
-            return False
-
-        return True
+            self.apply_information['accept'] = False
+            self.apply_information['rejected'] = False
 
     def set_mission_item(self):
         self.mission_item = self.db.getAllAdMissionCardInfoByAcceptApply(ad_user_apply_id=self.apply_id)
@@ -789,9 +790,9 @@ class AdApplyStatusUpdate:
         apply_information = {"rejected": True, "accept": True, "apply_data": True}
         for i in range(len(self.apply_user_list)):
             self.apply_status = self.db.getOneApplyStatus(ad_user_apply_id=self.apply_user_list[i])
-            status = self.check_status()
-            if status is False:
-                continue
+            self.check_status()
+            if False in self.apply_information.values():
+                return self.apply_information
             else:
                 self.apply_id = self.apply_user_list[i]
                 if self.kwargs['status'] == "reject":
@@ -799,8 +800,8 @@ class AdApplyStatusUpdate:
                     self.db.db_close()
                     return apply_information
                 elif self.kwargs['status'] != 'reject' and self.kwargs['status'] != 'accept':
-                    apply_information['apply_data'] = False
-                    return apply_information, self.user_fcm_list
+                    self.apply_information['apply_data'] = False
+                    return self.apply_information, self.user_fcm_list
 
                 if self.kwargs['status'] == "accept":
                     self.set_mission_item()
@@ -811,7 +812,7 @@ class AdApplyStatusUpdate:
                     self.insert_mission_card_user_information()
 
         self.db.db_close()
-        return apply_information
+        return self.apply_information
 
     def response(self):
         response_data = self.apply()
