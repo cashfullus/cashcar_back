@@ -94,7 +94,7 @@ def admin_review_mission_list(page, count):
               "aua.ad_user_apply_id, amcu.ad_mission_card_id as mission_card_id, "
               "ai.title, amc.mission_name, u.name, u.call_number, u.email, "
               "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
-              "amc.mission_type, `order` "
+              "amc.mission_type, `order`, latitude, longitude "
               "FROM ad_user_apply aua "
               "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
@@ -134,7 +134,7 @@ def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
     result = db.executeAll(
         query="SELECT "
               "amcu.status, amc.mission_name, mi.side_image, mi.back_image, "
-              "mi.instrument_panel, mi.travelled_distance, amcu.mission_type "
+              "mi.instrument_panel, mi.travelled_distance, amcu.mission_type, latitude, longitude "
               "FROM ad_mission_card_user as amcu "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "

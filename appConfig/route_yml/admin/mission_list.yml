@@ -71,6 +71,10 @@ responses:
                 description: 주행거리
               email:
                 type: string
+              latitude:
+                type: decimal
+              longitude:
+                type: decimal
               mission_history:
                 type: array
                 items:
