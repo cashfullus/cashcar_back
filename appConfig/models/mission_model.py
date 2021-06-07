@@ -24,7 +24,7 @@ def get_mission_type_idx_by_stand_by(ad_mission_card_user_id):
 
 
 # 사용자 미션 하기
-def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travelled_distance):
+def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travelled_distance, latitude, longitude):
     db = Database()
     save_to_db_dict = {}
     directory = f"{BASE_IMAGE_LOCATION}/{ad_mission_card_user_id}"
@@ -47,10 +47,11 @@ def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travel
         db.execute(
             query="UPDATE mission_images "
                   "SET side_image =%s, back_image = %s, instrument_panel = %s, "
-                  "travelled_distance = %s, updated_time = NOW() "
+                  "travelled_distance = %s, updated_time = NOW(), latitude = %s, longitude = %s "
                   "WHERE ad_mission_card_user_id = %s",
             args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"],
-                  save_to_db_dict["instrument_panel_image"], travelled_distance, ad_mission_card_user_id]
+                  save_to_db_dict["instrument_panel_image"], travelled_distance, ad_mission_card_user_id,
+                  latitude, longitude]
         )
         db.execute(
             query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",
@@ -60,9 +61,10 @@ def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travel
     elif mission_type == 1:
         db.execute(
             query="UPDATE mission_images "
-                  "SET side_image =%s, back_image = %s, updated_time = NOW() "
+                  "SET side_image =%s, back_image = %s, updated_time = NOW(), latitude = %s, longitude = %s "
                   "WHERE ad_mission_card_user_id = %s",
-            args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"], ad_mission_card_user_id]
+            args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"], ad_mission_card_user_id,
+                  latitude, longitude]
         )
         db.execute(
             query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",

@@ -87,135 +87,208 @@ def register_vehicle(**kwargs):
     return result, fcm_token
 
 
-# 사용자 ID로 등록한 차량 GET ALL    차량삭제 유무 확인
-def vehicle_list_by_user_id(user_id):
-    db = Database()
-    vehicle_list = db.getAllVehicleByUserId(user_id)
-    if vehicle_list:
-        for i in range(len(vehicle_list)):
-            is_supporters = db.executeOne(
-                query="SELECT vehicle_id FROM ad_user_apply "
-                      "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
-                args=[user_id, vehicle_list[i]['vehicle_id']]
-            )
-            if is_supporters:
-                vehicle_list[i]['is_delete'] = False
-            else:
-                vehicle_list[i]['is_delete'] = True
-    db.db_close()
-    return vehicle_list
+class Vehicle:
+    def __init__(self):
+        self._user_id = None
+        self._vehicle_id = None
+        self.update_result = {"target_vehicle": True, "double_check_number": True}
+        self.db = Database()
 
+    @property
+    def user_id(self):
+        return self._user_id
 
-# 차량의 ID 로 하나의 정보 조회
-def vehicle_detail_by_id(user_id, vehicle_id):
-    db = Database()
-    target_vehicle = db.getOneVehicleByVehicleIdAndUserId(
-        vehicle_id=vehicle_id,
-        user_id=user_id
-    )
-    if target_vehicle:
-        is_delete = db.executeOne(
+    @property
+    def vehicle_id(self):
+        return self._vehicle_id
+
+    @user_id.setter
+    def user_id(self, user_id):
+        self._user_id = user_id
+
+    @vehicle_id.setter
+    def vehicle_id(self, vehicle_id):
+        self._vehicle_id = vehicle_id
+
+    def get_vehicle_all_by_user_id(self):
+        return self.db.getAllVehicleByUserId(user_id=self._user_id)
+
+    def get_vehicle_one_by_vehicle_user_id(self):
+        return self.db.getOneVehicleByVehicleIdAndUserId(user_id=self._user_id, vehicle_id=self._vehicle_id)
+
+    def get_supporters(self):
+        return self.db.executeOne(
             query="SELECT vehicle_id FROM ad_user_apply "
                   "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
-            args=[user_id, vehicle_id]
+            args=[self._user_id, self._vehicle_id]
         )
-        if is_delete:
-            target_vehicle['is_delete'] = False
-        else:
-            target_vehicle['is_delete'] = True
-    db.db_close()
-    return target_vehicle
 
 
-# 차량의 ID로 정보 업데이트
-def vehicle_update_by_id(user_id, vehicle_id, **kwargs):
-    db = Database()
-    result = {"target_vehicle": True, "double_check_number": True}
-    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0"
-    target_vehicle = db.executeOne(
-        query=sql,
-        args=[vehicle_id, user_id]
-    )
+class VehicleList(Vehicle):
+    def set_is_delete(self):
+        vehicle_list = self.get_vehicle_all_by_user_id()
+        if vehicle_list:
+            for i in range(len(vehicle_list)):
+                self.vehicle_id = vehicle_list[i]['vehicle_id']
+                is_supporters = self.get_supporters()
+                if is_supporters:
+                    vehicle_list[i]['is_delete'] = False
+                else:
+                    vehicle_list[i]['is_delete'] = True
+        return vehicle_list
 
-    sql = "SELECT * FROM vehicle WHERE vehicle_id not in (%s) AND car_number = %s AND removed = 0"
-    double_check_data = db.executeOne(query=sql, args=[vehicle_id, kwargs.get('car_number')])
-    if double_check_data:
-        result["double_check_number"] = False
-        db.db_close()
-        return result
-
-    # vehicle_id 와 user_id에 맞는 데이터가 존재한다면
-    if target_vehicle:
-        if kwargs.get('supporters') == 1:
-            db.execute(
-                query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s",
-                args=user_id
-            )
-            db.execute(
-                query="UPDATE vehicle SET "
-                      "supporters = %s, is_foreign_car = %s, brand = %s, "
-                      "vehicle_model_name = %s, year = %s, car_number = %s, owner_relationship = %s "
-                      "WHERE vehicle_id = %s AND user_id = %s",
-                args=[kwargs['supporters'], kwargs['is_foreign_car'], kwargs['brand'],
-                      kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'], kwargs['owner_relationship'],
-                      vehicle_id, user_id
-                      ]
-            )
-            db.commit()
-            db.db_close()
-            return result
-        else:
-            # 업데이트 쿼리 진행
-            sql = "UPDATE vehicle SET " \
-                  "supporters = %s, is_foreign_car = %s, brand = %s, " \
-                  "vehicle_model_name = %s, year = %s, car_number = %s, owner_relationship = %s " \
-                  "WHERE vehicle_id = %s AND user_id = %s"
-            value_list = [kwargs['supporters'], kwargs['is_foreign_car'], kwargs['brand'],
-                          kwargs['vehicle_model_name'], kwargs['year'], kwargs['car_number'],
-                          kwargs['owner_relationship'], vehicle_id, user_id
-                          ]
-            db.execute(query=sql, args=value_list)
-            db.commit()
-            db.db_close()
-            return result
-    # 차량 정보가 존재하지않다면 False
-    else:
-        result["target_vehicle"] = False
-        db.db_close()
-        return result
+    def response(self, user_id):
+        self.user_id = user_id
+        response_data = self.set_is_delete()
+        self.db.db_close()
+        return response_data
 
 
-# 차량 ID로 차량 삭제 서포터즈 진행시 미삭제 불가
-def vehicle_delete_by_id(vehicle_id, user_id):
-    db = Database()
-    sql = "SELECT * FROM vehicle WHERE vehicle_id = %s AND user_id = %s AND removed = 0"
-    target_vehicle = db.executeOne(
-        query=sql,
-        args=[vehicle_id, user_id]
-    )
+class VehicleDetail(Vehicle):
+    def set_is_delete(self):
+        vehicle = self.get_vehicle()
+        if vehicle:
+            is_delete = self.get_is_delete_vehicle()
+            if is_delete:
+                vehicle['is_delete'] = False
+            else:
+                vehicle['is_delete'] = True
+        return vehicle
 
-    if target_vehicle:
-        is_delete = db.executeOne(
+    def get_vehicle(self):
+        return self.db.getOneVehicleByVehicleIdAndUserId(
+            vehicle_id=self._vehicle_id,
+            user_id=self.user_id
+        )
+
+    def get_is_delete_vehicle(self):
+        return self.db.executeOne(
             query="SELECT vehicle_id FROM ad_user_apply "
-                  "WHERE vehicle_id = %s AND user_id = %s AND status NOT IN ('success', 'fail')",
-            args=[vehicle_id, user_id]
+                  "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
+            args=[self.user_id, self.vehicle_id]
         )
-        if is_delete:
-            db.db_close()
-            return False
-        else:
-            db.execute(
-                query="UPDATE vehicle SET removed = 1, remove_time = NOW() WHERE vehicle_id = %s AND user_id = %s",
-                args=[vehicle_id, user_id]
-            )
-            db.commit()
-            db.db_close()
-            return True
 
-    else:
-        db.db_close()
+    def response(self, user_id, vehicle_id):
+        self.user_id = user_id
+        self.vehicle_id = vehicle_id
+        response_data = self.set_is_delete()
+        self.db.db_close()
+        return response_data
+
+
+class VehicleUpdate(Vehicle):
+    def __init__(self, **data):
+        super().__init__()
+        self.data = data
+
+    def double_check(self):
+        return self.db.executeOne(
+            query="SELECT vehicle_id FROM vehicle WHERE vehicle_id NOT IN (%s) AND car_number = %s AND removed = 0",
+            args=[self.vehicle_id, self.data.get('car_number')]
+        )
+
+    def is_supporters(self):
+        return self.db.executeOne(
+            query="SELECT vehicle_id FROM ad_user_apply "
+                  "WHERE user_id = %s AND vehicle_id = %s AND status IN ('stand_by', 'accept')",
+            args=[self.user_id, self.vehicle_id]
+        )
+
+    def is_valid(self):
+        double_check = self.double_check()
+        is_supporters = self.is_supporters()
+        if double_check:
+            self.update_result['double_check_number'] = False
+            return False
+
+        if is_supporters:
+            self.update_result['target_vehicle'] = False
+            return False
+        return True
+
+    def is_valid_supporters(self):
+        return self.db.executeOne(
+            query="SELECT vehicle_id FROM ad_user_apply WHERE user_id = %s AND status IN ('stand_by', 'accept')",
+            args=self.user_id
+        )
+
+    def update_supporters(self):
+        self.db.execute(
+            query="UPDATE vehicle SET supporters = 0 WHERE user_id = %s",
+            args=self.user_id
+        )
+        self.db.commit()
+
+    def update_information(self):
+        self.db.execute(
+            query="UPDATE vehicle SET "
+                  "supporters = %s, is_foreign_car = %s, brand = %s, "
+                  "vehicle_model_name = %s, year = %s, car_number = %s, owner_relationship = %s "
+                  "WHERE vehicle_id = %s AND user_id = %s",
+            args=[self.data.get('supporters'), self.data.get('is_foreign_car'), self.data.get('brand'),
+                  self.data.get('vehicle_model_name'), self.data.get('year'), self.data.get('car_number'),
+                  self.data.get('owner_relationship'), self.vehicle_id, self.user_id
+                  ]
+        )
+        self.db.commit()
+
+    def update(self):
+        # 유효한 데이터 검사
+        if self.is_valid():
+            # 서포터즈 차량으로 변경시
+            if self.data.get('supporters') == 1:
+                # 만약 서포터즈를 진행중인 차량이 있을시 서포터즈 차량선택 불가
+                if self.is_valid_supporters():
+                    self.data['supporters'] = 0
+                # 진행중인 서포터즈 차량이 없을시 다른 차량 서포터즈 해제 후 업데이트 진행
+                else:
+                    self.update_supporters()
+            # 차량 정보 업데이트
+            self.update_information()
+
+    def response(self, user_id, vehicle_id):
+        self.user_id = user_id
+        self.vehicle_id = vehicle_id
+        self.update()
+        self.db.db_close()
+        return self.update_result
+
+
+class VehicleDelete(Vehicle):
+    def is_valid(self):
+        vehicle = self.get_vehicle_one_by_vehicle_user_id()
+        if vehicle:
+            if self.is_delete():
+                return True
+            return False
         return False
 
+    def is_delete(self):
+        if self.get_delete_vehicle():
+            return False
+        return True
 
+    def get_delete_vehicle(self):
+        return self.db.executeOne(
+            query="SELECT vehicle_id FROM ad_user_apply "
+                  "WHERE vehicle_id = %s AND user_id = %s AND status IN ('stand_by', 'accept')",
+            args=[self.vehicle_id, self.user_id]
+        )
 
+    def delete_vehicle(self):
+        self.db.execute(
+            query="UPDATE vehicle SET removed = 1, remove_time = NOW() WHERE vehicle_id = %s AND user_id = %s",
+            args=[self.vehicle_id, self.user_id]
+        )
+        self.db.commit()
 
+    def response(self, user_id, vehicle_id):
+        self.user_id = user_id
+        self.vehicle_id = vehicle_id
+        if self.is_valid():
+            self.delete_vehicle()
+            self.db.db_close()
+            return True
+        else:
+            self.db.db_close()
+            return False

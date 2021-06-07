@@ -454,12 +454,12 @@ def vehicle_list():
         if int(user_id) != identity_:
             return jsonify(Unauthorized), 401
 
-        result = Vehicle.vehicle_list_by_user_id(user_id=user_id)
+        set_response = Vehicle.VehicleList()
+        result = set_response.response(user_id=user_id)
         if result:
             return jsonify({'status': True, 'data': result}), 200
         else:
             return jsonify({'status': True, 'data': []}), 201
-
     except TypeError:
         return jsonify({'status': False, 'data': 'Data Not Null'}), 400
 
@@ -478,14 +478,16 @@ def vehicle_get():
         identity_ = get_jwt_identity()
         if int(user_id) == identity_:
             if request.method == "GET":
-                result = Vehicle.vehicle_detail_by_id(user_id=user_id, vehicle_id=vehicle_id)
+                set_response = Vehicle.VehicleDetail()
+                result = set_response.response(user_id=user_id, vehicle_id=vehicle_id)
                 if result:
                     return jsonify({"status": True, "data": result}), 200
                 else:
                     return jsonify({"status": False, "data": "Not Found"}), 404
 
             elif request.method == "POST":
-                result = Vehicle.vehicle_update_by_id(user_id=user_id, vehicle_id=vehicle_id, **data)
+                set_response = Vehicle.VehicleUpdate(**data)
+                result = set_response.response(user_id=user_id, vehicle_id=vehicle_id)
                 if result["target_vehicle"] is True and result["double_check_number"] is True:
                     return jsonify({"status": True, "data": result}), 200
                 elif result["double_check_number"] is False:
@@ -494,7 +496,8 @@ def vehicle_get():
                     return jsonify({"status": False, "data": "Not Found"}), 404
 
             elif request.method == "DELETE":
-                result = Vehicle.vehicle_delete_by_id(vehicle_id=vehicle_id, user_id=user_id)
+                set_response = Vehicle.VehicleDelete()
+                result = set_response.response(user_id=user_id, vehicle_id=vehicle_id)
                 if result:
                     return jsonify({"status": True, "data": result}), 200
                 else:
@@ -653,13 +656,17 @@ def ad_mission_apply_with_list():
 
         # 이미지 결과
         try:
+            latitude = request.form.get('latitude', 0.0000000000, float)
+            longitude = request.form.get('longitude', 0.0000000000, float)
             allowed_result = allowed_image_for_dict(image_list)
             if False not in allowed_result:
                 result = Mission.user_apply_mission(
                     ad_mission_card_user_id=amcu_id_and_mission_type["ad_mission_card_user_id"],
                     mission_type=int(amcu_id_and_mission_type["mission_type"]),
                     image_dict=image_list,
-                    travelled_distance=travelled_distance
+                    travelled_distance=travelled_distance,
+                    latitude=latitude,
+                    longitude=longitude
                 )
                 if result:
                     return jsonify({"status": True, "data": result_status})

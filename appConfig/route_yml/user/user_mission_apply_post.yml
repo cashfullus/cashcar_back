@@ -38,6 +38,16 @@ parameters:
     type: integer
     required: false
 
+  - name: latitude
+    in: Form Data
+    type: float
+    required: false
+
+  - name: longitude
+    in: Form Data
+    type: float
+    required: false
+
 
 responses:
   200:
