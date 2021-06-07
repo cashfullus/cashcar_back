@@ -146,3 +146,4 @@ def admin_review_detail_mission_list(ad_mission_card_id, ad_user_apply_id):
     )
     db.db_close()
     return result
+

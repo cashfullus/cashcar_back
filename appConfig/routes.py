@@ -656,8 +656,8 @@ def ad_mission_apply_with_list():
 
         # 이미지 결과
         try:
-            latitude = request.form.get('latitude', 0.0000000000, float)
-            longitude = request.form.get('longitude', 0.0000000000, float)
+            latitude = request.form.get('latitude', "", str)
+            longitude = request.form.get('longitude', "", str)
             allowed_result = allowed_image_for_dict(image_list)
             if False not in allowed_result:
                 result = Mission.user_apply_mission(
