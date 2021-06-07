@@ -50,27 +50,30 @@ def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travel
                   "travelled_distance = %s, updated_time = NOW(), latitude = %s, longitude = %s "
                   "WHERE ad_mission_card_user_id = %s",
             args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"],
-                  save_to_db_dict["instrument_panel_image"], travelled_distance, ad_mission_card_user_id,
-                  latitude, longitude]
+                  save_to_db_dict["instrument_panel_image"], travelled_distance,
+                  latitude, longitude, ad_mission_card_user_id,]
         )
         db.execute(
             query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",
             args=[review_status, ad_mission_card_user_id]
         )
+        db.commit()
     # 선택미션인 경우
     elif mission_type == 1:
         db.execute(
             query="UPDATE mission_images "
                   "SET side_image =%s, back_image = %s, updated_time = NOW(), latitude = %s, longitude = %s "
                   "WHERE ad_mission_card_user_id = %s",
-            args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"], ad_mission_card_user_id,
-                  latitude, longitude]
+            args=[save_to_db_dict["side_image"], save_to_db_dict["back_image"],
+                  latitude, longitude, ad_mission_card_user_id,]
         )
         db.execute(
             query="UPDATE ad_mission_card_user SET status = %s WHERE ad_mission_card_user_id = %s",
             args=[review_status, ad_mission_card_user_id]
         )
+        db.commit()
     else:
+        db.commit()
         db.db_close()
         return False
 
