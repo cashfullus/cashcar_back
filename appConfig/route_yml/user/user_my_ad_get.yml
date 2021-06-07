@@ -88,6 +88,8 @@ responses:
                   type: string
                 ongoing_days:
                   type: integer
+                mission_name:
+                  type: string
             vehicle_information:
               type: array
               items:

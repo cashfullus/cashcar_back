@@ -454,7 +454,7 @@ class UserMyAd:
             "additional_mission_success_count": -1, "apply_register_time": "",
             "apply_status": "", "default_mission_success_count": -1, "mission_end_date": "", "mission_status": "",
             "mission_type": -1, "ongoing_day_percent": -1, "ongoing_days": -1,
-            "order": -1, "point": -1, "thumbnail_image": "", "title": "", "user_id": -1
+            "order": -1, "point": -1, "thumbnail_image": "", "title": "", "user_id": -1, "mission_name": ""
         }, "is_delete": True,
             "is_read_alarm": False,
             "vehicle_information": [],
@@ -485,7 +485,7 @@ class UserMyAd:
     @staticmethod
     def get_order_information(self, ad_mission_card_id):
         return self.db.executeOne(
-            query="SELECT `order` FROM ad_mission_card WHERE ad_mission_card_id = %s",
+            query="SELECT `order`, mission_name FROM ad_mission_card WHERE ad_mission_card_id = %s",
             args=ad_mission_card_id
         )
 
@@ -518,9 +518,11 @@ class UserMyAd:
 
         # 미션에 대한 order
         if ad_information['ad_mission_card_user_id'] is not None:
-            ad_information['order'] = self.get_order_information(
+            get_order = self.get_order_information(
                 self, ad_mission_card_id=ad_information['ad_mission_card_id']
-            )['order']
+            )
+            ad_information['order'] = get_order['order']
+            ad_information['mission_name'] = get_order['mission_name']
 
         # 삭제여부
         if datetime.strptime(ad_information["apply_register_time"], '%Y-%m-%d %H:%M:%S') + timedelta(
