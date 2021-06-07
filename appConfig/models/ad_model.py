@@ -650,6 +650,7 @@ class AdApplyStatusUpdate:
             query="INSERT INTO mission_images (ad_mission_card_user_id) VALUES (%s)",
             args=ad_mission_card_id_list
         )
+        self.db.commit()
 
     def insert_history(self):
         history_name = f"{self.apply_status['title']} 광고 신청 승인"
@@ -824,7 +825,6 @@ class AdApplyStatusUpdate:
                         self.apply_accept()
                     self.insert_history()
                     self.insert_mission_card_user_information()
-
         self.db.db_close()
         return self.apply_information
 
