@@ -423,7 +423,21 @@ class UserAdApply:
             args=[self.user_id, self.vehicle_id]
         )
 
+    def check_already_apply_advertisement(self):
+        already_apply = self.db.executeOne(
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
+            args=[self.user_id, self.ad_id]
+        )
+        if already_apply:
+            return False
+        return True
+
     def response(self):
+        check_already_apply = self.check_already_apply_advertisement()
+        if check_already_apply is False:
+            self.status["already_apply"] = False
+            self.db.db_close()
+            return self.status
         self.set_status()
         self.db.commit()
         self.db.db_close()
