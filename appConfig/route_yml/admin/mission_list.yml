@@ -72,9 +72,9 @@ responses:
               email:
                 type: string
               latitude:
-                type: decimal
+                type: string
               longitude:
-                type: decimal
+                type: string
               mission_history:
                 type: array
                 items:

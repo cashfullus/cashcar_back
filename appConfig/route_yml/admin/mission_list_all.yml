@@ -48,7 +48,7 @@ responses:
               travelled_distance:
                 type: integer
               latitude:
-                type: decimal
+                type: string
               longitude:
-                type: decimal
+                type: string
 

@@ -40,12 +40,12 @@ parameters:
 
   - name: latitude
     in: Form Data
-    type: float
+    type: string
     required: false
 
   - name: longitude
     in: Form Data
-    type: float
+    type: string
     required: false
 
 
