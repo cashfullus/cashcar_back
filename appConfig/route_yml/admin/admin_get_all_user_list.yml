@@ -23,10 +23,31 @@ parameters:
     type: integer
     required: true
 
+  - name: area
+    in: query string
+    type: string
+    required: false
+
+  - name: gender
+    in: query string
+    type: integer
+    required: false
+
+  - name: age
+    in: query string
+    type: string
+    required: false
+
+  - name: register_time
+    in: query string
+    type: string
+    required: false
+
+
 
 responses:
   200:
-    description: 회원 리스트 정보
+    description: 회원 리스트 정보 area('a,a'), gender(0-> 무관), age('0~200'), register_time('YYYY-mm-dd HH:ii:ss~YYYY-mm-dd HH:ii:ss')
     schema:
       type: object
       properties:

@@ -9,6 +9,7 @@ from flask_jwt_extended import create_access_token
 from datetime import datetime, date, timedelta
 import os
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
+from .filter_model import Filter
 
 from werkzeug.utils import secure_filename
 
@@ -73,6 +74,7 @@ def admin_register_notice(**kwargs):
     db.commit()
     return result
 
+
 # router /admin/notice
 class Notice:
     def __init__(self):
@@ -86,7 +88,7 @@ class Notice:
     def set_page_count(self, page, count):
         self.page = page
         self.count = count
-        self.per_page = (page-1) * count
+        self.per_page = (page - 1) * count
 
     def set_notice_id(self, notice_id):
         self.notice_id = notice_id
@@ -301,7 +303,7 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
             )
             if mission_information['order'] == 1 and mission_information['mission_type'] == 0:
                 start_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period'])-1))) \
+                end_date = (date.today() + timedelta(days=(int(mission_information['activity_period']) - 1))) \
                     .strftime('%Y-%m-%d 23:59:59')
                 db.execute(
                     query="UPDATE ad_user_apply "
@@ -424,8 +426,9 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 return result
 
 
-class AdminUserList:
+class AdminUserList(Filter):
     def __init__(self):
+        super().__init__()
         self.page = None
         self.count = None
         self.per_page = None
@@ -433,12 +436,27 @@ class AdminUserList:
         self.item_count = None
         self.each_user_id = None
         self.kwargs = None
+        self.area_filter = None
+        self.gender_filter = None
+        self.age_filter = None
+        self.register_time_filter = None
         self.db = Database()
 
     def set_pages(self, page, count):
         self.page = page
         self.count = count
-        self.per_page = (page-1) * count
+        self.per_page = (page - 1) * count
+
+    def set_filter(self, area, gender, age, register_time):
+        self.area = area
+        self.gender = gender
+        self.age = age
+        self.start_datetime = register_time.split('~')[0]
+        self.end_datetime = register_time.split('~')[1]
+        self.area_filter = self.get_area()
+        self.gender_filter = self.get_gender()
+        self.age_filter = self.get_age()
+        self.register_time_filter = self.get_user_register_datetime()
 
     def set_kwargs(self, **kwargs):
         self.kwargs = kwargs
@@ -461,13 +479,18 @@ class AdminUserList:
                   "resident_registration_number_front as date_of_birth, "
                   "marketing, main_address, detail_address, deposit, "
                   "DATE_FORMAT(u.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                  "FROM user u  ORDER BY register_time DESC LIMIT %s OFFSET %s",
+                  "FROM user u "
+                  f"WHERE {self.area_filter} AND {self.gender_filter} "
+                  f"AND {self.age_filter} AND {self.register_time_filter} "
+                  "ORDER BY register_time DESC LIMIT %s OFFSET %s",
             args=[self.count, self.per_page]
         )
 
     def get_item_count(self):
         return self.db.executeOne(
-            query="SELECT count(user_id) as item_count FROM user"
+            query="SELECT count(user_id) as item_count FROM user u "
+                  f"WHERE {self.area_filter} AND {self.gender_filter} "
+                  f"AND {self.age_filter} AND {self.register_time_filter} "
         )
 
     def get_vehicle_information(self):
@@ -517,7 +540,7 @@ class AdminWithdrawal:
     def set_pages(self, page, count):
         self.page = page
         self.count = count
-        self.per_page = (page-1) * count
+        self.per_page = (page - 1) * count
 
     def get_item_count(self):
         if self.is_point:
@@ -566,7 +589,6 @@ class AdminWithdrawal:
     # def update_withdrawal(self):
     #     if self.is_point:
     #         user_list = self.kwargs['withdrawal_list']
-
 
 
 # 어드민 포인트 출금 신청 리스트
@@ -929,13 +951,3 @@ class AdminPointAll:
         response = self.get_point_history()
         self.db.db_close()
         return response
-
-
-
-
-
-
-
-
-
-

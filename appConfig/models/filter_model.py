@@ -68,7 +68,14 @@ class Filter:
 
     def get_age(self):
         q = self.age.split('~')
-        return f"u.age >= {q[0]} AND u.age <= {q[1]}"
+        return f"(u.age >= {q[0]} AND u.age <= {q[1]})"
+
+    def get_user_register_datetime(self):
+        return f"(u.register_time >= '{self.start_datetime}' AND u.register_time <= '{self.end_datetime}')"
+
+    def get_ad_apply_register_time(self):
+        return f"(aua.register_time >= '{self.start_datetime}' AND aua.register_time <= '{self.end_datetime}')"
+
 
 
 

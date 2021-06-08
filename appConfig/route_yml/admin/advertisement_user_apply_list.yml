@@ -42,11 +42,16 @@ parameters:
     type: string
     required: false
 
+  - name: apply_time
+    in: query string
+    type: string
+    required: false
+
 
 
 responses:
   200:
-    description: 광고 신청 리스트 status('asd,asdad'), area('asd,asd'), gender(0->무관), age(0~100)
+    description: 광고 신청 리스트 status('asd,asdad'), area('asd,asd'), gender(0->무관), age(0~100), apply_time('YYYY-mm-dd HH:ii:ss~YYYY-mm-dd HH:ii:ss')
     schema:
       type: object
       properties:
