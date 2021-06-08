@@ -32,6 +32,11 @@ parameters:
     type: Integer
     required: true
 
+  - name: fcm_token
+    in: application/json
+    type: string
+    required: true
+
 
 responses:
   201:
