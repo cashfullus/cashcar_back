@@ -231,20 +231,6 @@ class AdvertisementList(Filter):
         result = self.db.executeAll(query=sql, args=[category, start_at, per_page])
         return result, status
 
-    def get_ad_apply_list(self, page, count):
-        per_page = (page - 1) * count
-        result = self.db.getAllAdUserApply(count=int(count), per_page=per_page)
-        item_count = self.db.executeOne(query="SELECT "
-                                              "count(aua.ad_user_apply_id) as item_count "
-                                              "FROM ad_user_apply aua "
-                                              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-                                              "JOIN user u on aua.user_id = u.user_id "
-                                              "WHERE status IN ('stand_by', 'accept', 'success', 'reject') "
-                                              "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
-                                              "aua.register_time DESC"
-                                        )
-        return result, item_count['item_count']
-
     def get_ad_apply_list_filter(self, page, count, status, area, gender, age):
         self.apply_status = status
         self.area = area
