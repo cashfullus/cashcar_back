@@ -2,6 +2,8 @@ from database.dbConnection import Database
 from werkzeug.utils import secure_filename
 import os
 
+from .filter_model import Filter
+
 BASE_IMAGE_LOCATION = os.getcwd() + "/static/image/mission"
 MISSION_IMAGE_HOST = "https://app.api.service.cashcarplus.com:50193/image/mission"
 
@@ -87,48 +89,52 @@ def user_apply_mission(ad_mission_card_user_id, mission_type, image_dict, travel
 # register_time, end_date, title, mission_name, name, call_number, mission_status,
 # image
 # 사용자의 미션 인증 신청 리스트
-def admin_review_mission_list(page, count):
-    db = Database()
-    per_page = page_nation(int(page), int(count))
-    result = db.executeAll(
-        query="SELECT "
-              "DATE_FORMAT(mi.updated_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
-              "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
-              "aua.ad_user_apply_id, amcu.ad_mission_card_id as mission_card_id, "
-              "ai.title, amc.mission_name, u.name, u.call_number, u.email, "
-              "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
-              "amc.mission_type, `order`, latitude, longitude "
-              "FROM ad_user_apply aua "
-              "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
-              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "JOIN user u on aua.user_id = u.user_id "
-              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
-              "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
-              "WHERE aua.status IN ('accept', 'stand_by') "
-              "AND amcu.status IN ('review', 're_review', 'reject', 'success', 'fail') "
-              "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail'), mi.updated_time DESC "
-              "LIMIT  %s OFFSET %s",
-        args=[int(count), per_page]
-    )
-    if result:
-        for i in range(len(result)):
-            mission_history = db.getAdminMissionHistory(ad_user_apply_id=result[i]["ad_user_apply_id"])
-            result[i]['mission_history'] = mission_history
+class ReviewMissionList(Filter):
+    def __init__(self, page, count, status):
+        super().__init__()
+        self.per_page = (page-1) * count
+        self.count = count
+        self.mission_status = status
+        self.mission_status_filter = None
+        self.db = Database()
 
-    item_count = db.executeOne(
-        query="SELECT COUNT(aua.ad_user_apply_id) as item_count "
-              "FROM ad_user_apply aua "
-              "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
-              "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "JOIN user u on aua.user_id = u.user_id "
-              "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
-              "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
-              "WHERE aua.status IN ('accept', 'stand_by') "
-              "AND amcu.status IN ('review', 're_review', 'reject', 'success', 'fail') "
-              "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail') "
-    )
-    db.db_close()
-    return result, item_count['item_count']
+    def get_review_mission(self):
+        result = self.db.executeAll(
+            query="SELECT "
+                  "DATE_FORMAT(mi.updated_time, '%%Y-%%m-%%d %%H:%%m:%%s') as register_time, "
+                  "DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%m:%%s') as mission_end_date, "
+                  "aua.ad_user_apply_id, amcu.ad_mission_card_id as mission_card_id, "
+                  "ai.title, amc.mission_name, u.name, u.call_number, u.email, "
+                  "amcu.status, mi.side_image, mi.back_image, mi.instrument_panel, mi.travelled_distance, "
+                  "amc.mission_type, `order`, latitude, longitude "
+                  "FROM ad_user_apply aua "
+                  "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
+                  "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                  "JOIN user u on aua.user_id = u.user_id "
+                  "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+                  "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
+                  "WHERE aua.status IN ('accept', 'stand_by') "
+                  f"AND {self.mission_status_filter} "
+                  "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail'), "
+                  "mi.updated_time DESC "
+                  "LIMIT %s OFFSET %s",
+            args=[self.count, self.per_page]
+        )
+        if result:
+            for i in range(len(result)):
+                mission_history = self.db.getAdminMissionHistory(ad_user_apply_id=result[i]["ad_user_apply_id"])
+                result[i]['mission_history'] = mission_history
+
+        return result
+
+    def set_mission_status_filter(self):
+        self.mission_status_filter = self.get_mission_status()
+
+    def response(self):
+        self.set_mission_status_filter()
+        mission_list = self.get_review_mission()
+        self.db.db_close()
+        return mission_list, len(mission_list)
 
 
 # 사용자 미션 인증 신청에서 디테일 미션 리스트

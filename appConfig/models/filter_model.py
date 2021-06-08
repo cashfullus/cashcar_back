@@ -4,6 +4,7 @@ class Filter:
     def __init__(self):
         self.ad_status = None
         self.apply_status = None
+        self.mission_status = None
         self.area = None
         self.gender = None
         self.age = None
@@ -12,12 +13,23 @@ class Filter:
         self.start_datetime = None
         self.end_datetime = None
 
+    def get_mission_status(self):
+        if not self.mission_status:
+            return "amcu.status IN ('review', 're_review', 'reject', 'success', 'fail')"
+        else:
+            q = self.mission_status.split(',')
+            if len(q) >= 2:
+                set_q = "|".join(q)
+                return f"amcu.status REGEXP '{set_q}'"
+            else:
+                return f"amcu.status = {self.mission_status}"
+
     def get_ad_status(self):
         if self.ad_status:
             q = self.ad_status.split(',')
             if len(q) >= 2:
                 set_q = "|".join(q)
-                query = f"ai.status REGEXP {set_q}"
+                query = f"ai.status REGEXP '{set_q}'"
                 return query
             else:
                 return f"ai.status = {self.ad_status}"

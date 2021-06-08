@@ -1263,9 +1263,11 @@ def admin_mission_list():
     status, code = admin_allowed_user_check(admin_user_id=admin_user_id, identity_=identity_)
     if status is not True:
         return jsonify(status), code
-    page = request.args.get('page', 1)
-    count = request.args.get('count', 10)
-    result, item_count = Mission.admin_review_mission_list(page=int(page), count=int(count))
+    page = request.args.get('page', 1, int)
+    count = request.args.get('count', 10, int)
+    status = request.args.get('status', "", str)
+    set_response = Mission.ReviewMissionList(page=page, count=count, status=status)
+    result, item_count = set_response.response()
     return jsonify({"data": result, "item_count": item_count})
 
 
