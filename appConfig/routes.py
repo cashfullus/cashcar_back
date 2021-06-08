@@ -1186,9 +1186,10 @@ def admin_user_apply_list():
     area = request.args.get('area', "", str)
     gender = request.args.get('gender', 0, int)
     age = request.args.get('age', '0~200', str)
+    register_time = request.args.get('apply_time', '0001-01-01 00:00:00~9999-12-30 00:00:00')
     advertisement = AD.AdvertisementList()
     result, item_count = advertisement.get_ad_apply_list_filter(
-        page=page, count=count, status=status, area=area, gender=gender, age=age)
+        page=page, count=count, status=status, area=area, gender=gender, age=age, register_time=register_time)
     if result:
         return jsonify({"status": True, "data": result, "item_count": item_count}), 200
     else:
@@ -1305,16 +1306,14 @@ def admin_get_all_user_list():
 
     page = request.args.get('page', 1, int)
     count = request.args.get('count', 10, int)
-    # area = request.args.get('area', '')
-    # gender = request.args.get('gender', 0)
-    # age = request.args.get('age', '0~200')
-    # register_time = request.args.get('register_time', '0000-00-00 00:00:00 ~ 9999-12-30 00:00:00')
-    # avg_register_time = register_time.split('~')
-    # avg_age = age.split('~')
+    area = request.args.get('area', '', str)
+    gender = request.args.get('gender', 0)
+    age = request.args.get('age', '0~200')
+    register_time = request.args.get('register_time', '0001-01-01 00:00:00~9999-12-30 00:00:00')
     set_pages = Admin.AdminUserList()
     set_pages.set_pages(page=page, count=count)
+    set_pages.set_filter(area=area, gender=gender, age=age, register_time=register_time)
     result, item_count = set_pages.response()
-    # result, item_count = Admin.get_all_user_list(page=page, count=count)
     return jsonify({"data": result, "item_count": item_count})
 
 
