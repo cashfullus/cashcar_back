@@ -356,7 +356,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                               "VALUES (%s, %s, %s, %s)",
                         args=[mission_information['user_id'], "mission", 1, body_name]
                     )
-                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                    if mission_information['alarm'] == 1:
+                        one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                     db.commit()
                     db.db_close()
                     result['status'] = "fail"
@@ -385,7 +386,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "VALUES (%s, %s, %s, %s)",
                     args=[mission_information['user_id'], "mission", 1, body_name]
                 )
-                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                if mission_information['alarm'] == 1:
+                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
                 db.db_close()
                 result['status'] = "fail"
@@ -414,7 +416,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "VALUES (%s, %s, %s, %s)",
                     args=[mission_information['user_id'], "mission", 1, body_name]
                 )
-                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                if mission_information['alarm'] == 1:
+                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
                 db.commit()
                 db.db_close()
                 result['status'] = "reject"
