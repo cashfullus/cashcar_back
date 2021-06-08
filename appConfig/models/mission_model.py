@@ -127,14 +127,32 @@ class ReviewMissionList(Filter):
 
         return result
 
+    def get_item_count(self):
+        result = self.db.executeOne(
+            query="SELECT "
+                  "count(amcu.ad_mission_card_user_id) as item_count "
+                  "FROM ad_user_apply aua "
+                  "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
+                  "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                  "JOIN user u on aua.user_id = u.user_id "
+                  "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
+                  "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
+                  "WHERE aua.status IN ('accept', 'stand_by') "
+                  f"AND {self.mission_status_filter} "
+                  "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail'), "
+                  "mi.updated_time DESC "
+        )['item_count']
+        return result
+
     def set_mission_status_filter(self):
         self.mission_status_filter = self.get_mission_status()
 
     def response(self):
         self.set_mission_status_filter()
         mission_list = self.get_review_mission()
+        item_count = self.get_item_count()
         self.db.db_close()
-        return mission_list, len(mission_list)
+        return mission_list, item_count
 
 
 # 사용자 미션 인증 신청에서 디테일 미션 리스트

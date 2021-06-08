@@ -1568,7 +1568,7 @@ def admin_marketing_user_list():
     if register_time_query:
         register_time = register_time_query.split(',')
     else:
-        register_time = ['0000-00-00 00:00:00', '9999-12-01 23:59:59']
+        register_time = ['0001-01-01 00:00:00', '9999-12-01 23:59:59']
     result, item_count = Notification.get_all_marketing_user(page=page, count=count, area=area_list,
                                                              gender=gender, register_time=register_time
                                                              )

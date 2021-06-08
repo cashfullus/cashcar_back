@@ -34,7 +34,6 @@ def get_all_marketing_user(page, count, area, gender, register_time):
     where_area = check_user_area_filter(area)
     where_gender = check_gender_filter(gender)
     where_register_time = f"(register_time >= '{register_time[0]}' AND register_time <= '{register_time[1]}')"
-
     query = "SELECT user_id, nickname, name, call_number, email, resident_registration_number_back as gender, age, " \
             "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time " \
             "FROM user " \
@@ -55,7 +54,11 @@ def get_all_marketing_user(page, count, area, gender, register_time):
                 user_list[i]['vehicle_information'] = vehicle
             else:
                 user_list[i]['vehicle_information'] = vehicle_information
-    item_count = len(user_list)
+    item_count = db.executeOne(
+        query="SELECT count(user_id) as item_count FROM user "
+              f"WHERE marketing = 1 AND {where_area} AND {where_gender} AND {where_register_time} "
+              f"ORDER BY register_time"
+    )['item_count']
     db.db_close()
     return user_list, item_count
 
