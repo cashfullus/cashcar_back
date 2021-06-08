@@ -776,15 +776,14 @@ class AdApplyStatusUpdate:
         self.db.commit()
 
     def apply_reject(self):
-        if self.kwargs['status'] == "reject":
-            if int(self.apply_status['max_recruiting_count'] == int(self.apply_status['recruiting_count'])):
-                self.db.execute(
-                    query="UPDATE ad_information as ad_info "
-                          "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
-                          "SET ad_info.recruiting_count = ad_info.recruiting_count - 1, ad_status = 'ongoing' "
-                          "WHERE aua.ad_user_apply_id = %s",
-                    args=self.apply_id
-                )
+        if int(self.apply_status['max_recruiting_count'] == int(self.apply_status['recruiting_count'])):
+            self.db.execute(
+                query="UPDATE ad_information as ad_info "
+                      "JOIN ad_user_apply aua on ad_info.ad_id = aua.ad_id "
+                      "SET ad_info.recruiting_count = ad_info.recruiting_count - 1, ad_status = 'ongoing' "
+                      "WHERE aua.ad_user_apply_id = %s",
+                args=self.apply_id
+            )
         else:
             self.db.execute(
                 query="UPDATE ad_information as ad_info "
@@ -841,8 +840,6 @@ class AdApplyStatusUpdate:
                 self.apply_id = self.apply_user_list[i]
                 if self.kwargs['status'] == "reject":
                     self.apply_reject()
-                    self.db.db_close()
-                    return apply_information
                 elif self.kwargs['status'] != 'reject' and self.kwargs['status'] != 'accept':
                     self.apply_information['apply_data'] = False
                     return self.apply_information, self.user_fcm_list
