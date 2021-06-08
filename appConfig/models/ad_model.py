@@ -3,6 +3,8 @@ from werkzeug.utils import secure_filename
 
 from datetime import date, timedelta, datetime
 
+from .filter_model import Filter
+
 import os
 from .user_model import saveAlarmHistory
 
@@ -208,8 +210,9 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             return True
 
 
-class AdvertisementList:
+class AdvertisementList(Filter):
     def __init__(self):
+        super().__init__()
         self.db = Database()
 
     def get_all_by_category_ad_list(self, page, category):
@@ -240,6 +243,44 @@ class AdvertisementList:
                                               "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
                                               "aua.register_time DESC"
                                         )
+        return result, item_count['item_count']
+
+    def get_ad_apply_list_filter(self, page, count, status, area, gender, age):
+        self.apply_status = status
+        self.area = area
+        self.gender = gender
+        self.age = age
+        status_filter = self.get_apply_status()
+        area_filter = self.get_area()
+        gender_filter = self.get_gender()
+        age_filter = self.get_age()
+        per_page = (page - 1) * count
+        result = self.db.executeAll(
+            query="SELECT "
+                  "title, owner_name, name, main_address, detail_address, "
+                  "aua.recruit_number, max_recruiting_count, aua.status, "
+                  "u.user_id, aua.ad_user_apply_id, call_number, email, "
+                  "DATE_FORMAT(aua.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+                  "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time "
+                  "FROM ad_user_apply aua "
+                  "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                  "JOIN user u on aua.user_id = u.user_id "
+                  f"WHERE {status_filter} AND {area_filter} AND {gender_filter} AND {age_filter} "
+                  "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail'), aua.register_time DESC "
+                  "LIMIT %s OFFSET %s",
+            args=[count, per_page]
+        )
+        item_count = self.db.executeOne(
+            query="SELECT "
+                  "count(aua.ad_user_apply_id) as item_count "
+                  "FROM ad_user_apply aua "
+                  "JOIN ad_information ai on aua.ad_id = ai.ad_id "
+                  "JOIN user u on aua.user_id = u.user_id "
+                  f"WHERE {status_filter} AND {area_filter} AND {gender_filter} AND {age_filter} "
+                  "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
+                  "aua.register_time DESC"
+        )
+        self.db.db_close()
         return result, item_count['item_count']
 
 

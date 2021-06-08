@@ -1182,8 +1182,13 @@ def admin_user_apply_list():
 
     page = request.args.get('page', 1, int)
     count = request.args.get('count', 10, int)
+    status = request.args.get('status', "", str)
+    area = request.args.get('area', "", str)
+    gender = request.args.get('gender', 0, int)
+    age = request.args.get('age', '0~200', str)
     advertisement = AD.AdvertisementList()
-    result, item_count = advertisement.get_ad_apply_list(page=page, count=count)
+    result, item_count = advertisement.get_ad_apply_list_filter(
+        page=page, count=count, status=status, area=area, gender=gender, age=age)
     if result:
         return jsonify({"status": True, "data": result, "item_count": item_count}), 200
     else:
