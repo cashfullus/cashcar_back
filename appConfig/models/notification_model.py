@@ -4,9 +4,9 @@ from notification.user_push_nofitication import one_cloud_messaging
 
 def check_gender_filter(gender):
     if int(gender) == 0:
-        where_gender = f"resident_registration_number_back IN ('',0, 1, 2)"
+        where_gender = f"resident_registration_number_back IN ('', '1', '2')"
     else:
-        where_gender = f"resident_registration_number_back IN ({gender})"
+        where_gender = f"resident_registration_number_back IN ('{gender}')"
     return where_gender
 
 
