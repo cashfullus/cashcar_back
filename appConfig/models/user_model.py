@@ -339,26 +339,28 @@ def user_mission_list(user_id):
             args=user_id
         )
         ad_user_information = db.executeOne(
-            query="SELECT total_point, title, thumbnail_image, activity_period,"
+            query="SELECT total_point, title, thumbnail_image, activity_period, day_point,"
                   "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, "
                   "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date "
                   "FROM ad_user_apply as aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-                  "WHERE user_id = %s AND status NOT IN ('success', 'fail')",
+                  "WHERE user_id = %s AND status NOT IN ('success', 'fail', 'reject')",
             args=user_id
         )
+        print(ad_user_information)
         day_diff = 0
         if ad_user_information['activity_start_date'] == '0000-00-00 00:00:00':
             ad_user_information['day_diff'] = 0
             ad_user_information['activity_start_date'] = ""
             ad_user_information['activity_end_date'] = ""
+            ad_user_information['cumulative_point'] = 0
         else:
             start_date = datetime.strptime(ad_user_information['activity_start_date'], '%Y-%m-%d %H:%M:%S').date()
             time_diff = ((date.today() + timedelta(days=1)) - start_date).days
             day_diff = ((time_diff / ad_user_information['activity_period']) * 100)
             if day_diff >= 100:
                 day_diff = 100
-
+            ad_user_information['cumulative_point'] = int(time_diff * ad_user_information['day_point'])
             ad_user_information['day_diff'] = time_diff
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information

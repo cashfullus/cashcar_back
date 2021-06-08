@@ -50,6 +50,12 @@ responses:
                   type: integer
                   description: 진행일수
                   default: 0
+                cumulative_point:
+                  type: integer
+                  description: 누적 포인트
+                day_point:
+                  type: integer
+                  description: 하루 포인트
             images:
               type: array
               items:
