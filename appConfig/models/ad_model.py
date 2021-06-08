@@ -830,7 +830,6 @@ class AdApplyStatusUpdate:
         self.update_apply_status()
 
     def apply(self):
-        apply_information = {"rejected": True, "accept": True, "apply_data": True}
         for i in range(len(self.apply_user_list)):
             self.apply_status = self.db.getOneApplyStatus(ad_user_apply_id=self.apply_user_list[i])
             self.check_status()
