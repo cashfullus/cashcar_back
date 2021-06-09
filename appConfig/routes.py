@@ -975,7 +975,6 @@ def register_notice_by_admin():
     admin_user_id = request.headers['admin_user_id']
     if int(admin_user_id) != identity_:
         return jsonify(Unauthorized), 401
-
     try:
         data = request.get_json()
         result = Admin.admin_register_notice(**data)
