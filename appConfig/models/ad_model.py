@@ -231,18 +231,21 @@ class AdvertisementList(Filter):
         result = self.db.executeAll(query=sql, args=[category, start_at, per_page])
         return result, status
 
-    def get_ad_apply_list_filter(self, page, count, status, area, gender, age, register_time):
+    def get_ad_apply_list_filter(self, page, count, status, area, gender, age, register_time, search, search_type):
         self.apply_status = status
         self.area = area
         self.gender = gender
         self.age = age
         self.start_datetime = register_time.split('~')[0]
         self.end_datetime = register_time.split('~')[1]
+        self.search = search
+        self.search_type = search_type
         status_filter = self.get_apply_status()
         area_filter = self.get_area()
         gender_filter = self.get_gender()
         age_filter = self.get_age()
         register_time_filter = self.get_ad_apply_register_time()
+        search_filter = self.get_ad_apply_search_query()
         per_page = (page - 1) * count
         result = self.db.executeAll(
             query="SELECT "
@@ -255,7 +258,7 @@ class AdvertisementList(Filter):
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                   "JOIN user u on aua.user_id = u.user_id "
                   f"WHERE {status_filter} AND {area_filter} AND {gender_filter} "
-                  f"AND {age_filter} AND {register_time_filter} "
+                  f"AND {age_filter} AND {register_time_filter} AND {search_filter} "
                   "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail'), aua.register_time DESC "
                   "LIMIT %s OFFSET %s",
             args=[count, per_page]
@@ -267,7 +270,7 @@ class AdvertisementList(Filter):
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                   "JOIN user u on aua.user_id = u.user_id "
                   f"WHERE {status_filter} AND {area_filter} AND {gender_filter} "
-                  f"AND {age_filter} AND {register_time_filter} "
+                  f"AND {age_filter} AND {register_time_filter} AND {search_filter} "
                   "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
                   "aua.register_time DESC"
         )
@@ -386,7 +389,7 @@ class UserAdApply:
 
     def set_rejected_apply(self):
         return self.db.executeOne(
-            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s AND status = 'reject'",
             args=[self.user_id, self.ad_id]
         )
 

@@ -47,6 +47,15 @@ parameters:
     type: string
     required: false
 
+  - name: q
+    in: query string
+    type: string
+    reqired: false
+
+  - name: q_type(ai.title, ai.owner_name, u.name, u.call_number, u.main_address, u.detail_address)
+    in: query string
+    required: false
+
 
 
 responses:

@@ -1186,9 +1186,13 @@ def admin_user_apply_list():
     gender = request.args.get('gender', 0, int)
     age = request.args.get('age', '0~200', str)
     register_time = request.args.get('apply_time', '0001-01-01 00:00:00~9999-12-30 00:00:00')
+    search = request.args.get('q', "", str)
+    search_type = request.args.get('q_type', "all", str)
     advertisement = AD.AdvertisementList()
     result, item_count = advertisement.get_ad_apply_list_filter(
-        page=page, count=count, status=status, area=area, gender=gender, age=age, register_time=register_time)
+        page=page, count=count, status=status, area=area, gender=gender, age=age, register_time=register_time,
+        search=search, search_type=search_type
+    )
     if result:
         return jsonify({"status": True, "data": result, "item_count": item_count}), 200
     else:

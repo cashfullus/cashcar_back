@@ -12,6 +12,8 @@ class Filter:
         self.point = None
         self.start_datetime = None
         self.end_datetime = None
+        self.search = None
+        self.search_type = None
 
     def get_mission_status(self):
         if not self.mission_status:
@@ -75,6 +77,21 @@ class Filter:
 
     def get_ad_apply_register_time(self):
         return f"(aua.register_time >= '{self.start_datetime}' AND aua.register_time <= '{self.end_datetime}')"
+
+    # 전체, 광고명, 광고주, 본명, 연락처, 주소
+    def get_ad_apply_search_query(self):
+        if self.search_type == "all":
+            query = f"(ai.title LIKE '%%{self.search}%%' " \
+                    f"OR ai.owner_name LIKE '%%{self.search}%%' " \
+                    f"OR u.name LIKE '%%{self.search}%%' " \
+                    f"OR u.call_number LIKE '%%{self.search}%%' " \
+                    f"OR u.main_address LIKE '%%{self.search}%%' " \
+                    f"OR u.detail_address LIKE '%%{self.search}%%')"
+        else:
+            query = f"{self.search_type} LIKE '%%{self.search}%%'"
+
+        return query
+
 
 
 
