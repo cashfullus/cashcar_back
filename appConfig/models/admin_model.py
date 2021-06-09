@@ -677,7 +677,7 @@ def withdrawal_total_result(withdrawal_type, **kwargs):
                             fcm_list.append(fcm_token['fcm_token'])
                     else:
                         status_list.append({i: False})
-                multiple_cloud_messaging(totens=fcm_list, body="[출금]이 완료되었습니다. 통장 내역을 확인해보세요 :)")
+                multiple_cloud_messaging(tokens=fcm_list, body="[출금]이 완료되었습니다. 통장 내역을 확인해보세요 :)")
                 db.commit()
                 db.db_close()
                 return kwargs['status']
