@@ -389,7 +389,7 @@ class UserAdApply:
 
     def set_rejected_apply(self):
         return self.db.executeOne(
-            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s AND status = 'reject'",
+            query="SELECT ad_user_apply_id FROM ad_user_apply WHERE user_id = %s AND ad_id = %s",
             args=[self.user_id, self.ad_id]
         )
 
