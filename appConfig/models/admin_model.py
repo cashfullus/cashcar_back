@@ -188,15 +188,13 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
     recruit_end = recruit_time.split('~')[1]
     category_value = ""
     if category == "ongoing":
-        category_value = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
+        category_value = "ad_status = 'ongoing'"
     elif category == "scheduled":
-        category_value = "recruit_start_date > NOW()"
+        category_value = "ad_status = 'scheduled'"
     elif category == "done":
-        category_value = "recruit_end_date < NOW() OR max_recruiting_count = recruiting_count"
+        category_value = "ad_status = 'done'"
     elif category == 'none':
-        category_value = "((recruit_start_date <= NOW() AND recruit_end_date >= NOW()) " \
-                         "OR (recruit_start_date > NOW()) " \
-                         "OR (recruit_end_date < NOW() OR max_recruiting_count = recruiting_count)) "
+        category_value = "ad_status IN ('scheduled', 'ongoing', 'done')"
     else:
         status["correct_category"] = False
 
