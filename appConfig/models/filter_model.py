@@ -88,7 +88,10 @@ class Filter:
                     f"OR u.main_address LIKE '%%{self.search}%%' " \
                     f"OR u.detail_address LIKE '%%{self.search}%%')"
         else:
-            query = f"{self.search_type} LIKE '%%{self.search}%%'"
+            if self.search_type == "address":
+                query = f"(u.main_address LIKE '%%{self.search}%%' OR u.detail_address LIKE '%%{self.search}%%')"
+            else:
+                query = f"{self.search_type} LIKE '%%{self.search}%%'"
 
         return query
 

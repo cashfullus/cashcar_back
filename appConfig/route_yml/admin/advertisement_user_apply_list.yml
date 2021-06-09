@@ -52,7 +52,7 @@ parameters:
     type: string
     reqired: false
 
-  - name: q_type(ai.title, ai.owner_name, u.name, u.call_number, u.main_address, u.detail_address)
+  - name: q_type(ai.title, ai.owner_name, u.name, u.call_number, address)
     in: query string
     required: false
 
