@@ -1130,8 +1130,7 @@ def admin_ad_list():
     gender = request.args.get('gender', '0')
     age = request.args.get('age', '0~200')
     distance = request.args.get('distance', '0')
-    recruit_start_date = request.args.get('recruit_start', '0000-00-00')
-    recruit_end_date = request.args.get('recruit_end', '9999-12-30')
+    recruit_time = request.args.get('recruit_time', '0001-01-01 00:00:00~9999-12~30 00:00:00')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'DESC')
     count = request.args.get('count', 10)
@@ -1146,7 +1145,7 @@ def admin_ad_list():
     avg_age = age.split('~')
     result, item_count = Admin.get_all_by_admin_ad_list(category=category, avg_point=avg_point, area=area_list,
                                                         gender=gender, avg_age=avg_age, distance=distance,
-                                                        recruit_start=recruit_start_date, recruit_end=recruit_end_date,
+                                                        recruit_time=recruit_time,
                                                         order_by=order_by, sort=sort,
                                                         page=int(page), count=int(count)
                                                         )

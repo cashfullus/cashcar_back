@@ -47,12 +47,7 @@ parameters:
     type: int
     required: false
 
-  - name: recruit_start_date
-    in: query string
-    type: string
-    required: false
-
-  - name: recruit_end_date
+  - name: recruit_time
     in: query string
     type: string
     required: false

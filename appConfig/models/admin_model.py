@@ -179,11 +179,13 @@ def login(**kwargs):
 
 
 # 어드민 광고 리스트 (query string)
-def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_start, recruit_end, order_by,
+def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distance, recruit_time, order_by,
                              sort, page, count):
     db = Database()
     per_page = (page - 1) * int(count)
     status = {"correct_category": True}
+    recruit_start = recruit_time.split('~')[0]
+    recruit_end = recruit_time.split('~')[1]
     category_value = ""
     if category == "ongoing":
         category_value = "recruit_start_date <= NOW() AND recruit_end_date >= NOW()"
@@ -207,7 +209,7 @@ def get_all_by_admin_ad_list(category, avg_point, area, gender, avg_age, distanc
         where_gender = f"gender IN ({gender})"
     where_distance = f"min_distance >= {distance}"
     where_age = f"(min_age_group >= {avg_age[0]} AND max_age_group <= {avg_age[1]})"
-    where_recruit_date = f"(recruit_start_date >= '{recruit_start} 00:00:00' AND recruit_end_date <= '{recruit_end} 00:00:00')"
+    where_recruit_date = f"(recruit_start_date >= '{recruit_start}' AND recruit_end_date <= '{recruit_end}')"
 
     sql = "SELECT ad_id, owner_name, title, thumbnail_image, activity_period, ad_status, " \
           "max_recruiting_count, recruiting_count, total_point, " \
