@@ -1130,7 +1130,7 @@ def admin_ad_list():
     gender = request.args.get('gender', '0')
     age = request.args.get('age', '0~200')
     distance = request.args.get('distance', '0')
-    recruit_time = request.args.get('recruit_time', '0001-01-01 00:00:00~9999-12~30 00:00:00')
+    recruit_time = request.args.get('recruit_time', '0001-01-01 00:00:00~9999-12-30 00:00:00')
     order_by = request.args.get('order_by', 'ad_id')
     sort = request.args.get('sort', 'DESC')
     count = request.args.get('count', 10)
