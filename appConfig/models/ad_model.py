@@ -574,11 +574,11 @@ class UserMyAd:
         else:
             start_date = datetime.strptime(ad_information['activity_start_date'].split(' ')[0], '%Y-%m-%d').date()
             ad_information['ongoing_days'] = (date.today() - start_date).days
-            if (datetime.now().date() - start_date).days > 0:
-                ad_information['point'] = (datetime.now().date() - start_date).days * ad_information['point']
             time_diff = ((date.today() + timedelta(days=1)) - start_date).days
             if time_diff > ad_information['activity_period']:
                 time_diff = ad_information['activity_period']
+            if (datetime.now().date() - start_date).days > 0:
+                ad_information['point'] = time_diff * ad_information['point']
             day_diff = ((time_diff / ad_information['activity_period']) * 100)
             ad_information['ongoing_day_percent'] = int(day_diff)
             ad_information['ongoing_days'] = time_diff
