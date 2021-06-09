@@ -66,6 +66,10 @@ def setup_logging():
     app.logger.setLevel(logging.INFO)
 
 
+@app.route('/loaderio-172e5c35659a2844dd59a7be44fa9da0/')
+def test_user():
+    return jsonify({"data": True})
+
 # 이미지 파일 형식검사
 def allowed_files(files):
     result = []

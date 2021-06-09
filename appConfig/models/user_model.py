@@ -347,7 +347,6 @@ def user_mission_list(user_id):
                   "WHERE user_id = %s AND status NOT IN ('success', 'fail', 'reject')",
             args=user_id
         )
-        print(ad_user_information)
         day_diff = 0
         if ad_user_information['activity_start_date'] == '0000-00-00 00:00:00':
             ad_user_information['day_diff'] = 0
