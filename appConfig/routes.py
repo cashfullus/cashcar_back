@@ -21,7 +21,7 @@ from models import (
 import os
 import logging
 import requests
-import ast
+import subprocess
 
 from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from notification.user_push_nofitication import one_cloud_messaging, multiple_cloud_messaging
@@ -97,6 +97,9 @@ Forbidden = {"status": False, "data": "Forbidden"}
 
 @app.route('/gihub/webhook')
 def webhook():
+    subprocess.call("git pull", shell=True)
+    subprocess.call("service uwsgi reload", shell=True)
+    subprocess.call("service nginx reload", shell=True)
     return jsonify({"Data": True})
 
 
