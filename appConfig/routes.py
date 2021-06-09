@@ -95,6 +95,11 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 Forbidden = {"status": False, "data": "Forbidden"}
 
 
+@app.route('/gihub/webhook')
+def webhook():
+    return jsonify({"Data": True})
+
+
 # 제3자 정보제공 동의
 @app.route('/agree/provide-policy')
 @swag_from('route_yml/agree/provide_policy.yml')
