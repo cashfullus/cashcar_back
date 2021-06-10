@@ -374,8 +374,11 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                               "WHERE ad_mission_card_id = %s AND ad_user_apply_id = %s",
                         args=[mission_card_id, ad_apply_id]
                     )
-                    db.saveStatusMessage(
-                        ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
+                    db.execute(
+                        query="INSERT INTO ad_mission_reason "
+                              "(ad_user_apply_id, title, reason, message_type, is_additional_fail) "
+                              "VALUE (%s, %s, %s, %s, %s)",
+                        args=[ad_apply_id, title, reason, "mission_fail", 1]
                     )
                 history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 실패"
                 db.execute(

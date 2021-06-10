@@ -23,7 +23,23 @@ responses:
         data:
           properties:
             message:
-              type:
+              type: object
+              properties:
+                is_additional_fail:
+                  type: integer
+                  description: 1 = 추가 미션 완전 실패
+                is_read:
+                  type: integer
+                message_type:
+                  type: string
+                  description: 메세지의 원인
+                reason:
+                  type: string
+                  description: 사유
+                reason_id:
+                  type: integer
+                title:
+                  type: string
             is_delete:
               type: boolean
             is_read_alarm:
