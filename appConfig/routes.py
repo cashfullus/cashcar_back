@@ -95,7 +95,7 @@ Unauthorized = {"status": False, "data": "Unauthorized"}
 Forbidden = {"status": False, "data": "Forbidden"}
 
 
-@app.route('/gihub/webhook')
+@app.route('/github/webhook')
 def webhook():
     subprocess.call("git pull", shell=True)
     subprocess.call("service uwsgi reload", shell=True)
