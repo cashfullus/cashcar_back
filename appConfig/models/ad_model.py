@@ -494,6 +494,7 @@ class UserMyAd:
             "is_read_alarm": False,
             "vehicle_information": [],
             "message": {
+                "is_additional_fail": 0,
                 "is_read": -1,
                 "reason": "",
                 "reason_id": 0,
