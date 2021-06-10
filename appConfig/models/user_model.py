@@ -602,7 +602,7 @@ def update_reason_by_user(reason_id):
 def get_user_my_page(user_id):
     db = Database()
     user_information = db.executeOne(
-        query="SELECT user_id, profile_image, name, email, deposit, login_type FROM user WHERE user_id = %s",
+        query="SELECT user_id, profile_image, nickname, name, email, deposit, login_type FROM user WHERE user_id = %s",
         args=user_id
     )
     db.db_close()

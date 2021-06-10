@@ -34,6 +34,8 @@ responses:
                   description: 사용자 이메일
                 name:
                   type: string
+                nickname:
+                  type: string
                 profile_image:
                   type: image url
                 user_id:
