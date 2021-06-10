@@ -199,7 +199,7 @@ class Database:
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \
               "WHERE user_id = %s " \
               "AND (amcu.status NOT IN ('fail') or amcu.status IS NULL) " \
-              "AND removed = 0 AND aua.status NOT IN ('success', 'fail', 'reject') " \
+              "AND removed = 0 AND aua.status NOT IN ('success', 'fail', 'reject', 'cancel') " \
               "ORDER BY FIELD(amcu.status, 'ongoing', 'review', 're_review', 'stand_by', 'success'), " \
               "amcu.mission_start_date LIMIT 1"
         self.cursor.execute(query=sql, args=user_id)

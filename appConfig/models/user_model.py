@@ -235,6 +235,8 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
             os.makedirs(directory, exist_ok=True)
             profile_image.save(directory + "/" + secure_filename(profile_image.filename))
             save_image = f"{PROFILE_IMAGE_HOST}/{user_id}/{secure_filename(profile_image.filename)}"
+            if kwargs.get('nickname') == "":
+                kwargs['nickname'] = kwargs['name']
             sql = "UPDATE user SET " \
                   "nickname = %s, email = %s, name = %s, " \
                   "call_number = %s, " \
@@ -257,6 +259,8 @@ def update_user_profile(user_id, profile_image=None, **kwargs):
                   "resident_registration_number_front = %s, " \
                   "alarm = %s, " \
                   "marketing = %s WHERE user_id = %s"
+            if kwargs.get('nickname') == "":
+                kwargs['nickname'] = kwargs['name']
             value_list = [kwargs['nickname'], kwargs['email'], kwargs['name'],
                           kwargs['call_number'], kwargs['gender'], kwargs['date_of_birth'],
                           kwargs['alarm'], kwargs['marketing'], int(user_id)
