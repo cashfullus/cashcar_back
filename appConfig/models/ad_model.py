@@ -645,13 +645,6 @@ class UserApplyCancel:
 
     def delete_apply_information(self):
         self.db.execute(
-            query="DELETE FROM ad_user_apply WHERE ad_user_apply_id = %s",
-            args=self.ad_user_apply_id
-        )
-        self.db.commit()
-
-    def delete_apply_information_v1(self):
-        self.db.execute(
             query="UPDATE ad_user_apply SET status = 'cancel' WHERE ad_user_apply_id = %s",
             args=self.ad_user_apply_id
         )
