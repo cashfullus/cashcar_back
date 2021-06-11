@@ -351,6 +351,14 @@ def user_mission_list(user_id):
                   "WHERE user_id = %s AND status NOT IN ('success', 'fail', 'reject')",
             args=user_id
         )
+        additional_point = db.executeOne(
+            query="SELECT SUM(additional_point) as sum_point FROM ad_mission_card amc "
+                  "JOIN ad_mission_card_user amcu on amc.ad_mission_card_id = amcu.ad_mission_card_id "
+                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+                  "WHERE user_id = %s "
+                  "AND amcu.status = 'success' AND amcu.mission_type = 1 AND aua.status = 'accept'",
+            args=user_id
+        )['sum_point']
         day_diff = 0
         if ad_user_information['activity_start_date'] == '0000-00-00 00:00:00':
             ad_user_information['day_diff'] = 0
@@ -365,6 +373,7 @@ def user_mission_list(user_id):
                 day_diff = 100
             ad_user_information['cumulative_point'] = int(time_diff * ad_user_information['day_point'])
             ad_user_information['day_diff'] = time_diff
+        ad_user_information['cumulative_point'] += additional_point
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information
         result["images"] = images

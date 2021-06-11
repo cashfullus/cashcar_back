@@ -506,6 +506,20 @@ class UserMyAd:
     def get_my_advertisement(self):
         return self.db.getMainMyAd(user_id=self.user_id)
 
+    def get_additional_point(self):
+        point = self.db.executeOne(
+            query="SELECT SUM(additional_point) as sum_point FROM ad_mission_card amc "
+                  "JOIN ad_mission_card_user amcu on amc.ad_mission_card_id = amcu.ad_mission_card_id "
+                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id "
+                  "WHERE user_id = %s "
+                  "AND amcu.status = 'success' AND amcu.mission_type = 1 AND aua.status = 'accept'",
+            args=self.user_id
+        )['sum_point']
+        if not point:
+            return 0
+        else:
+            return point
+
     def get_vehicle_information(self):
         return self.db.getAllVehicleByUserId(user_id=self.user_id)
 
@@ -552,6 +566,7 @@ class UserMyAd:
         if allowed == 0:
             return
 
+        additional_point = self.get_additional_point()
         # 미션에 대한 order
         if ad_information['ad_mission_card_user_id'] is not None:
             get_order = self.get_order_information(
@@ -580,6 +595,7 @@ class UserMyAd:
                 time_diff = ad_information['activity_period']
             if (datetime.now().date() - start_date).days > 0:
                 ad_information['point'] = time_diff * ad_information['point']
+            ad_information['point'] += additional_point
             day_diff = ((time_diff / ad_information['activity_period']) * 100)
             ad_information['ongoing_day_percent'] = int(day_diff)
             ad_information['ongoing_days'] = time_diff
