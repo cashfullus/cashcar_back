@@ -348,7 +348,7 @@ def user_mission_list(user_id):
                   "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date "
                   "FROM ad_user_apply as aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-                  "WHERE user_id = %s AND status NOT IN ('success', 'fail', 'reject')",
+                  "WHERE user_id = %s AND status NOT IN ('success', 'fail', 'reject', 'cancel')",
             args=user_id
         )
         additional_point = db.executeOne(
