@@ -595,7 +595,7 @@ class UserMyAd:
                 time_diff = ad_information['activity_period']
             if (datetime.now().date() - start_date).days > 0:
                 ad_information['point'] = time_diff * ad_information['point']
-            ad_information['point'] += additional_point
+            ad_information['point'] += int(additional_point)
             day_diff = ((time_diff / ad_information['activity_period']) * 100)
             ad_information['ongoing_day_percent'] = int(day_diff)
             ad_information['ongoing_days'] = time_diff
