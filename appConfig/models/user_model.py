@@ -375,7 +375,7 @@ def user_mission_list(user_id):
             ad_user_information['day_diff'] = time_diff
 
         if additional_point:
-            ad_user_information['cumulative_point'] += additional_point
+            ad_user_information['cumulative_point'] += int(additional_point)
         result["mission_information"] = mission_information
         result['ad_user_information'] = ad_user_information
         result["images"] = images
