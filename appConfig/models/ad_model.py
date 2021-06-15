@@ -396,7 +396,7 @@ class UserAdApply:
     def set_possible_area(self):
         area = self.kwargs['main_address'].split(' ')[0]
         query = "SELECT ad_id, title, max_recruiting_count, recruiting_count, ad_status FROM ad_information " \
-                "WHERE area LIKE '%%{0}%%' AND ad_id = {1}".format(area, self.ad_id)
+                "WHERE (area LIKE '%%{0}%%' or area = '전국') AND ad_id = {1}".format(area, self.ad_id)
         return self.db.executeOne(
             query=query
         )
