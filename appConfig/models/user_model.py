@@ -773,7 +773,7 @@ def get_user_alarm_history(user_id, page):
 def getAllFaQ():
     db = Database()
     result = db.executeAll(
-        query="SELECT title, description FROM faq"
+        query="SELECT title, description FROM faq ORDER BY `order`"
     )
     db.db_close()
     return result
