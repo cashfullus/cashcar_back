@@ -560,7 +560,7 @@ class AdminWithdrawal:
             return self.db.executeAll(
                 query="SELECT "
                       "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
-                      "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
+                      "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, call_number,"
                       "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
                       "WHEN w.change_done IS NOT NULL "
                       "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
