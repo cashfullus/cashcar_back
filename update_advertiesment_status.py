@@ -15,6 +15,7 @@ def update_ad_status():
         args=None
     )
     db.commit()
+    db.db_close()
     return True
 
 
