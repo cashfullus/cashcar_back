@@ -301,16 +301,6 @@ def user_register():
         elif result['default'] is False:
             return jsonify({"status": False, "data": "Default Data"}), 406
         else:
-            if data['alarm'] == 1:
-                push_result = one_cloud_messaging(token=data['fcm_token'],
-                                                  body="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 "
-                                                       "리워드가 쌓이는 즐거움을 느껴보세요 :D "
-                                                  )
-                if push_result['success'] >= 1:
-                    User.saveAlarmHistory(user_id=result['data']['user_id'],
-                                          alarm_type="register", required=1,
-                                          description="캐시카플러스에 가입하신 것을 환영합니다! 다양한 서포터즈 활동을 통해 리워드가 쌓이는 즐거움을 느껴보세요 :D"
-                                          )
             return jsonify({"status": True, "data": result["data"]}), 201
     except TypeError:
         return jsonify({"status": False, "data": "Data Not Null"}), 400
@@ -425,7 +415,7 @@ def register_car():
     try:
         data = request.get_json()
         identity_ = get_jwt_identity()
-        result, fcm_token_result = Vehicle.register_vehicle(**data)
+        result = Vehicle.register_vehicle(**data)
         if data["user_id"] == identity_:
             if result["user"] is False:
                 return jsonify({"status": False, "data": "Not Correct User"}), 404
@@ -434,16 +424,6 @@ def register_car():
             elif result["double_check_number"] is False:
                 return jsonify({"status": False, "data": "Double Check False"}), 409
             else:
-                if fcm_token_result:
-                    if fcm_token_result['alarm'] == 1:
-                        push_result = one_cloud_messaging(token=fcm_token_result['fcm_token'],
-                                                          body="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
-                                                          )
-                        if push_result['success'] >= 1:
-                            User.saveAlarmHistory(user_id=result['vehicle_information']['user_id'],
-                                                  alarm_type="vehicle_register", required=1,
-                                                  description="차량 등록이 완료되었습니다! 관심이 가는 브랜드의 서포터즈가 되어보세요 :)"
-                                                  )
                 return jsonify({"status": True, "data": result}), 201
         else:
             return jsonify(Unauthorized), 401
