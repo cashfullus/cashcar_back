@@ -11,14 +11,12 @@ def datetime_to_str(time):
 def register_vehicle(**kwargs):
     db = Database()
     result = {"user": True, "register": True, "double_check_number": True}
-    fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
     # 계정유무 확인
     user = db.getUserById(kwargs.get("user_id"))
     if not user:
         result["user"] = False
-        fcm_token = ""
         db.db_close()
-        return result, fcm_token
+        return result
 
     # 본인이 등록한 차량 수 조회
     counter_register_vehicle = db.executeOne(
@@ -34,16 +32,14 @@ def register_vehicle(**kwargs):
     # 최대 허용 등록 개수 3개
     if counter_register_vehicle["cnt"] >= 3:
         result["register"] = False
-        fcm_token = ""
         db.db_close()
-        return result, fcm_token
+        return result
 
     # 차량 번호 중복 확인
     elif check_vehicle_number:
         result["double_check_number"] = False
-        fcm_token = ""
         db.db_close()
-        return result, fcm_token
+        return result
 
     else:
         pass
@@ -74,8 +70,6 @@ def register_vehicle(**kwargs):
                         args=all_vehicle[i]['vehicle_id']
                     )
 
-    # fcm_token get
-    fcm_token = db.getOneFcmToken(user_id=kwargs['user_id'])
     # INSERT
     sql = "INSERT INTO vehicle " \
           "(user_id, supporters, is_foreign_car, brand, vehicle_model_name, year, car_number, owner_relationship) " \
@@ -84,7 +78,7 @@ def register_vehicle(**kwargs):
     db.commit()
     result["vehicle_information"] = kwargs
     db.db_close()
-    return result, fcm_token
+    return result
 
 
 class Vehicle:
