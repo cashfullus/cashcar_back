@@ -83,6 +83,10 @@ def update_point():
                 )
 
             db.commit()
+        db.db_close()
+        return
+    db.db_close()
+    return
 
 
 update_point()
