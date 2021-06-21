@@ -115,8 +115,8 @@ class ReviewMissionList(Filter):
                   "JOIN mission_images mi on amcu.ad_mission_card_user_id = mi.ad_mission_card_user_id "
                   "WHERE aua.status IN ('accept', 'stand_by') "
                   f"AND {self.mission_status_filter} "
-                  "ORDER BY FIELD(amcu.status, 'review', 're_review', 'reject', 'success', 'fail'), "
-                  "mi.updated_time DESC "
+                  "ORDER BY FIELD(amcu.status, 're_review', 'review', 'success', 'reject', 'fail'), "
+                  "amcu.mission_end_date "
                   "LIMIT %s OFFSET %s",
             args=[self.count, self.per_page]
         )

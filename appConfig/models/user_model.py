@@ -515,10 +515,11 @@ def update_user_withdrawal_data(user_id, **kwargs):
               kwargs['name'], kwargs['account_number']]
     )
     # commit 은 데이터 완전 저장 이기떄문에 안전하게 셀렉후 바로 저장
+    contents_name = f"{kwargs['account_bank']} 출금"
     db.execute(
         query="INSERT INTO point_history (user_id, point, contents) "
               "VALUES (%s, %s, %s)",
-        args=[user_id, -int(kwargs['withdrawal_point']), "통장으로 출금"]
+        args=[user_id, -int(kwargs['withdrawal_point']), contents_name]
     )
     if int(kwargs['is_main']) == 1:
         db.execute(
