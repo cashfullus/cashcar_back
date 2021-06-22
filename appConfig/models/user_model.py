@@ -343,7 +343,7 @@ def user_mission_list(user_id):
             args=user_id
         )
         ad_user_information = db.executeOne(
-            query="SELECT total_point, title, thumbnail_image, activity_period, day_point,"
+            query="SELECT total_point, title, thumbnail_image, activity_period, day_point, logo_image, "
                   "DATE_FORMAT(activity_start_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_start_date, "
                   "DATE_FORMAT(activity_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') as activity_end_date "
                   "FROM ad_user_apply as aua "
