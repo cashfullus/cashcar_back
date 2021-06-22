@@ -35,7 +35,7 @@ def update_point():
                     args=[check_default_mission['ad_user_apply_id'], check_default_mission['ad_mission_card_id']]
                 )
                 title = "신청한 서포터즈 활동에 실패했습니다:("
-                reason = """서포터즈 활동 미션 인증에 실패하였습니다. 활동 미행으로 리워드는 지급해드리지 않으며 다른 서포터즈 활동에 지원해주세요."""
+                reason = """서포터즈 활동 미션 인증에 실패하였습니다. 활동 미이행으로 리워드는 지급해드리지 않으며 다른 서포터즈 활동에 지원해주세요."""
                 db.saveStatusMessage(
                     ad_user_apply_id=users[i]['ad_user_apply_id'], title=title,
                     reason=reason, message_type="apply_fail"

@@ -210,6 +210,12 @@ def admin_ad_register(other_images, ad_images, req_method, **kwargs):
             return True
 
 
+def adverting_image_upload(image, ad_id):
+    directory = f"{BASE_IMAGE_LOCATION}/{ad_id}"
+    image.save(directory + "/" + secure_filename(image.filename))
+    return True
+
+
 class AdvertisementList(Filter):
     def __init__(self):
         super().__init__()

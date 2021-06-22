@@ -1644,3 +1644,12 @@ def admin_point_all():
     set_result = Admin.AdminPointAll(user_list=data['user_list'], point=data['point'], contents=data['contents'])
     result = set_result.response()
     return jsonify({"data": result})
+
+
+@app.route("/admin/adverting/update/test", methods=['POST'])
+@jwt_required()
+def admin_ad_image_upload():
+    img = request.files.get('image')
+    ad_id = request.args.get('ad_id', 0)
+    result = AD.adverting_image_upload(image=img, ad_id=ad_id)
+    return jsonify({"data": result})
