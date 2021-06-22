@@ -338,8 +338,8 @@ def user_mission_list(user_id):
     mission_information = db.getAllMyMissionByUserId(user_id=user_id)
     if mission_information:
         images = db.executeAll(
-            query="SELECT image FROM ad_images "
-                  "JOIN ad_user_apply aua on ad_images.ad_id = aua.ad_id WHERE aua.user_id = %s",
+            query="SELECT image FROM ad_user_apply aua JOIN ad_images ai on aua.ad_id = ai.ad_id "
+                  "WHERE user_id = %s AND aua.status = 'accept'",
             args=user_id
         )
         ad_user_information = db.executeOne(
