@@ -32,6 +32,7 @@ def delete_advertisement():
     db.execute("DELETE FROM withdrawal_donate", None)
     db.execute("DELETE FROM withdrawal_self", None)
     db.execute("DELETE FROM app_push_log", None)
+    db.execute("DELETE FROM ad_information", None)
     db.execute("ALTER TABLE ad_user_apply AUTO_INCREMENT = 1", None)
     db.execute("ALTER TABLE ad_images AUTO_INCREMENT = 1", None)
     db.execute("ALTER TABLE ad_mission_card AUTO_INCREMENT = 1", None)
@@ -41,6 +42,7 @@ def delete_advertisement():
     db.execute("ALTER TABLE withdrawal_self AUTO_INCREMENT = 1", None)
     db.execute("ALTER TABLE withdrawal_donate AUTO_INCREMENT = 1", None)
     db.execute("ALTER TABLE app_push_log AUTO_INCREMENT = 1", None)
+    db.execute("ALTER TABLE ad_information AUTO_INCREMENT = 1", None)
     db.db_close()
     return True
 
