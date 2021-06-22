@@ -8,7 +8,7 @@ def select_user():
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
               "JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id "
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
-              "WHERE activity_end_date IS NOT NULL AND aua.status != 'success' "
+              "WHERE activity_end_date IS NOT NULL AND aua.status NOT IN ('success', 'fail', 'cancel') "
               "AND activity_end_date <= NOW() AND activity_end_date != '0000-00-00 00:00:00'"
     )
     return users
@@ -41,7 +41,6 @@ def update_point():
                     reason=reason, message_type="apply_fail"
                 )
             else:
-                sum_additional_point = 0
                 default_point = db.executeOne(
                     query="SELECT ai.total_point, user_id, title FROM ad_user_apply aua "
                           "JOIN ad_information ai on aua.ad_id = ai.ad_id "
