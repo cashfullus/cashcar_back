@@ -253,6 +253,7 @@ class AdvertisementList(Filter):
         register_time_filter = self.get_ad_apply_register_time()
         search_filter = self.get_ad_apply_search_query()
         per_page = (page - 1) * count
+        register_minus_1hour = "(DATE_SUB(NOW(), INTERVAL 1 hour) >= aua.register_time)"
         result = self.db.executeAll(
             query="SELECT "
                   "title, owner_name, name, main_address, detail_address, "
@@ -263,7 +264,7 @@ class AdvertisementList(Filter):
                   "FROM ad_user_apply aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                   "JOIN user u on aua.user_id = u.user_id "
-                  f"WHERE {status_filter} AND {area_filter} AND {gender_filter} "
+                  f"WHERE {register_minus_1hour} AND {status_filter} AND {area_filter} AND {gender_filter} "
                   f"AND {age_filter} AND {register_time_filter} AND {search_filter} "
                   "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject', 'fail'), aua.register_time DESC "
                   "LIMIT %s OFFSET %s",
@@ -275,7 +276,7 @@ class AdvertisementList(Filter):
                   "FROM ad_user_apply aua "
                   "JOIN ad_information ai on aua.ad_id = ai.ad_id "
                   "JOIN user u on aua.user_id = u.user_id "
-                  f"WHERE {status_filter} AND {area_filter} AND {gender_filter} "
+                  f"WHERE {register_minus_1hour} AND {status_filter} AND {area_filter} AND {gender_filter} "
                   f"AND {age_filter} AND {register_time_filter} AND {search_filter} "
                   "ORDER BY FIELD(status, 'stand_by', 'accept', 'success', 'reject'), "
                   "aua.register_time DESC"
