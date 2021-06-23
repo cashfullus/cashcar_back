@@ -766,6 +766,10 @@ class AdApplyStatusUpdate:
                       "ongoing", self.start_date.strftime('%Y-%m-%d 00:00:00'), end_date
                       ]
             )
+            self.db.execute(
+                query="UPDATE ad_user_apply SET is_first_message = 1 WHERE ad_user_apply_id = %s",
+                args=self.apply_id
+            )
         elif self.item['order'] != 1 and self.item['mission_type'] == 0 and self.item['based_on_activity_period'] != 0:
             start_date = date.today() + timedelta(days=self.item['based_on_activity_period'])
             end_date = (start_date + timedelta(days=self.item['due_date'])).strftime('%Y-%m-%d 23:59:59')
