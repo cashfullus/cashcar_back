@@ -16,21 +16,16 @@ def default_mission_list():
               "GROUP BY u.user_id"
     )
     if first_default_mission_send_message:
-        fcm_token_list = []
         for i in range(len(first_default_mission_send_message)):
             db.execute(
                 query="UPDATE ad_user_apply SET is_first_message = 1 WHERE ad_user_apply_id = %s",
                 args=first_default_mission_send_message[i]['ad_user_apply_id']
             )
-            fcm_token_list.append(first_default_mission_send_message[i]['fcm_token'])
             db.execute(
-                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                      "VALUES (%s, %s, %s, %s)",
-                args=[first_default_mission_send_message[i]['user_id'],
-                      "mission", 1, "[1차 미션]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"]
+                query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                args=[first_default_mission_send_message[i]['user_id'], "[1차 미션]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"]
             )
         db.commit()
-        multiple_cloud_messaging(tokens=fcm_token_list, body="[1차 미션]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!")
         sleep(0.2)
 
     mission_list = db.executeAll(
@@ -52,11 +47,9 @@ def default_mission_list():
             )
             if mission_list[i]['alarm'] == 1:
                 body_name = f"[{mission_list[i]['mission_name']}]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"
-                one_cloud_messaging(token=mission_list[i]['fcm_token'], body=body_name)
                 db.execute(
-                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                          "VALUES (%s, %s, %s, %s)",
-                    args=[mission_list[i]['user_id'], "mission", 1, body_name]
+                    query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                    args=[mission_list[i]['user_id'], body_name]
                 )
                 db.commit()
             sleep(0.08)
