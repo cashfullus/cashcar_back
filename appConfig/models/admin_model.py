@@ -271,6 +271,8 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
         else:
             pass
 
+        today_datetime = datetime.now()
+
         # 미션 성공일 경우
         if status == 'success':
             # 미션 타입에 따라(필수, 선택) 성공 횟수 추가
@@ -317,12 +319,20 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 args=[mission_information['user_id'], history_name]
             )
             if mission_information['alarm'] == 1:
-                one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
-            db.execute(
-                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                      "VALUES (%s, %s, %s, %s)",
-                args=[mission_information['user_id'], "mission", 1, body_name]
-            )
+                # 현재시간이 21시 이전일 경우 앱푸쉬 전송
+                if today_datetime.hour < 21:
+                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                    db.execute(
+                        query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                              "VALUES (%s, %s, %s, %s)",
+                        args=[mission_information['user_id'], "mission", 1, body_name]
+                    )
+                # 현재시간이 21시 이후일 경우 앱푸쉬 예약 전송
+                else:
+                    db.execute(
+                        query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                        args=[mission_information['user_id'], body_name]
+                    )
             save_message_name = f"{mission_information['mission_name']} 성공"
             db.saveStatusMessage(
                 ad_user_apply_id=ad_apply_id, reason=save_message_name, message_type="mission_success"
@@ -353,13 +363,19 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                         ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="apply_fail"
                     )
                     body_name = f"[{mission_information['mission_name']}] 인증에 실패하였습니다. 다음 기회에 다시 도전해주세요 :("
-                    db.execute(
-                        query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                              "VALUES (%s, %s, %s, %s)",
-                        args=[mission_information['user_id'], "mission", 1, body_name]
-                    )
                     if mission_information['alarm'] == 1:
-                        one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                        if today_datetime.hour < 21:
+                            one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                            db.execute(
+                                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                                      "VALUES (%s, %s, %s, %s)",
+                                args=[mission_information['user_id'], "mission", 1, body_name]
+                            )
+                        else:
+                            db.execute(
+                                query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                                args=[mission_information['user_id'], body_name]
+                            )
                     db.commit()
                     db.db_close()
                     result['status'] = "fail"
@@ -386,13 +402,19 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                     args=[mission_information['user_id'], history_name]
                 )
                 body_name = f"[{mission_information['mission_name']}] 인증에 실패하였습니다. 다음 기회에 다시 도전해주세요ㅠㅜ"
-                db.execute(
-                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                          "VALUES (%s, %s, %s, %s)",
-                    args=[mission_information['user_id'], "mission", 1, body_name]
-                )
                 if mission_information['alarm'] == 1:
-                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                    if today_datetime.hour < 21:
+                        one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                        db.execute(
+                            query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                                  "VALUES (%s, %s, %s, %s)",
+                            args=[mission_information['user_id'], "mission", 1, body_name]
+                        )
+                    else:
+                        db.execute(
+                            query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                            args=[mission_information['user_id'], body_name]
+                        )
                 db.commit()
                 db.db_close()
                 result['status'] = "fail"
@@ -416,13 +438,19 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                 db.saveStatusMessage(
                     ad_user_apply_id=ad_apply_id, title=title, reason=reason, message_type="mission_fail"
                 )
-                db.execute(
-                    query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-                          "VALUES (%s, %s, %s, %s)",
-                    args=[mission_information['user_id'], "mission", 1, body_name]
-                )
                 if mission_information['alarm'] == 1:
-                    one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                    if today_datetime.hour < 21:
+                        one_cloud_messaging(token=mission_information['fcm_token'], body=body_name)
+                        db.execute(
+                            query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                                  "VALUES (%s, %s, %s, %s)",
+                            args=[mission_information['user_id'], "mission", 1, body_name]
+                        )
+                    else:
+                        db.execute(
+                            query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
+                            args=[mission_information['user_id'], body_name]
+                        )
                 db.commit()
                 db.db_close()
                 result['status'] = "reject"
@@ -589,60 +617,11 @@ class AdminWithdrawal:
         item_count = self.get_item_count()
         return response, item_count['item_count']
 
-    # def update_withdrawal(self):
-    #     if self.is_point:
-    #         user_list = self.kwargs['withdrawal_list']
-
-
-# 어드민 포인트 출금 신청 리스트
-# def get_all_withdrawal_point(page, count):
-#     db = Database()
-#     per_page = (int(page) - 1) * int(count)
-#     result = db.executeAll(
-#         query="SELECT "
-#               "withdrawal_self_id, w.account_bank, name, w.account_number, user.user_id, amount, `status`, "
-#               "DATE_FORMAT(w.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-#               "CASE WHEN w.change_done = '0000-00-00 00:00:00' THEN '' "
-#               "WHEN w.change_done IS NOT NULL "
-#               "THEN DATE_FORMAT(w.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done "
-#               "FROM user JOIN withdrawal_self w on user.user_id = w.user_id "
-#               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') LIMIT %s OFFSET %s",
-#         args=[int(count), per_page]
-#     )
-#     item_count = db.executeOne(
-#         query="SELECT count(withdrawal_self_id) as item_count FROM withdrawal_self"
-#     )
-#     return result, item_count['item_count']
-
 
 # 어드민 포인트 출금 상태 변경  (waiting(대기중), confirm(확인), done(승인), reject(반려))
 def update_withdrawal_point(**kwargs):
     result = withdrawal_total_result(withdrawal_type="point", **kwargs)
     return result
-
-
-# 어드민 기부 신청 리스트
-# def get_all_withdrawal_donate(page, count):
-#     db = Database()
-#     per_page = (int(page) - 1) * int(count)
-#     result = db.executeAll(
-#         query="SELECT "
-#               "name, user.user_id, amount, `status`, donation_organization_name as donation_organization, "
-#               "receipt, name_of_donor,"
-#               "DATE_FORMAT(wd.register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time, "
-#               "CASE WHEN wd.change_done = '0000-00-00 00:00:00' THEN '' "
-#               "WHEN wd.change_done IS NOT NULL "
-#               "THEN DATE_FORMAT(wd.change_done, '%%Y-%%m-%%d %%H:%%i:%%s') END as change_done, withdrawal_donate_id "
-#               "FROM user JOIN withdrawal_donate wd on user.user_id = wd.user_id "
-#               "JOIN donation_organization d on wd.donation_organization_id = d.donation_organization_id "
-#               "ORDER BY FIELD(`status`, 'waiting', 'checking', 'reject', 'cancel', 'done') "
-#               "LIMIT %s OFFSET %s",
-#         args=[int(count), per_page]
-#     )
-#     item_count = db.executeOne(
-#         query="SELECT count(withdrawal_donate_id) as item_count FROM withdrawal_donate"
-#     )
-#     return result, item_count['item_count']
 
 
 # 어드민 기부 출금 상태 변경 (waiting(대기중), checking(확인중), done(승인), reject(반려))
