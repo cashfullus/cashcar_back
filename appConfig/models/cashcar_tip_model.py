@@ -76,7 +76,7 @@ def get_cash_car_tip_all(page, request_user, count=10):
         cash_car_tip_information = db.executeAll(
             query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
                   "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-                  "FROM cash_car_tip ORDER BY register_time DESC LIMIT %s OFFSET %s",
+                  "FROM cash_car_tip WHERE removed = 0 ORDER BY register_time DESC LIMIT %s OFFSET %s",
             args=[count, per_page]
         )
         return cash_car_tip_information
@@ -113,7 +113,7 @@ def get_cash_car_tip_by_id(cash_car_tip_id):
     result = db.executeOne(
         query="SELECT cash_car_tip_id, title, thumbnail_image, main_description, "
               "DATE_FORMAT(register_time, '%%Y-%%m-%%d %%H:%%i:%%s') as register_time "
-              "FROM cash_car_tip WHERE cash_car_tip_id = %s ORDER BY register_time DESC",
+              "FROM cash_car_tip WHERE cash_car_tip_id = %s AND removed = 0 ORDER BY register_time DESC",
         args=cash_car_tip_id
     )
     if not result:
