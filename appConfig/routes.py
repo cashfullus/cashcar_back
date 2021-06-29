@@ -138,6 +138,13 @@ def marketing_information():
     return render_template('marketing_information.html')
 
 
+# 통합 금융정보 및 전자문서 서비스 약관
+@app.route('/agree/terms_of_service')
+@swag_from('route_yml/agree/terms_of_service.yml')
+def terms_of_service():
+    return render_template('terms_of_service.html')
+
+
 # 이미지 send
 @app.route('/image/<location>/<idx>/<image_file>', methods=['GET', 'DELETE'])
 @swag_from('route_yml/image/get_image.yml')
