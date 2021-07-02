@@ -55,9 +55,9 @@ def default_mission_list():
             sleep(0.08)
 
     db.db_close()
-    return True
+    return "default_mission_list success"
 
 
-default_mission_list()
+print(default_mission_list())
 
 

@@ -34,7 +34,7 @@ def update_mission_list():
             sleep(0.08)
 
     db.db_close()
-    return True
+    return "update_mission_list success"
 
 
-update_mission_list()
+print(update_mission_list())

@@ -16,8 +16,8 @@ def update_ad_status():
     )
     db.commit()
     db.db_close()
-    return True
+    return "update_ad_status success"
 
 
-update_ad_status()
+print(update_ad_status())
 
