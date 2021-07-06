@@ -277,17 +277,18 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
         if status == 'success':
             # 미션 타입에 따라(필수, 선택) 성공 횟수 추가
             other_sql = "SELECT " \
-                  "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
-                  "amc.mission_name, amc.mission_type, amc.additional_point, " \
-                  "based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
-                  "mission_fail_count, title, u.user_id as user_id, fcm_token, alarm, due_date " \
-                  "FROM ad_mission_card_user as amcu " \
-                  "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
-                  "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
-                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
-                  "JOIN user u on aua.user_id = u.user_id " \
-                  "JOIN user_fcm uf on aua.user_id = uf.user_id " \
-                  "WHERE amcu.ad_user_apply_id = %s AND amcu.ad_mission_card_id NOT IN (%s) AND removed = 0"
+                        "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
+                        "amc.mission_name, amc.mission_type, amc.additional_point, " \
+                        "based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
+                        "mission_fail_count, title, u.user_id as user_id, fcm_token, alarm, due_date " \
+                        "FROM ad_mission_card_user as amcu " \
+                        "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+                        "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
+                        "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+                        "JOIN user u on aua.user_id = u.user_id " \
+                        "JOIN user_fcm uf on aua.user_id = uf.user_id " \
+                        "WHERE amcu.ad_user_apply_id = %s AND amcu.ad_mission_card_id NOT IN (%s) AND removed = 0 " \
+                        "AND mission_start_date = '0000-00-00 00:00:00'"
             other_mission_list = db.executeAll(
                 query=other_sql,
                 args=[ad_apply_id, mission_card_id]
