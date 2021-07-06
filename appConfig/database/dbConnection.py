@@ -193,7 +193,7 @@ class Database:
               "WHEN mission_end_date IS NOT NULL THEN DATE_FORMAT(amcu.mission_end_date, '%%Y-%%m-%%d %%H:%%i:%%s') " \
               "END as mission_end_date, " \
               "title, thumbnail_image, amcu.status as mission_status, amcu.mission_type as mission_type, " \
-              "ad_mission_card_user_id, activity_period " \
+              "ad_mission_card_user_id, activity_period, total_point " \
               "FROM ad_user_apply as aua " \
               "JOIN ad_information ai on aua.ad_id = ai.ad_id " \
               "LEFT JOIN ad_mission_card_user amcu on aua.ad_user_apply_id = amcu.ad_user_apply_id " \

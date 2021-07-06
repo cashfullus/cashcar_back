@@ -371,7 +371,11 @@ def user_mission_list(user_id):
             day_diff = ((time_diff / ad_user_information['activity_period']) * 100)
             if day_diff >= 100:
                 day_diff = 100
-            ad_user_information['cumulative_point'] = int(time_diff * ad_user_information['day_point'])
+            if datetime.now().date() == (datetime.strptime(ad_user_information['activity_end_date'],
+                                                           '%Y-%m-%d %H:%M:%S').date()):
+                ad_user_information['cumulative_point'] = int(ad_user_information['total_point'])
+            else:
+                ad_user_information['cumulative_point'] = int(time_diff * ad_user_information['day_point'])
             ad_user_information['day_diff'] = time_diff
 
         if additional_point:
