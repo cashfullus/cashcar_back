@@ -774,22 +774,13 @@ class AdApplyStatusUpdate:
                 query="UPDATE ad_user_apply SET is_first_message = 1 WHERE ad_user_apply_id = %s",
                 args=self.apply_id
             )
-        elif self.item['order'] != 1 and self.item['mission_type'] == 0 and self.item['based_on_activity_period'] != 0:
-            start_date = date.today() + timedelta(days=self.item['based_on_activity_period'])
-            end_date = (start_date + timedelta(days=self.item['due_date'])).strftime('%Y-%m-%d 23:59:59')
+        elif self.item['order'] != 1 and self.item['mission_type'] == 0:
+            start_date = '0000-00-00 00:00:00'
+            end_date = '0000-00-00 00:00:00'
             self.db.execute(
                 query=query,
                 args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
-                      "stand_by", start_date.strftime('%Y-%m-%d 00:00:00'), end_date
-                      ]
-            )
-        elif self.item['order'] != 1 and self.item['mission_type'] == 0 and self.item['based_on_activity_period'] == 0:
-            start_date = date.today() + timedelta(days=self.item['based_on_activity_period'])
-            end_date = (start_date + timedelta(days=self.item['due_date'])).strftime('%Y-%m-%d 23:59:59')
-            self.db.execute(
-                query=query,
-                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
-                      "ongoing", start_date.strftime('%Y-%m-%d 00:00:00'), end_date
+                      "stand_by", start_date, end_date
                       ]
             )
         else:
@@ -798,13 +789,9 @@ class AdApplyStatusUpdate:
 
     def additional_mission(self):
         # 미션 아이템
-        mission_start_date = (date.today() + timedelta(days=self.item['based_on_activity_period']))
-        mission_end_date = (mission_start_date + timedelta(days=self.item['due_date'])).strftime(
-            '%Y-%m-%d 23:59:59')
-        if date.today() == mission_start_date:
-            mission_status = "ongoing"
-        else:
-            mission_status = "stand_by"
+        mission_start_date = '0000-00-00 00:00:00'
+        mission_end_date = '0000-00-00 00:00:00'
+        mission_status = "stand_by"
         self.db.execute(
             query="INSERT INTO ad_mission_card_user "
                   "(ad_user_apply_id, ad_mission_card_id, "

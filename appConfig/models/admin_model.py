@@ -276,6 +276,22 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
         # 미션 성공일 경우
         if status == 'success':
             # 미션 타입에 따라(필수, 선택) 성공 횟수 추가
+            other_sql = "SELECT " \
+                  "amcu.ad_mission_card_user_id, amcu.status, mission_fail_count, " \
+                  "amc.mission_name, amc.mission_type, amc.additional_point, " \
+                  "based_on_activity_period, amc.`order`, amc.mission_type, activity_period, " \
+                  "mission_fail_count, title, u.user_id as user_id, fcm_token, alarm, due_date " \
+                  "FROM ad_mission_card_user as amcu " \
+                  "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id " \
+                  "JOIN ad_information ai on amc.ad_id = ai.ad_id " \
+                  "JOIN ad_user_apply aua on amcu.ad_user_apply_id = aua.ad_user_apply_id " \
+                  "JOIN user u on aua.user_id = u.user_id " \
+                  "JOIN user_fcm uf on aua.user_id = uf.user_id " \
+                  "WHERE amcu.ad_user_apply_id = %s AND amcu.ad_mission_card_id NOT IN (%s) AND removed = 0"
+            other_mission_list = db.executeAll(
+                query=other_sql,
+                args=[ad_apply_id, mission_card_id]
+            )
             if mission_information['mission_type'] == 0:
                 db.execute(
                     query="UPDATE ad_user_apply "
@@ -312,6 +328,22 @@ def admin_accept_mission(ad_apply_id, mission_card_id, **kwargs):
                           "SET activity_start_date = %s, activity_end_date = %s WHERE ad_user_apply_id = %s",
                     args=[start_date, end_date, ad_apply_id]
                 )
+                if other_mission_list:
+                    for idx, value in enumerate(other_mission_list):
+                        if value.get('based_on_activity_period') == 0:
+                            other_mission_status = 'ongoing'
+                        else:
+                            other_mission_status = 'stand_by'
+                        start_date = date.today() + timedelta(days=value.get('based_on_activity_period'))
+                        end_date = (start_date + timedelta(days=value.get('due_date'))).strftime('%Y-%m-%d 23:59:59')
+                        db.execute(
+                            query="UPDATE ad_mission_card_user "
+                                  "SET mission_start_date = %s, mission_end_date = %s, status = %s "
+                                  "WHERE ad_mission_card_user_id = %s",
+                            args=[start_date.strftime('%Y-%m-%d 00:00:00'), end_date,
+                                  other_mission_status, value.get('ad_mission_card_user_id')
+                                  ]
+                        )
             history_name = f"{mission_information['title']} 광고 {mission_information['mission_name']} 승인"
             body_name = f"[{mission_information['mission_name']}]에 성공하였습니다. 축하드립니다 :)"
             db.execute(
