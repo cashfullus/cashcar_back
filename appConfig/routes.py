@@ -223,6 +223,7 @@ def app_version_check():
 def fmc_token():
     try:
         data = request.get_json()
+        user_agent = request.headers.get('User-Agent', '')
         result = User.user_fcm(**data)
         if result:
             return jsonify({"status": True, "data": "Success Save Fcm"}), 200
