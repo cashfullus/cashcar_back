@@ -671,7 +671,7 @@ class UserApplyCancel:
         self.db.execute(
             query="UPDATE ad_user_apply "
                   "SET recruit_number = recruit_number - 1 "
-                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success') "
+                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success', 'fail') "
                   "AND ad_id = %s AND recruit_number > %s",
             args=[adId_userId_information['ad_user_apply_id'], adId_userId_information['ad_id'],
                   adId_userId_information['recruit_number']]
