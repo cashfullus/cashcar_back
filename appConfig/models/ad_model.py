@@ -782,33 +782,17 @@ class AdApplyStatusUpdate:
                 query="UPDATE ad_user_apply SET is_first_message = 1 WHERE ad_user_apply_id = %s",
                 args=self.apply_id
             )
-        elif self.item['order'] != 1 and self.item['mission_type'] == 0:
+            self.db.commit()
+        else:
             start_date = '0000-00-00 00:00:00'
             end_date = '0000-00-00 00:00:00'
             self.db.execute(
-                query=query,
-                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
-                      "stand_by", start_date, end_date
-                      ]
+                query="INSERT INTO ad_mission_card_user (ad_user_apply_id, ad_mission_card_id, mission_type, "
+                      "mission_start_date, mission_end_date) "
+                      "VALUES (%s, %s, %s, %s, %s)",
+                args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"], start_date, end_date]
             )
-        else:
             self.db.commit()
-            self.additional_mission()
-
-    def additional_mission(self):
-        # 미션 아이템
-        mission_start_date = '0000-00-00 00:00:00'
-        mission_end_date = '0000-00-00 00:00:00'
-        mission_status = "stand_by"
-        self.db.execute(
-            query="INSERT INTO ad_mission_card_user "
-                  "(ad_user_apply_id, ad_mission_card_id, "
-                  "mission_type, status, mission_start_date, mission_end_date) "
-                  "VALUES (%s, %s, %s, %s, %s, %s)",
-            args=[self.apply_id, self.item["ad_mission_card_id"], self.item["mission_type"],
-                  mission_status, mission_start_date, mission_end_date]
-        )
-        self.db.commit()
 
     def apply_reject(self):
         if int(self.apply_status['max_recruiting_count'] == int(self.apply_status['recruiting_count'])):
