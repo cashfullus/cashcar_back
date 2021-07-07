@@ -409,7 +409,7 @@ def user_apply_id_by_ad_id(page, count, ad_id):
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN vehicle v on u.user_id = v.user_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status != 'cancel' "
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status NOT IN ('cancel', 'reject') "
               "ORDER BY ad_user_apply_id LIMIT %s OFFSET %s",
         args=[ad_id, count, per_page]
     )
@@ -418,7 +418,7 @@ def user_apply_id_by_ad_id(page, count, ad_id):
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN vehicle v on u.user_id = v.user_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status != 'cancel' ",
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status NOT IN ('cancel', 'reject') ",
         args=ad_id
     )
     return user_information, item_count['item_count']
