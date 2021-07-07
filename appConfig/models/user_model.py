@@ -403,13 +403,13 @@ def user_apply_id_by_ad_id(page, count, ad_id):
               "u.user_id, nickname, name, call_number, email, "
               "cast('resident_registration_number_back' as unsigned) as gender, "
               "resident_registration_number_front as birth_of_date, "
-              "car_number, vehicle_model_name, brand,recruit_number, max_recruiting_count,"
+              "car_number, vehicle_model_name, brand,recruit_number, max_recruiting_count, "
               "DATE_FORMAT(accept_status_time, '%%Y-%%m-%%d %%H:%%i:%%s') as accept_status_time "
               "FROM ad_user_apply as aua "
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN vehicle v on u.user_id = v.user_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 "
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status != 'cancel' "
               "ORDER BY ad_user_apply_id LIMIT %s OFFSET %s",
         args=[ad_id, count, per_page]
     )
@@ -418,7 +418,7 @@ def user_apply_id_by_ad_id(page, count, ad_id):
               "JOIN user u on aua.user_id = u.user_id "
               "JOIN vehicle v on u.user_id = v.user_id "
               "JOIN ad_information ai on aua.ad_id = ai.ad_id "
-              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0",
+              "WHERE aua.ad_id = %s AND v.supporters = 1 AND v.removed = 0 AND aua.status != 'cancel' ",
         args=ad_id
     )
     return user_information, item_count['item_count']

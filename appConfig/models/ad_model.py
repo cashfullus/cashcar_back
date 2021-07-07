@@ -651,7 +651,7 @@ class UserApplyCancel:
 
     def get_ad_information(self):
         return self.db.executeOne(
-            query="SELECT title, user_id, ai.ad_id FROM ad_information as ai "
+            query="SELECT title, user_id, ai.ad_id, recruit_number, ad_user_apply_id FROM ad_information as ai "
                   "JOIN ad_user_apply aua on ai.ad_id = aua.ad_id "
                   "WHERE ad_user_apply_id = %s",
             args=self.ad_user_apply_id
@@ -667,6 +667,14 @@ class UserApplyCancel:
         self.db.execute(
             query="UPDATE ad_information SET recruiting_count = recruiting_count - 1 WHERE ad_id = %s",
             args=adId_userId_information['ad_id']
+        )
+        self.db.execute(
+            query="UPDATE ad_user_apply "
+                  "SET recruit_number = recruit_number - 1 "
+                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success', 'fail') "
+                  "AND ad_id = %s AND recruit_number > %s",
+            args=[adId_userId_information['ad_user_apply_id'], adId_userId_information['ad_id'],
+                  adId_userId_information['recruit_number']]
         )
         self.db.commit()
 
@@ -831,7 +839,7 @@ class AdApplyStatusUpdate:
         self.db.execute(
             query="UPDATE ad_user_apply "
                   "SET recruit_number = recruit_number - 1 "
-                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success') "
+                  "WHERE ad_user_apply_id NOT IN (%s) AND status IN ('stand_by', 'accept', 'success', 'fail') "
                   "AND ad_id = %s AND recruit_number > %s",
             args=[self.apply_id, self.apply_status["ad_id"], self.apply_status['recruit_number']]
         )
