@@ -55,7 +55,11 @@ def default_mission_list():
                 db.commit()
 
     db.db_close()
-    return "default_mission_list success"
+    data = {"default_mission_list success": "OK",
+            "first_send_message": first_default_mission_send_message,
+            "mission_list": mission_list
+            }
+    return data
 
 
 print(default_mission_list())

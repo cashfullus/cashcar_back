@@ -15,26 +15,25 @@ def update_mission_list():
               "AND mission_start_date != '0000-00-00 00:00:00' AND mission_start_date <= NOW() AND alarm = 1"
     )
     if mission_list:
-        for i in range(len(mission_list)):
+        for _, value in enumerate(mission_list):
+            body_name = f"[{value.get('mission_name')}]이 오픈되었습니다. 서포터즈 활동 창에서 확인해보세요!"
             db.execute(
                 query="UPDATE ad_mission_card_user SET status = 'ongoing' WHERE ad_mission_card_user_id = %s",
-                args=mission_list[i]['ad_mission_card_user_id']
+                args=value.get('ad_mission_card_user_id')
             )
-            body_name = f"[{mission_list[i]['mission_name']}]이 오픈되었습니다. 서포터즈 활동 창에서 확인해보세요!"
             db.execute(
                 query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
-                args=[mission_list[i]['user_id'], body_name]
+                args=[value.get('user_id'), body_name]
             )
-            # db.execute(
-            #     query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
-            #           "VALUES (%s, %s, %s, %s)",
-            #     args=[mission_list[i]['user_id'], "mission", 1, body_name]
-            # )
+            db.execute(
+                query="INSERT INTO alarm_history (user_id, alarm_type, required, description) "
+                      "VALUES (%s, %s, %s, %s)",
+                args=[value.get('user_id'), "mission", 1, body_name]
+            )
             db.commit()
-            sleep(0.08)
-
     db.db_close()
-    return "update_mission_list success"
+    data = {"update_mission_list success": "OK", "mission_list": mission_list}
+    return data
 
 
 print(update_mission_list())
