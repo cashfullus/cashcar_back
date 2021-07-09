@@ -16,17 +16,16 @@ def default_mission_list():
               "GROUP BY u.user_id"
     )
     if first_default_mission_send_message:
-        for i in range(len(first_default_mission_send_message)):
+        for idx, value in enumerate(first_default_mission_send_message):
             db.execute(
                 query="UPDATE ad_user_apply SET is_first_message = 1 WHERE ad_user_apply_id = %s",
-                args=first_default_mission_send_message[i]['ad_user_apply_id']
+                args=value.get('ad_user_apply_id')
             )
             db.execute(
                 query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
-                args=[first_default_mission_send_message[i]['user_id'], "[1차 미션]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"]
+                args=[value.get('user_id'), "[1차 미션]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"]
             )
         db.commit()
-        sleep(0.2)
 
     mission_list = db.executeAll(
         query="SELECT u.user_id, fcm_token, ad_mission_card_user_id, mission_name, alarm "
@@ -37,22 +36,23 @@ def default_mission_list():
               "JOIN ad_mission_card amc on amcu.ad_mission_card_id = amc.ad_mission_card_id "
               "WHERE amcu.mission_type = 0 AND amc.order NOT IN (1) AND amcu.status = 'stand_by'"
               "AND aua.status = 'accept' AND amcu.mission_start_date <= NOW() "
+              "AND amcu.mission_start_date != '0000-00-00 00:00:00' "
               "GROUP BY u.user_id"
     )
     if mission_list:
-        for i in range(len(mission_list)):
+        for _, value in enumerate(mission_list):
             db.execute(
                 query="UPDATE ad_mission_card_user SET status = 'ongoing' WHERE ad_mission_card_user_id = %s",
-                args=mission_list[i]['ad_mission_card_user_id']
+                args=value.get('ad_mission_card_user_id')
             )
-            if mission_list[i]['alarm'] == 1:
-                body_name = f"[{mission_list[i]['mission_name']}]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"
+            if value.get('alarm') == 1:
+
+                body_name = f"[{value.get('mission_name')}]이 발생하였습니다. 미션 내용 확인 후 인증해주세요!"
                 db.execute(
                     query="INSERT INTO user_app_push_reservation (user_id, contents) VALUES (%s, %s)",
-                    args=[mission_list[i]['user_id'], body_name]
+                    args=[value.get('user_id'), body_name]
                 )
                 db.commit()
-            sleep(0.08)
 
     db.db_close()
     return "default_mission_list success"
