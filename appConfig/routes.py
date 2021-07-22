@@ -1661,3 +1661,9 @@ def admin_ad_image_upload():
     ad_id = request.args.get('ad_id', 0)
     result = AD.adverting_image_upload(image=img, ad_id=ad_id)
     return jsonify({"data": result})
+
+
+@app.route("/multipart/test", methods=['POST'])
+def multipart_test_function():
+    image = request.files.get('test_image')
+    return jsonify({"data": secure_filename(image.filename)})
